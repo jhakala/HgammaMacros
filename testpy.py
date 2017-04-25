@@ -22,7 +22,7 @@ def getHiggsRangesDict():
   rangesDict["%sJet_HbbTag"%label]=[-1. , 1.]
   rangesDict["%sJet_pruned_abseta"%label]=[0., 3]
   rangesDict["%sJett2t1"%label]=[0, 1]
-  rangesDict["%sPrunedJetCorrMass"%label]=[0,700]
+  rangesDict["%sPrunedJetCorrMass"%label]=[0,200]
   rangesDict["phJetDeltaR_%s"%label]=[0,6]
   rangesDict["phJetInvMass_pruned_%s"%label]=[0,4000]
   return rangesDict
@@ -100,6 +100,8 @@ def makeAllHists(cutName, withBtag=True, sideband=False):
           varNames.append(branch.GetName())
       for var in varNames:
         hist = TH1F("hist_%s_%s_%s"%(var, region, key),"hist_%s_%s_%s"%(var, region, key),100,rangesDict[var][0],rangesDict[var][1])
+        if var == "higgsJet_HbbTag":
+          hist.Rebin(5)
         if   cutName in "btag":
           cut = getBtagComboCut(region, sideband)
         elif cutName in "antibtag":

@@ -6,14 +6,14 @@ def getSamplesDirs():
   response = {}
   response["HgammaFlatTuples"] = "~/physics/80Xsignals"
   response["small3sDir"]       = "~/physics/nov21_ntuples"
-  response["ddDir"]            = "~/WZgammaMacros/80XDDs_Dec13/"
-  response["sigDDdir"]         = "~/WZgammaMacros/80XDDs_Dec13_sigs"
-  response["dataDir"]          = "~/WZgammaMacros/80XDDs_Dec13/ddTree_SilverJson.root"
+  response["ddDir"]            = "~/WZgammaMacros/80XDDs_Mar9/"
+  response["sigDDdir"]         = "~/WZgammaMacros/80XDDs_Mar9_sigs"
+  response["dataDir"]          = "~/WZgammaMacros/80XDDs_Mar9/ddTree_SilverJson.root"
   return response
 
 def getNormalizations():
   normalizations = {}
-  normalizations["650"]  = 1.0
+  #normalizations["650"]  = 1.0
   normalizations["750"]  = 1.0
   normalizations["850"]  = 1.0
   normalizations["1000"] = 0.8
@@ -32,7 +32,7 @@ def getNormalizations():
 def getMassWindows():
   # TODO: this needs updating for the new signals
   massWindows = {}
-  massWindows[650]  = [600,   700]
+  #massWindows[650]  = [600,   700]
   massWindows[750]  = [700,   800]
   massWindows[850]  = [800,   900]
   massWindows[1000] = [900,  1100]

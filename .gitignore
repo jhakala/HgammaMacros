@@ -8,3 +8,9 @@ weightedMCbgHists*
 stackplots*
 80XDDs*
 optplots*
+*.d
+*.so
+*.txt
+*.tx
+*.log
+*.pdf

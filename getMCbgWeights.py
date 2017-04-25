@@ -78,7 +78,7 @@ def getSignalsToInclude():
             #"Hgamma_m3000.root",
             #"Hgamma_m3500.root",
             #"Hgamma_m4000.root"
-            "signal_m650.root",
+            #"signal_m650.root",
             "signal_m750.root",
             "signal_m850.root",
             "signal_m1000.root",
@@ -109,20 +109,20 @@ def getWeightsDict(small3Dir):
   #for signalToInclude in getSignalsToInclude():
   #  sampleWeights[signalToInclude] = signalWeight
   sampleWeights["SilverJson.root"] = 1
-  sampleWeights[ "signal_m650.root"   ] = .8
-  sampleWeights[ "signal_m750.root"   ] = .8
-  sampleWeights[ "signal_m850.root"   ] = .8
-  sampleWeights[ "signal_m1000.root"  ] = .7
-  sampleWeights[ "signal_m1150.root"  ] = .7
-  sampleWeights[ "signal_m1300.root"  ] = .7
-  sampleWeights[ "signal_m1450.root"  ] = .6
-  sampleWeights[ "signal_m1600.root"  ] = .6
-  sampleWeights[ "signal_m1750.root"  ] = .6
-  sampleWeights[ "signal_m1900.root"  ] = .5
-  sampleWeights[ "signal_m2050.root"  ] = .5
-  sampleWeights[ "signal_m2450.root"  ] = .5
-  sampleWeights[ "signal_m2850.root"  ] = .4
-  sampleWeights[ "signal_m3250.root"  ] = .4
+#  sampleWeights[ "signal_m650.root"   ] = .8*10
+  sampleWeights[ "signal_m750.root"   ] = .8*10
+  sampleWeights[ "signal_m850.root"   ] = .8*10
+  sampleWeights[ "signal_m1000.root"  ] = .7*10
+  sampleWeights[ "signal_m1150.root"  ] = .7*10
+  sampleWeights[ "signal_m1300.root"  ] = .7*10
+  sampleWeights[ "signal_m1450.root"  ] = .6*10
+  sampleWeights[ "signal_m1600.root"  ] = .6*10
+  sampleWeights[ "signal_m1750.root"  ] = .6*10
+  sampleWeights[ "signal_m1900.root"  ] = .5*10
+  sampleWeights[ "signal_m2050.root"  ] = .5*10
+  sampleWeights[ "signal_m2450.root"  ] = .5*10
+  sampleWeights[ "signal_m2850.root"  ] = .4*10
+  sampleWeights[ "signal_m3250.root"  ] = .4*10
   return sampleWeights
 
 def getMCbgWeightsDict(small3Dir):

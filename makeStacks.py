@@ -14,6 +14,8 @@ parser.add_option("-r", action="store_false", dest="showSigs" , default=True,
                   help="if -r is used, then do not show signals overlaid."             )
 parser.add_option("-s", action="store_true", dest="sideband"  , default=False,
                   help="if -s is used, then look in sideband, not Higgs window."       )
+parser.add_option("-l", action="store_false", dest="addLines"     , default=True,
+                  help = "if -l is used, then do not draw a line at 1 in the ratios"   )
 parser.add_option("-b", action="store_true", dest="batch"     , default=False,
                   help = "turn on batch mode"                                          )
 (options, args) = parser.parse_args()
@@ -34,6 +36,7 @@ from tcanvasTDR import TDRify
 #for withBtag in [True, False]:
 sideband = options.sideband
 showSigs = options.showSigs
+addLines = options.addLines
 for withBtag in [options.withBtag]:
   print "withBtag is %r" % withBtag
   printNonempties = False
@@ -42,7 +45,7 @@ for withBtag in [options.withBtag]:
   if options.cutName=="preselection" or sideband:
     blindData       = False
   else:
-    blindData    = False
+    blindData    = True
 
   sampleDirs = getSamplesDirs()
 
@@ -92,6 +95,7 @@ for withBtag in [options.withBtag]:
     datafiles=[]
     sighists=[]
     sigfiles=[]
+    lines=[]
     legendLabels = getMCbgLabels()
     varDict = getVariableDict()
 
@@ -215,7 +219,6 @@ for withBtag in [options.withBtag]:
           sighists[-1].Draw("SAME")
 
       pads[-1].SetBottomMargin(0)
-      pads[-1].SetLogy()
       pads[-1].BuildLegend()
       cans[-1].cd()
       pads[-1].Draw()
@@ -252,6 +255,10 @@ for withBtag in [options.withBtag]:
       datahistsCopies[-1].Sumw2()
       datahistsCopies[-1].Divide(fullStack)
       datahistsCopies[-1].Draw("PE")
+      if addLines:
+        lines.append(TLine(fullStack.GetXaxis().GetBinLowEdge(1) , 1, fullStack.GetXaxis().GetBinUpEdge(fullStack.GetXaxis().GetNbins()) ,1))
+        lines[-1].SetLineStyle(2)
+        lines[-1].Draw("SAME")
       datahistsCopies[-1].SetTitle("")
       datahistsCopies[-1].GetYaxis().SetRangeUser(0,2)
       datahistsCopies[-1].SetLineColor(kBlack)
