@@ -1,5 +1,6 @@
 from ROOT import *
-tfile = TFile("efficienciesGraphs_masswindow_110-140.root")
+phSFvariation = "nom"
+tfile = TFile("btag-nom_phSF-%s_efficienciesGraphs_masswindow_110-140.root" % phSFvariation)
 graphBtag = tfile.Get("SigEff_btag")
 can1 = TCanvas()
 can1.cd()
@@ -41,8 +42,8 @@ fitFunctionAntiBtag.SetParameters(0.16 , 650 , .002 , 0 , 0)
 print "Fitting the ANTIBTAG category"
 graphAntiBtag.Fit(fitFunctionAntiBtag)
 
-can1.Print("sigEff_btag.root")
-can2.Print("sigEff_antibtag.root")
+can1.Print("phSF_%s_sigEff_btag.root" % phSFvariation)
+can2.Print("phSF_%s_sigEff_antibtag.root" % phSFvariation)
 
 for iParameter in range(0, fitFunctionAntiBtag.GetNumberFreeParameters()):
   #  print parameter, ","
