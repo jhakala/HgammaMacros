@@ -9,7 +9,7 @@ using namespace std;
 // The trees differ in the AK8 jet mass cuts -- different windows are used for different bosons 
 // John Hakala -- May 11, 2016
 
-void HgammaSelector::Loop(string outputFileName, int btagVariation, float mcWeight) {
+void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvariation, float mcWeight) {
   cout << "output filename is: " << outputFileName << endl;
   // Flags for running this macro
   bool debugFlag                     =  false ;  // If debugFlag is false, the trigger checking couts won't appear and the loop won't stop when it reaches entriesToCheck
@@ -280,8 +280,8 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, float mcWeig
           cout << "                                    tau2/tau1 is: " << puppi_softdrop_higgsJetTau2/puppi_softdrop_higgsJetTau1 << endl;
         }
         higgsJett2t1 = puppi_softdrop_higgsJetTau2/puppi_softdrop_higgsJetTau1;
-        antibtagSF = computeOverallSF("antibtag" , higgsJet_puppi_softdrop.Pt(), higgsJet_HbbTag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation);
-        btagSF     = computeOverallSF("btag"     , higgsJet_puppi_softdrop.Pt(), higgsJet_HbbTag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation);
+        antibtagSF = computeOverallSF("antibtag" , higgsJet_puppi_softdrop.Pt(), higgsJet_HbbTag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
+        btagSF     = computeOverallSF("btag"     , higgsJet_puppi_softdrop.Pt(), higgsJet_HbbTag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
         //weightFactor = 1/trigEffHist->GetBinContent(trigEffHist->GetXaxis()->FindBin(leadingPhoton.Pt()));
         weightFactor = 1.0/(turnOnCurve->Eval(leadingPhoton.Pt()));
         boostedPho = leadingPhoton;
@@ -328,27 +328,40 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, float mcWeig
   cout << "\nCompleted output file is " << outputFileName.c_str() <<".\n" << endl;
 }
 
-float HgammaSelector::computeOverallSF(std::string category, float jetPt, float jetHbbTag, float photonPt, float photonEta, bool debug, int variation) {
-  return computePhotonSF(photonPt, photonEta, debug)*computeBtagSF(category, jetPt, jetHbbTag, debug, variation);
+float HgammaSelector::computeOverallSF(std::string category, float jetPt, float jetHbbTag, float photonPt, float photonEta, bool debug, int variation, int phSFvariation) {
+  return computePhotonSF(photonPt, photonEta, debug, phSFvariation)*computeBtagSF(category, jetPt, jetHbbTag, debug, variation);
 }
 
-float HgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debug) {
+float HgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debug, int phSFvariation) {
+  float variedSF = 1.;
+  if (phSFvariation != 0 && phSFvariation != 1 && phSFvariation != -1) {
+    std::cout << "Error, photon SF variation must be 0 (unvaried), +1 (varied up), or -1 (varied down)" << std::endl;
+    exit(EXIT_FAILURE);
+  }
   if (photonEta > 0) {
     if (photonEta < 0.8) {
-      return 0.99667 * 0.9938;
+      variedSF = 0.99667 * 0.9938; //The two numbers are the photon SF for MVA, and the photon SF for the CSEV
     }
     else {
-      return 1.01105 * 0.9938;
+      variedSF = 1.01105 * 0.9938;
     }
   }
   else {
     if(photonEta > -0.8) {
-      return 0.992282 * 0.9938;
+      variedSF =  0.992282 * 0.9938;
     }
     else {
-      return 0.995595 * 0.9938;
+      variedSF = 0.995595 * 0.9938;
     }
   }
+  if (phSFvariation == 1) {
+    variedSF += std::sqrt(0.017*0.017 + 0.0119*0.0119); // the two numbers are the MVA SF uncertainty and the CSEV uncertainty
+  }
+  else if (phSFvariation == -1) {
+    variedSF -= std::sqrt(0.017*0.017 + 0.0119*0.0119);
+
+  }
+  return variedSF;
 }
 float HgammaSelector::computeBtagSF(std::string category, float jetPt, float jetHbbTag, bool debug, int variation) {
   //  variation:
