@@ -4,10 +4,12 @@ from natsort import natsorted
 from ROOT import TFile, TGraph, TCanvas
 from HgParameters import getNormalizations
 from checkSignalEfficiency import getSignalEfficiencies
+from makeVgHists import getVgShortName
 
 massWindowToCheck = [110, 140]
 
-for variation in ["btag-up", "btag-down"]:
+#for variation in ["btag-up", "btag-down"]:
+for variation in ["btag-nom_phSF-nom", "btag-nom_phSF-up", "btag-nom_phSF-down"]:
   outfile = TFile("%s_efficienciesGraphs_masswindow_%r-%r.root"%(variation, massWindowToCheck[0], massWindowToCheck[1]), "RECREATE")
   outfile.cd()
   
@@ -36,7 +38,7 @@ for variation in ["btag-up", "btag-down"]:
   graphs   = []
   
   #for category in ['btag', 'antibtag']:
-  sigEffs = getSignalEfficiencies("vgHists_%s" % variation)
+  sigEffs = getSignalEfficiencies("%s_%s" % (getVgShortName(), variation))
   for category in ['btag', 'antibtag']:
     #canvases.append(TCanvas())
     graphs.append(TGraph())
