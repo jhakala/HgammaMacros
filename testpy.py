@@ -13,6 +13,7 @@ printCuts = False
 
 def getHiggsRangesDict(fineBinning=False):
   rangesDict = {}
+  rangesDict["mcWeight"]                 = [[-9999999., 9999999.]]
   rangesDict["cosThetaStar"]                 = [[0., 1.]]
   rangesDict["phPtOverMgammaj"]              = [[0., 1.2]]
   rangesDict["leadingPhPhi"]                 = [[-3.5, 3.5]]
@@ -136,6 +137,8 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
           #print "cutName is:", cutName
           if   cutName in "btag":
             cut = getBtagComboCut(region, useTrigger, sideband, useScaleFactors, windowEdges)
+            print "\n\n"
+            print cut
           elif cutName in "antibtag":
             cut = getAntiBtagComboCut(region, useTrigger, sideband, useScaleFactors, windowEdges)
           elif cutName in "nobtag":
@@ -172,7 +175,7 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
               cutString = "1*(%s)" % cut
             else:
               cutString = "1*(%s)" % (cut)
-          print "cuts:", cutString
+          #print "cuts:", cutString
           nEntries = tree.Draw("%s>> %s"%(var, histName), cutString, "HIST")
           directory = ""
           bareDirectory = ""

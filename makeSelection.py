@@ -4,6 +4,7 @@ from pyrootTools import *
 from HgParameters import *
 from HgCuts import getDefaultCuts, combineCuts
 from os import path
+from sys import argv
 
 # macro for plotting post-selection for H(bb)gamma
 # John Hakala 7/13/16
@@ -11,10 +12,12 @@ from os import path
 samplesDirs = getSamplesDirs()
 #dataFileName = samplesDirs["dataDir"]
 #mass = "1000"
-sampleFileName=path.join(samplesDirs["dataDDdir"], "ddTree_data2016SinglePhoton.root")
+#sampleFileName=path.join(samplesDirs["dataDDdir"], "ddTree_data2016SinglePhoton.root")
 #sampleFileName="testSilver.root"
+sampleFileName=argv[1]
 
-cuts = getDefaultCuts("higgs", True)
+#cuts = getDefaultCuts("higgs", True, False, [110., 140.])
+cuts = getDefaultCuts("higgs", True, False, [140., 150.])
 
 btagCuts = copy.deepcopy(cuts)
 btagCuts.pop("antibtag")
@@ -37,19 +40,25 @@ print sampleFile
 higgsTree = sampleFile.Get("higgs")
 print "higgsTree: ",
 print higgsTree
-print "\nall cuts, btag cat\n   "
+print "\nall cuts, btag cat:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", btagComboCut)
-print "\nall cuts, antibtag cat\n   "
+print btagComboCut
+print "----------"
+print "\nall cuts, antibtag cat:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", antibtagComboCut)
-print "\nno btag cut\n   "
+print antibtagComboCut
+print "----------"
+print "\nno btag cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
+print notagComboCut
+print "----------"
 
 #print notagComboCut
 #print notagCuts
 
 notagCuts.pop("ptOverM")
 notagComboCut = combineCuts(notagCuts)
-print "\nno pT/M cut\n   "
+print "\nno pT/M cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
 
 #print notagComboCut
@@ -65,32 +74,40 @@ print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
 
 notagCuts.pop("phEta")
 notagComboCut = combineCuts(notagCuts)
-print "\nno phEta cut\n   "
+print "\nno phEta cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
+print notagComboCut
+print "---------"
 
 #print notagComboCut
 #print notagCuts
 
 notagCuts.pop("jetAbsEta")
 notagComboCut = combineCuts(notagCuts)
-print "\nno jetEta cut\n   "
+print "\nno jetEta cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
+print notagComboCut
+print "---------"
 
 #print notagComboCut
 #print notagCuts
 
 notagCuts.pop("turnon")
 notagComboCut = combineCuts(notagCuts)
-print "\nno turnon cut\n   "
+print "\nno turnon cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
+print notagComboCut
+print "---------"
 
 #print notagComboCut
 #print notagCuts
 
 notagCuts.pop("higgsWindow")
 notagComboCut = combineCuts(notagCuts)
-print "\nno higgs window cut\n   "
+print "\nno higgs window cut:   ",
 print higgsTree.Draw("phJetInvMass_puppi_softdrop_higgs", notagComboCut)
+print notagComboCut
+print "---------"
 
 
 #print notagComboCut

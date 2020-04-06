@@ -6,6 +6,7 @@ from ROOT import TCut
 def getCutValues():
   cutValues = {}
   cutValues["minInvMass"]     = 720.0
+  #cutValues["minInvMass"]     = 500.0
   cutValues["phEta"]          = 1.4442
   cutValues["phPt"]           = 200.0
   cutValues["jetAbsEta"]      = 2.2
@@ -138,7 +139,7 @@ def getNminus1ComboCut(region, popVar, withBtag, useTrigger, sideband=False, win
     nobtagCuts.pop("antibtag")
     if not withBtag:
       nobtagCuts.pop("btag")
-    if not "SF" in popVar and not "weightFactor" in popVar:
+    if not "SF" in popVar and not "weightFactor" in popVar and not "mcWeight" in popVar:
       nobtagCuts.pop(getVarKeys()[popVar])
     return combineCuts(nobtagCuts)
 

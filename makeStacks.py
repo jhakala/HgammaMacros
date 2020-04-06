@@ -26,6 +26,8 @@ parser.add_option("-v", action="store_true", dest="vgMC", default=False,
                   help = "if -v is used, make a stackplot for MC BG limits"            )
 (options, args) = parser.parse_args()
 
+dinkoMethod = False
+
 if options.sideband is False:
   windowEdges=[0,0]
 if options.edges is not None and options.sideband is False:
@@ -141,6 +143,7 @@ for withBtag in [options.withBtag]:
       histsDir += "_vgMC"
 
     #print "going to pass makeAllHists windowEdges", windowEdges
+    print "calling makeAllHists(" + str(cutName)  + ", " +  str(withBtag) + ", " + str(sideband) + ", " + str(useScaleFactors) + ", " + str(windowEdges) +", " + str(vgMC) + ",  " + str(vgMC) + ")"
     nonEmptyFilesDict = makeAllHists(cutName, withBtag, sideband, useScaleFactors, windowEdges, vgMC, vgMC)
     #print "done making all histograms."
     thstacks=[]
@@ -165,10 +168,14 @@ for withBtag in [options.withBtag]:
           #print "about to get rid of ", varkey, "from the higgsRangesDict"
           higgsRangesDict.pop(varkey)
     for varkey in higgsRangesDict.keys():
+      if "mcWeight" in varkey:
+        continue;
       iRange = 1
       first = True
       for rng in higgsRangesDict[varkey]:
-        #print "working on range", rng, "for varkey", varkey
+        print "working on range", rng, "for varkey", varkey
+        if "btagSF" in varkey:
+          continue;
         indexLabel = ""
         if not first:
           indexLabel +="_%i" % iRange
@@ -257,17 +264,21 @@ for withBtag in [options.withBtag]:
         thstacks[-1].SetMinimum(0.08)
         thstacks[-1].SetMaximum(thstacks[-1].GetMaximum()*45)
         #print thstacks[-1]
+        hasAxis = True;
         if varkey in varDict.keys():
           #print "going to set title for thstacks[-1] to %s " % varkey
           #print "varkey:", varkey
           #print "varDict:", varDict
           #print "varDict[varkey]:", varDict[varkey]
           #print thstacks[-1].GetXaxis()
-          thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
-        thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
-        thstacks[-1].GetYaxis().SetLabelSize(0.04)
-        thstacks[-1].GetYaxis().SetTitleSize(0.04)
-        thstacks[-1].GetYaxis().SetTitleOffset(1.2)
+          #print "working on thstack with name: ", thstacks[-1].GetName()
+          #print type(thstacks[-1].GetXaxis().GetTitle())
+          #thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
+          pass
+        #thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
+        #thstacks[-1].GetYaxis().SetLabelSize(0.04)
+        #thstacks[-1].GetYaxis().SetTitleSize(0.04)
+        #thstacks[-1].GetYaxis().SetTitleOffset(1.2)
 
         dataFileName = varkey+"_"+treekey+"_data2016SinglePhoton%s.root" % indexLabel
         dName = "weightedMCbgHists_%s" % cutName
@@ -285,7 +296,7 @@ for withBtag in [options.withBtag]:
         #print datahists[-1]
         if not blindData:
           datahists[-1].Draw("PE SAME")
-        datahists[-1].SetMarkerStyle(20)
+        #datahists[-1].SetMarkerStyle(20)
         datahistsCopies.append(datahists[-1].Clone())
         #for sigMass in [650, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000]:
         if showSigs:
@@ -316,7 +327,7 @@ for withBtag in [options.withBtag]:
             sighists[-1].SetLineWidth(2)
             sighists[-1].SetLineColor(colors[sigMass])
             sighists[-1].SetTitle("H#gamma(%r TeV)"%(sigMass/float(1000)))
-            sighists[-1].SetMarkerSize(0)
+            #sighists[-1].SetMarkerSize(0)
             sighists[-1].Draw("hist SAME")
 
         pads[-1].SetBottomMargin(0)
@@ -353,7 +364,11 @@ for withBtag in [options.withBtag]:
             fullStack.GetXaxis().SetTitle(varDict[varkey])
           ### HEREHERE
           if sideband:
-            sbScale = fullStack.GetSumOfWeights()/datahists[-1].GetSumOfWeights()
+            if dinkoMethod:
+              sbScale = 1
+            else:
+              sbScale = fullStack.GetSumOfWeights()/datahists[-1].GetSumOfWeights()
+              print "sbscale is: ", sbScale
             for iBin in range(0, datahists[-1].GetNbinsX()):
               #print "sbScale", sbScale 
               #print "old bin content", datahists[-1].GetBinContent(iBin)
@@ -402,4 +417,5 @@ for withBtag in [options.withBtag]:
         outfile.Close()
         iRange += 1
         first = False
-
+print "done with makeStacks!"
+exit(0)

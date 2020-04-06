@@ -8,6 +8,7 @@ from os import path, makedirs
 # Makes optimization plots by sliding cuts over N-1 stackplots from makeStacks.py
 
 gROOT.SetBatch()
+debugOneVar = True
 
 def whichVarAmI(inFileName):
   for key in getRangesDict().keys():
@@ -149,9 +150,17 @@ def makeOpt(inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCan
     elif "THStack" in subprim.IsA().GetName() or "THist" in subprim.IsA().GetName():
       subprim.SetName("garbage_%i_%s_%s" % (i, inFileName_sideband, subprim.GetName()))
       subprim.Delete()
-  sbNorm = stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
-  print "number of entries in stack is   : %i" % stack.GetStack().Last().GetSumOfWeights()
-  print "number of entries in sideband is: %i" % sideband.GetSumOfWeights()
+
+
+  def getSbNorm(stack, sideband, mode="matchMCsig"):
+    if mode=="matchMCsig":
+      return stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
+
+  sbNorm = getSbNorm(stack, sideband)
+  #sbNorm = stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
+
+  print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
+  print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
   print "                       sbNorm is: %f" % sbNorm 
   for sbBin in range (1, sideband.GetXaxis().GetNbins()+1):
     sideband.SetBinContent(sbBin, sideband.GetBinContent(sbBin)*sbNorm)
@@ -371,6 +380,9 @@ for direction in ["up", "down"]:
   sidebands = []
   i=0
   for key in getHiggsRangesDict().keys():
+    print "key:", key
+    if debugOneVar and not key=="phPtOverMgammaj":
+      continue
     # for withBtag / noBtag you need to change the next THREE lines
     sideband_varName    = "stackplots_puppiSoftdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( withBtag, windowEdges[0], windowEdges[1], key)
     higgswindow_varName = "stackplots_puppiSoftdrop_nMinus1_%s/nMinus1_stack_%s.root"%(withBtag, key)

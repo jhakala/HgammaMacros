@@ -5,6 +5,9 @@ from sympy import Symbol, erf
 from ROOT import *
 from HgCuts import *
 
+fixExpCoeff = False
+quick = True
+solutionLine = False
 
 can = TCanvas()
 can.cd()
@@ -12,9 +15,12 @@ can.cd()
 graph = TGraph()
 graph.SetNameTitle("turnOn", "turnOn")
 
-fixExpCoeff = True
+if fixExpCoeff:
+  nParams = 3
+else: 
+  nParams = 4
 useWeightFactors=True
-outDir = "mc_turnOns_functions_"
+outDir = "jan26_mc_turnOns_functions_"
 if useWeightFactors:
   outDir += "_withWeightFactors"
 else:
@@ -33,6 +39,9 @@ inFile = TFile("organize_mcDDs_btag-nom/allMCbgs_withWeights.root")
 tree = inFile.Get("higgs")
 hist = TH1F("hist", "m_{j#gamma}", 500, 0, 5000)
 hist.GetXaxis().SetRangeUser(400, 1400)
+hist.GetXaxis().SetTitle("m_{j#gamma} (GeV)")
+hist.GetYaxis().SetTitle("Events / 10 GeV")
+hist.GetYaxis().SetTitleOffset(1.35)
 jetMassWindows = []
 turnOns=[]
 expCoeffs = []
@@ -41,13 +50,25 @@ windowWidth = 30.
 x = Symbol("x")
 if fixExpCoeff:
   expCoeffFunc = TF1("expCoeffFunc", "TMath::Max([0]+[1]*TMath::ATan((x-[2])/[3]), -0.0064)", 40, 200) 
-  expCoeffFunc.SetParameters(-0.00523795357368,  0.00120007401227,  109.24343923,  24.3269585017)
+  #expCoeffFunc.SetParameters(-0.00523795357368,  0.00120007401227,  109.24343923,  24.3269585017)
+  expCoeffFunc.SetParameters(-0.00529366792733, 0.00116711330691, 107.446268733, 23.0800140458)
 
-for i in range(0,121):
-  jetMassWindows.append([30.0+1.*i, 30.0+windowWidth+1.*i])
+if quick:
+  for i in range(0,13):
+    jetMassWindows.append([30.0+10.*i, 30.0+windowWidth+10.*i])
+else:
+  for i in range(0,121):
+    jetMassWindows.append([30.0+1.*i, 30.0+windowWidth+1.*i])
 #jetMassWindows.append([110.0,140.0])
 first = True
 cachedParameters = []
+noFitCan = TCanvas()
+if quick:
+  noFitWindows = {kRed+1 : jetMassWindows[2], kOrange+1 : jetMassWindows[4], kYellow : jetMassWindows[6], kGreen+1 : jetMassWindows[8], kAzure : jetMassWindows[10]}
+else:
+  noFitWindows = {kRed+1 : jetMassWindows[20], kOrange+1 : jetMassWindows[40], kYellow : jetMassWindows[60], kGreen+1 : jetMassWindows[80], kAzure : jetMassWindows[100]}
+noFitHists = []
+firstNoFit = True;
 for jetMassWindow in jetMassWindows:
   if fixExpCoeff:
     expCoeff = expCoeffFunc.Eval((jetMassWindow[0]+jetMassWindow[1])/2.)
@@ -72,6 +93,27 @@ for jetMassWindow in jetMassWindows:
     cut = "mcWeight*(%s)" % getNoBtagComboCut("higgs", True, True, jetMassWindow)
   #print cut
   tree.Draw("phJetInvMass_puppi_softdrop_higgs >>hist", cut)
+  for color, window in noFitWindows.iteritems():
+    if window == jetMassWindow:
+      noFitCan.cd()
+      noFitHists.append(hist.Clone())
+      cloneHistName = "%i GeV < m_{j} < %i GeV" % (int(jetMassWindow[0]), int(jetMassWindow[1]))
+      noFitHists[-1].SetNameTitle(cloneHistName, cloneHistName)
+      noFitHists[-1].SetMarkerColor(color)
+      noFitHists[-1].SetLineColor(color)
+      if firstNoFit:
+        noFitHists[-1].Draw()
+        firstNoFit = False
+      else:
+        noFitHists[-1].Draw("SAME")
+      can.cd()
+      #noFitCan.Print("noFit_massWindow%i-%i.pdf" % (int(jetMassWindow[0]), int(jetMassWindow[1])))
+
+  can.cd()
+  print "pre-fit parameter values:"
+  for i in range(0, nParams):
+    print str(fit.GetParameter(i)) + ",",
+  print "\n",
   
   for i in range(0, 10):
     result = hist.Fit(fit, "SMLQ", "", 500, 2500)
@@ -85,6 +127,11 @@ for jetMassWindow in jetMassWindows:
     result = hist.Fit(fit, "SLQ", "", 500, 2500)
     print "result of fit, try %i:" % i, result.IsValid()
     i += 1
+  if result.IsValid():
+    print "fit parameters:"
+    for i in range(0, nParams):
+      print str(fit.GetParameter(i)) + ",",
+    print "\n",
    
   if fixExpCoeff:
     cachedParameters = [fit.GetParameter(0), fit.GetParameter(1), fit.GetParameter(2)]
@@ -126,13 +173,14 @@ for jetMassWindow in jetMassWindows:
   else:
     print "... did not get exactly one solution for this mass window"
   turnOns.append(([jetMassWindow[0],jetMassWindow[1]], solution[0]))
-  line = TLine(solution[0], 0, solution[0], can.GetFrame().GetY2())
-  line.SetLineColor(kBlack)
-  line.Draw("SAME")
-  text = TPaveText(solution[0]+can.GetFrame().GetX2()/16., can.GetFrame().GetY2()/12., solution[0]+can.GetFrame().GetX2()/16. , can.GetFrame().GetY2()/12.)
-  text.AddText("m_{j\gamma}=%01d GeV" % solution[0])
-  text.SetTextSize(0.03)
-  text.Draw("SAME")
+  if solutionLine:
+    line = TLine(solution[0], 0, solution[0], can.GetFrame().GetY2())
+    line.SetLineColor(kBlack)
+    line.Draw("SAME")
+    text = TPaveText(solution[0]+can.GetFrame().GetX2()/16., can.GetFrame().GetY2()/12., solution[0]+can.GetFrame().GetX2()/16. , can.GetFrame().GetY2()/12.)
+    text.AddText("m_{j\gamma}=%01d GeV" % solution[0])
+    text.SetTextSize(0.03)
+    text.Draw("SAME")
   can.Print(path.join(outDir, "turnOn_%i-%i.pdf" % (int(jetMassWindow[0]), int(jetMassWindow[1]))))
   
 
@@ -159,3 +207,9 @@ for expCoeff in expCoeffs:
 expCoeffGraph.Write()
 expCoeffHist.Write()
 outFile.Close()
+noFitCan.BuildLegend()
+noFitHists[0].SetTitle("comparison of m_{j#gamma} spectra in different m_{j} sidebands")
+outFileNoFit = TFile("noFitCan.root", "RECREATE")
+noFitCan.Write()
+outFileNoFit.Close()
+noFitCan.Print("noFit_overlay.pdf") 

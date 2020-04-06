@@ -9,10 +9,10 @@ def getSamplesDirs():
   response["dataSmall3Dir"]       = "/Users/johakala/HgammaMacros/organize_smallifications/data"
   response["dataSmall3File"]       = "/Users/johakala/HgammaMacros/organize_smallifications/smallification_data2016SinglePhoton.root"
 
-  response["bkgDDdir"]            = "/Users/johakala/HgammaMacros/organize_DDs/backgrounds"
-  response["sigDDdir"]         = "/Users/johakala/HgammaMacros/organize_DDs/signals"
-  response["dataDDdir"]          = "/Users/johakala/HgammaMacros/organize_DDs/data/"
-  response["dataDDFile"]          = "/Users/johakala/HgammaMacros/organize_DDs/data/ddTree_data2016SinglePhoton.root"
+  response["bkgDDdir"]            = "/Users/johakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/backgrounds"
+  response["sigDDdir"]         = "/Users/johakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/signals"
+  response["dataDDdir"]          = "/Users/johakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/data/"
+  response["dataDDFile"]          = "/Users/johakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/data/ddTree_data2016SinglePhoton.root"
   return response
 
 def getNormalizations():
@@ -77,6 +77,7 @@ def getVariableDict():
   varDict["cosThetaStar"]              = "#||{cos(#theta*)}"
   varDict["phJetInvMass_puppi_softdrop_higgs"] = "m_{#gammaJ} (GeV)"
   varDict["higgsPuppi_softdropJetCorrMass"]    = "m_{J}^{PUPPI+SD} (GeV)"
+  varDict["mcWeight"]    = "weight on MC background event"
   return varDict
 
 

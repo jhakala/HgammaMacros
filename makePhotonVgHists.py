@@ -8,7 +8,7 @@ from HgParameters import getSigNevents
 
 
 btagVariation = "nom"
-phSFvariation = "nom"
+phSFvariation = "down"
 useWeightFactor = True
 
 debug = True
@@ -24,11 +24,11 @@ debug = True
 #  exit(1)
 
 
-def makeHist(inFileName, category, sampleType, sigNevents, windowEdges=[0.,0.], outputShortName="vgHists_test"):
+def makeHist(inFileName, category, sampleType, sigNevents, windowEdges=[0.,0.], outputShortName="vgHists_photonTest"):
   gROOT.SetBatch()
   inFile = TFile(inFileName)
   tree = inFile.Get("higgs")
-  hist = TH1D("distribs_X", "distribs_X", 4000, 720, 4720)
+  hist = TH1D("distribs_X", "distribs_X", 100, 0, 2000)
 
   region = "higgs"
 
@@ -66,7 +66,7 @@ def makeHist(inFileName, category, sampleType, sigNevents, windowEdges=[0.,0.], 
     print "working on file %s" % inFile.GetName()
     print "sample", inFileName, "category", category
     print "weights/cuts:", cut
-  tree.Draw("phJetInvMass_puppi_softdrop_higgs>> distribs_X", cut)
+  tree.Draw("leadingPhPt>> distribs_X", cut)
 
   outputDir = "%s_btag-%s_phSF-%s/%s"%(outputShortName, btagVariation, phSFvariation, category)
   if not useWeightFactor:
@@ -84,7 +84,7 @@ def makeHist(inFileName, category, sampleType, sigNevents, windowEdges=[0.,0.], 
   outFile.Close()
 
 def getVgShortName():
-  return "vgHists_test"
+  return "vgHists_photonTest"
 
 
 if __name__=="__main__":
@@ -110,7 +110,7 @@ if __name__=="__main__":
                   if "THStack" in subprim.IsA().GetName():
                     inHists[cat] = subprim.GetStack().Last()
       for cat in inHists.keys():
-        outputDir = path.join("%s_btag-%s_phSF-%s"%(outputShortName,btagVariation, phSFvariation), cat)
+        outputDir = path.join("photonTest_%s_btag-%s_phSF-%s"%(outputShortName,btagVariation, phSFvariation), cat)
         outFileName = path.join(outputDir, "histos_mcBG.root")
         outFile = TFile(outFileName, "RECREATE")
         inHists[cat].SetName("distribs_X")

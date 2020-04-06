@@ -15,4 +15,5 @@ optplots*
 *.log
 *.pdf
 *.root
+*.png
 organize*
