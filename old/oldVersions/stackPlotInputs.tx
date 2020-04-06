@@ -1,7 +1,0 @@
-gammaJets   inputs/gJets_eta14_Feb6.root
-QCD         inputs/qcd_eta14_Feb6.root
-wJets       inputs/wJets600toInfHistos_eta14.root
-zJets       inputs/zJets600toInfHistos_eta14.root
-M-750       inputs/M-750Histos_eta14.root
-M-2000      inputs/M-2000Histos_eta14.root
-data        inputs/data_eta14_Feb6.root
