@@ -8,10 +8,11 @@ first = True
 
 #for variation in [("nom", 0), ("up", 1), ("down", -1)]:
 for btagVariation in [("nom", 0)]:
-  for phSFvariation in [("nom", 0), ("up", 1), ("down", -1)]:
+  #for phSFvariation in [("nom", 0), ("up", 1), ("down", -1)]:
+  for phSFvariation in [("nom", 0)]:
     baseDir = path.join(getcwd(), "organize_smallifications")
-    #categories = ["backgrounds", "signals", "data"]
-    categories = ["signals"]
+    categories = ["backgrounds", "signals", "data"]
+    #categories = ["signals"]
     catDirs = {}
     for category in categories:
       catDirs[category] = path.join(baseDir, category)

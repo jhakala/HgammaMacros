@@ -8,6 +8,8 @@
 #ifndef HgammaSelector_h
 #define HgammaSelector_h
 
+#include <math.h>
+
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -31,7 +33,7 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
   // Variables calculated using events
-  bool  triggerFired_175                 = false ; 
+  bool  triggerFired_200                 = false ; 
   bool  triggerFired_165HE10             = false ; 
   bool  ignoreAllCuts                    = true  ; 
   bool  requireTrigger                   = false  ; 
@@ -39,8 +41,8 @@ public :
   bool  phoEtaPassesCut                  = false ; 
   bool  phoPtPassesCut                   = false ; 
   bool  eventHasTightPho                 = false ; 
-  bool  eventHasHiggsPuppi_softdropJet           = false ; 
-  int   eventsPassingTrigger_175         =    0  ;
+  bool  eventHasHiggs_softdropJet           = false ; 
+  int   eventsPassingTrigger_200         =    0  ;
   int   eventsPassingTrigger_165HE10     =    0  ;
   //int   eventsWithTightPho               =    0  ;
   //int   eventsWithLooseJet               =    0  ;
@@ -51,19 +53,18 @@ public :
   float leadingJetEta                    = -999. ;
   float leadingJetPhi                    = -999. ;
   float leadingJetM                      =    0. ;
-  float leadingJetPuppi_softdropM           =    0. ; 
+  float leadingJet_softdropM           =    0. ; 
   float leadingJetSoftdropM              =    0. ;
   //float HT                             =    0. ;
   //float HT_ak4                         =    0. ;
   float leadingJetTau1                   = -999. ;
-  float higgsPuppi_softdropJetCorrMass           = -999. ;
-  float higgsJet_HbbTag                  = -999. ;
+  float higgs_softdropJetCorrMass           = -999. ;
+  float higgsJet_DDBtag                  = -999. ;
   //float test_looseloose                = -1.   ;
   //bool higgs_looseloose                = false ;
   float higgsSoftdropJetCorrMass    = -999. ;
-  float puppi_softdrop_higgsJetTau1         = -999. ;
+  float softdrop_higgsJetTau1         = -999. ;
   float leadingJetTau2              = -999. ;
-  float puppi_softdrop_higgsJetTau2         = -999. ;
   float softdrop_higgsJetTau2       = -999. ;
   float leadingJetTau3              = -999. ;
   //float pruned_higgsJetTau3         = -999. ;
@@ -75,14 +76,14 @@ public :
   float leadingPhCat                =    0. ;
   float matchedJett2t1              = -999. ;
   float higgsJett2t1                = -999. ;
-  float higgsJet_puppi_abseta      = -999. ;
-  float higgsJet_puppi_eta         = -999. ;
-  float higgsJet_puppi_phi         = -999. ;
-  float higgsJet_puppi_pt          = -999. ;
+  float higgsJet_abseta      = -999. ;
+  float higgsJet_eta         = -999. ;
+  float higgsJet_phi         = -999. ;
+  float higgsJet_pt          = -999. ;
   float leadingPhAbsEta             = -999. ;
   float cosThetaStar                =  -99. ;
   float phPtOverMgammaj             =  -99. ;
-  float phJetInvMass_puppi_softdrop_higgs   =  -99. ;
+  float phJetInvMass_softdrop_higgs   =  -99. ;
   float phJetDeltaR_higgs           =  -99. ;
   float antibtagSF                  =  -99. ;
   float btagSF                      =  -99. ;
@@ -90,7 +91,7 @@ public :
 
   TLorentzVector leadingPhoton              ;
   TLorentzVector tmpLeadingJet              ;
-  TLorentzVector higgsJet_puppi_softdrop            ;
+  TLorentzVector higgsJet_softdrop            ;
   TLorentzVector sumVector                  ;
   TLorentzVector boostedJet                 ;
   TLorentzVector boostedPho                 ;
@@ -212,27 +213,27 @@ public :
    //vector<int>     *mu_isPFMuon;
    //vector<int>     *mu_isSoftMuon;
    Float_t         rho;
-   Int_t           jetAK4_N;
-   vector<float>   *jetAK4_pt;
-   vector<float>   *jetAK4_eta;
-   vector<float>   *jetAK4_mass;
-   vector<float>   *jetAK4_phi;
-   vector<float>   *jetAK4_e;
-   vector<float>   *jetAK4_jec;
-   vector<bool>    *jetAK4_IDLoose;
-   vector<bool>    *jetAK4_IDTight;
-   vector<bool>    *jetAK4_IDTightLepVeto;
-   vector<int>     *jetAK4_charge;
-   //vector<float>   *jetAK4_cisv;
-   vector<float>   *jetAK4_vtxMass;
-   vector<float>   *jetAK4_vtxNtracks;
-   vector<float>   *jetAK4_vtx3DVal;
-   vector<float>   *jetAK4_vtx3DSig;
-   //vector<int>     *jetAK4_partonFlavour;
-   //vector<int>     *jetAK4_hadronFlavour;
-   //vector<int>     *jetAK4_genParton_pdgID;
-   //vector<int>     *jetAK4_nbHadrons;
-   //vector<int>     *jetAK4_ncHadrons;
+   //Int_t           jetAK4_N;
+   //vector<float>   *jetAK4_pt;
+   //vector<float>   *jetAK4_eta;
+   //vector<float>   *jetAK4_mass;
+   //vector<float>   *jetAK4_phi;
+   //vector<float>   *jetAK4_e;
+   //vector<float>   *jetAK4_jec;
+   //vector<bool>    *jetAK4_IDLoose;
+   //vector<bool>    *jetAK4_IDTight;
+   //vector<bool>    *jetAK4_IDTightLepVeto;
+   //vector<int>     *jetAK4_charge;
+   ////vector<float>   *jetAK4_cisv;
+   //vector<float>   *jetAK4_vtxMass;
+   //vector<float>   *jetAK4_vtxNtracks;
+   //vector<float>   *jetAK4_vtx3DVal;
+   //vector<float>   *jetAK4_vtx3DSig;
+   ////vector<int>     *jetAK4_partonFlavour;
+   ////vector<int>     *jetAK4_hadronFlavour;
+   ////vector<int>     *jetAK4_genParton_pdgID;
+   ////vector<int>     *jetAK4_nbHadrons;
+   ////vector<int>     *jetAK4_ncHadrons;
    Int_t           jetAK8_N;
    vector<float>   *jetAK8_pt;
    vector<float>   *jetAK8_eta;
@@ -244,9 +245,9 @@ public :
    vector<float>   *jetAK8_jecDown;
    vector<bool>    *jetAK8_IDLoose;
    vector<bool>    *jetAK8_IDTight;
-   vector<bool>    *jetAK8_IDTightLepVeto;
+   //vector<bool>    *jetAK8_IDTightLepVeto;
    vector<int>     *jetAK8_charge;
-   vector<float>   *jetAK8_Hbbtag;
+   vector<float>   *jetAK8_DDB;
    //vector<int>     *jetAK8_partonFlavour;
    //vector<int>     *jetAK8_hadronFlavour;
    //vector<int>     *jetAK8_genParton_pdgID;
@@ -256,17 +257,6 @@ public :
    vector<float>   *jetAK8_tau1;
    vector<float>   *jetAK8_tau2;
    vector<float>   *jetAK8_tau3;
-   vector<float>   *jetAK8_puppi_softdrop_mass;
-   vector<float>   *jetAK8_puppi_softdrop_massCorr;
-   Int_t            jetAK8_puppi_N;
-   vector<float>   *jetAK8_puppi_pt;
-   vector<float>   *jetAK8_puppi_eta;
-   vector<float>   *jetAK8_puppi_phi;
-   vector<float>   *jetAK8_puppi_e;
-   vector<int>     *jetAK8_puppi_charge;
-   vector<float>   *jetAK8_puppi_Hbbtag;
-   vector<float>   *jetAK8_puppi_tau1;
-   vector<float>   *jetAK8_puppi_tau2;
    vector<float>   *jetAK8_softdrop_mass;
    vector<float>   *jetAK8_softdrop_massCorr;
    vector<float>   *jetAK8_softdrop_jec;
@@ -279,15 +269,15 @@ public :
    //vector<vector<int> > *subjetAK8_softdrop_charge;
    //vector<vector<int> > *subjetAK8_softdrop_partonFlavour;
    //vector<vector<int> > *subjetAK8_softdrop_hadronFlavour;
-   //vector<vector<float> > *subjetAK8_puppi_pt;
-   //vector<vector<float> > *subjetAK8_puppi_eta;
-   //vector<vector<float> > *subjetAK8_puppi_softdrop_mass;
-   //vector<vector<float> > *subjetAK8_puppi_phi;
-   //vector<vector<float> > *subjetAK8_puppi_e;
-   //vector<vector<int> > *subjetAK8_puppi_charge;
-   //vector<vector<int> > *subjetAK8_puppi_partonFlavour;
-   //vector<vector<int> > *subjetAK8_puppi_hadronFlavour;
-   //vector<vector<float> > *subjetAK8_puppi_csv;
+   //vector<vector<float> > *subjetAK8_pt;
+   //vector<vector<float> > *subjetAK8_eta;
+   //vector<vector<float> > *subjetAK8_softdrop_mass;
+   //vector<vector<float> > *subjetAK8_phi;
+   //vector<vector<float> > *subjetAK8_e;
+   //vector<vector<int> > *subjetAK8_charge;
+   //vector<vector<int> > *subjetAK8_partonFlavour;
+   //vector<vector<int> > *subjetAK8_hadronFlavour;
+   //vector<vector<float> > *subjetAK8_csv;
    //Int_t           genJetAK4_N;
    //vector<float>   *genJetAK4_pt;
    //vector<float>   *genJetAK4_eta;
@@ -424,22 +414,22 @@ public :
    //TBranch        *b_mu_isPFMuon;   //!
    //TBranch        *b_mu_isSoftMuon;   //!
    TBranch        *b_rho;   //!
-   TBranch        *b_jetAK4_N;   //!
-   TBranch        *b_jetAK4_pt;   //!
-   TBranch        *b_jetAK4_eta;   //!
-   TBranch        *b_jetAK4_mass;   //!
-   TBranch        *b_jetAK4_phi;   //!
-   TBranch        *b_jetAK4_e;   //!
-   TBranch        *b_jetAK4_jec;   //!
-   TBranch        *b_jetAK4_IDLoose;   //!
-   TBranch        *b_jetAK4_IDTight;   //!
-   TBranch        *b_jetAK4_IDTightLepVeto;   //!
-   TBranch        *b_jetAK4_charge;   //!
-   //TBranch        *b_jetAK4_cisv;   //!
-   TBranch        *b_jetAK4_vtxMass;   //!
-   TBranch        *b_jetAK4_vtxNtracks;   //!
-   TBranch        *b_jetAK4_vtx3DVal;   //!
-   TBranch        *b_jetAK4_vtx3DSig;   //!
+   //TBranch        *b_jetAK4_N;   //!
+   //TBranch        *b_jetAK4_pt;   //!
+   //TBranch        *b_jetAK4_eta;   //!
+   //TBranch        *b_jetAK4_mass;   //!
+   //TBranch        *b_jetAK4_phi;   //!
+   //TBranch        *b_jetAK4_e;   //!
+   //TBranch        *b_jetAK4_jec;   //!
+   //TBranch        *b_jetAK4_IDLoose;   //!
+   //TBranch        *b_jetAK4_IDTight;   //!
+   //TBranch        *b_jetAK4_IDTightLepVeto;   //!
+   //TBranch        *b_jetAK4_charge;   //!
+   ////TBranch        *b_jetAK4_cisv;   //!
+   //TBranch        *b_jetAK4_vtxMass;   //!
+   //TBranch        *b_jetAK4_vtxNtracks;   //!
+   //TBranch        *b_jetAK4_vtx3DVal;   //!
+   //TBranch        *b_jetAK4_vtx3DSig;   //!
    //TBranch        *b_jetAK4_partonFlavour;   //!
    //TBranch        *b_jetAK4_hadronFlavour;   //!
    //TBranch        *b_jetAK4_genParton_pdgID;   //!
@@ -456,9 +446,9 @@ public :
    TBranch        *b_jetAK8_jecDown;   //!
    TBranch        *b_jetAK8_IDLoose;   //!
    TBranch        *b_jetAK8_IDTight;   //!
-   TBranch        *b_jetAK8_IDTightLepVeto;   //!
+   //TBranch        *b_jetAK8_IDTightLepVeto;   //!
    TBranch        *b_jetAK8_charge;   //!
-   TBranch        *b_jetAK8_Hbbtag;   //!
+   TBranch        *b_jetAK8_DDB;   //!
    //TBranch        *b_jetAK8_partonFlavour;   //!
    //TBranch        *b_jetAK8_hadronFlavour;   //!
    //TBranch        *b_jetAK8_genParton_pdgID;   //!
@@ -468,16 +458,6 @@ public :
    TBranch        *b_jetAK8_tau1;   //!
    TBranch        *b_jetAK8_tau2;   //!
    TBranch        *b_jetAK8_tau3;   //!
-   TBranch        *b_jetAK8_puppi_N;   //!
-   TBranch        *b_jetAK8_puppi_pt;   //!
-   TBranch        *b_jetAK8_puppi_eta;   //!
-   TBranch        *b_jetAK8_puppi_phi;   //!
-   TBranch        *b_jetAK8_puppi_e;   //!
-   TBranch        *b_jetAK8_puppi_tau1;   //!
-   TBranch        *b_jetAK8_puppi_tau2;   //!
-   TBranch        *b_jetAK8_puppi_tau3;   //!
-   TBranch        *b_jetAK8_puppi_softdrop_mass;   //!
-   TBranch        *b_jetAK8_puppi_softdrop_massCorr;   //!
    TBranch        *b_jetAK8_softdrop_mass;   //!
    TBranch        *b_jetAK8_softdrop_massCorr;   //!
    TBranch        *b_jetAK8_softdrop_jec;   //!
@@ -568,9 +548,9 @@ public :
    //virtual unsigned short     FindEvent(unsigned int run, unsigned int lumiBlock, unsigned long long event);
 
    
-   float computeOverallSF(std::string category, float jetPt, float jetHbbTag, float photonPt, float photonEta, bool debug = false, int btagVariation=0, int phSFvariation=0);
+   float computeOverallSF(std::string category, float jetPt, float jetDDBtag, float photonPt, float photonEta, bool debug = false, int btagVariation=0, int phSFvariation=0);
    float computePhotonSF(float photonPt, float photonEta, bool debug = false, int phSFvariation = 0);
-   float computeBtagSF(std::string category, float jetPt, float jetHbbTag, bool debug = false, int btagVariation=0);
+   float computeBtagSF(std::string category, float jetPt, float jetDDBtag, bool debug = false, int btagVariation=0);
 
    //leadingSubjets getLeadingSubjets(vector<float> prunedJet);
    //passSubjetCuts getSubjetCutDecisions(leadingSubjets subjets);
@@ -697,26 +677,26 @@ void HgammaSelector::Init(TTree *tree)
    //mu_isLooseMuon = 0;
    //mu_isPFMuon = 0;
    //mu_isSoftMuon = 0;
-   jetAK4_pt = 0;
-   jetAK4_eta = 0;
-   jetAK4_mass = 0;
-   jetAK4_phi = 0;
-   jetAK4_e = 0;
-   jetAK4_jec = 0;
-   jetAK4_IDLoose = 0;
-   jetAK4_IDTight = 0;
-   jetAK4_IDTightLepVeto = 0;
-   jetAK4_charge = 0;
-   //jetAK4_cisv = 0;
-   jetAK4_vtxMass = 0;
-   jetAK4_vtxNtracks = 0;
-   jetAK4_vtx3DVal = 0;
-   jetAK4_vtx3DSig = 0;
-   //jetAK4_partonFlavour = 0;
-   //jetAK4_hadronFlavour = 0;
-   //jetAK4_genParton_pdgID = 0;
-   //jetAK4_nbHadrons = 0;
-   //jetAK4_ncHadrons = 0;
+   //jetAK4_pt = 0;
+   //jetAK4_eta = 0;
+   //jetAK4_mass = 0;
+   //jetAK4_phi = 0;
+   //jetAK4_e = 0;
+   //jetAK4_jec = 0;
+   //jetAK4_IDLoose = 0;
+   //jetAK4_IDTight = 0;
+   //jetAK4_IDTightLepVeto = 0;
+   //jetAK4_charge = 0;
+   ////jetAK4_cisv = 0;
+   //jetAK4_vtxMass = 0;
+   //jetAK4_vtxNtracks = 0;
+   //jetAK4_vtx3DVal = 0;
+   //jetAK4_vtx3DSig = 0;
+   ////jetAK4_partonFlavour = 0;
+   ////jetAK4_hadronFlavour = 0;
+   ////jetAK4_genParton_pdgID = 0;
+   ////jetAK4_nbHadrons = 0;
+   ////jetAK4_ncHadrons = 0;
    jetAK8_pt = 0;
    jetAK8_eta = 0;
    jetAK8_mass = 0;
@@ -727,9 +707,9 @@ void HgammaSelector::Init(TTree *tree)
    jetAK8_jecDown = 0;
    jetAK8_IDLoose = 0;
    jetAK8_IDTight = 0;
-   jetAK8_IDTightLepVeto = 0;
+   //jetAK8_IDTightLepVeto = 0;
    jetAK8_charge = 0;
-   jetAK8_Hbbtag = 0;
+   jetAK8_DDB = 0;
    //jetAK8_partonFlavour = 0;
    //jetAK8_hadronFlavour = 0;
    //jetAK8_genParton_pdgID = 0;
@@ -739,14 +719,14 @@ void HgammaSelector::Init(TTree *tree)
    jetAK8_tau1 = 0;
    jetAK8_tau2 = 0;
    jetAK8_tau3 = 0;
-   jetAK8_puppi_pt = 0;
-   jetAK8_puppi_eta = 0;
-   jetAK8_puppi_phi = 0;
-   jetAK8_puppi_e = 0;
-   jetAK8_puppi_tau1 = 0;
-   jetAK8_puppi_tau2 = 0;
-   jetAK8_puppi_softdrop_mass = 0;
-   jetAK8_puppi_softdrop_massCorr = 0;
+   jetAK8_pt = 0;
+   jetAK8_eta = 0;
+   jetAK8_phi = 0;
+   jetAK8_e = 0;
+   jetAK8_tau1 = 0;
+   jetAK8_tau2 = 0;
+   jetAK8_softdrop_mass = 0;
+   jetAK8_softdrop_massCorr = 0;
    jetAK8_softdrop_mass = 0;
    jetAK8_softdrop_massCorr = 0;
    jetAK8_softdrop_jec = 0;
@@ -887,27 +867,27 @@ void HgammaSelector::Init(TTree *tree)
    //fChain->SetBranchAddress("mu_isPFMuon", &mu_isPFMuon, &b_mu_isPFMuon);
    //fChain->SetBranchAddress("mu_isSoftMuon", &mu_isSoftMuon, &b_mu_isSoftMuon);
    fChain->SetBranchAddress("rho", &rho, &b_rho);
-   fChain->SetBranchAddress("jetAK4_N", &jetAK4_N, &b_jetAK4_N);
-   fChain->SetBranchAddress("jetAK4_pt", &jetAK4_pt, &b_jetAK4_pt);
-   fChain->SetBranchAddress("jetAK4_eta", &jetAK4_eta, &b_jetAK4_eta);
-   fChain->SetBranchAddress("jetAK4_mass", &jetAK4_mass, &b_jetAK4_mass);
-   fChain->SetBranchAddress("jetAK4_phi", &jetAK4_phi, &b_jetAK4_phi);
-   fChain->SetBranchAddress("jetAK4_e", &jetAK4_e, &b_jetAK4_e);
-   fChain->SetBranchAddress("jetAK4_jec", &jetAK4_jec, &b_jetAK4_jec);
-   fChain->SetBranchAddress("jetAK4_IDLoose", &jetAK4_IDLoose, &b_jetAK4_IDLoose);
-   fChain->SetBranchAddress("jetAK4_IDTight", &jetAK4_IDTight, &b_jetAK4_IDTight);
-   fChain->SetBranchAddress("jetAK4_IDTightLepVeto", &jetAK4_IDTightLepVeto, &b_jetAK4_IDTightLepVeto);
-   fChain->SetBranchAddress("jetAK4_charge", &jetAK4_charge, &b_jetAK4_charge);
-   //fChain->SetBranchAddress("jetAK4_cisv", &jetAK4_cisv, &b_jetAK4_cisv);
-   fChain->SetBranchAddress("jetAK4_vtxMass", &jetAK4_vtxMass, &b_jetAK4_vtxMass);
-   fChain->SetBranchAddress("jetAK4_vtxNtracks", &jetAK4_vtxNtracks, &b_jetAK4_vtxNtracks);
-   fChain->SetBranchAddress("jetAK4_vtx3DVal", &jetAK4_vtx3DVal, &b_jetAK4_vtx3DVal);
-   fChain->SetBranchAddress("jetAK4_vtx3DSig", &jetAK4_vtx3DSig, &b_jetAK4_vtx3DSig);
-   //fChain->SetBranchAddress("jetAK4_partonFlavour", &jetAK4_partonFlavour, &b_jetAK4_partonFlavour);
-   //fChain->SetBranchAddress("jetAK4_hadronFlavour", &jetAK4_hadronFlavour, &b_jetAK4_hadronFlavour);
-   //fChain->SetBranchAddress("jetAK4_genParton_pdgID", &jetAK4_genParton_pdgID, &b_jetAK4_genParton_pdgID);
-   //fChain->SetBranchAddress("jetAK4_nbHadrons", &jetAK4_nbHadrons, &b_jetAK4_nbHadrons);
-   //fChain->SetBranchAddress("jetAK4_ncHadrons", &jetAK4_ncHadrons, &b_jetAK4_ncHadrons);
+   //fChain->SetBranchAddress("jetAK4_N", &jetAK4_N, &b_jetAK4_N);
+   //fChain->SetBranchAddress("jetAK4_pt", &jetAK4_pt, &b_jetAK4_pt);
+   //fChain->SetBranchAddress("jetAK4_eta", &jetAK4_eta, &b_jetAK4_eta);
+   //fChain->SetBranchAddress("jetAK4_mass", &jetAK4_mass, &b_jetAK4_mass);
+   //fChain->SetBranchAddress("jetAK4_phi", &jetAK4_phi, &b_jetAK4_phi);
+   //fChain->SetBranchAddress("jetAK4_e", &jetAK4_e, &b_jetAK4_e);
+   //fChain->SetBranchAddress("jetAK4_jec", &jetAK4_jec, &b_jetAK4_jec);
+   //fChain->SetBranchAddress("jetAK4_IDLoose", &jetAK4_IDLoose, &b_jetAK4_IDLoose);
+   //fChain->SetBranchAddress("jetAK4_IDTight", &jetAK4_IDTight, &b_jetAK4_IDTight);
+   //fChain->SetBranchAddress("jetAK4_IDTightLepVeto", &jetAK4_IDTightLepVeto, &b_jetAK4_IDTightLepVeto);
+   //fChain->SetBranchAddress("jetAK4_charge", &jetAK4_charge, &b_jetAK4_charge);
+   ////fChain->SetBranchAddress("jetAK4_cisv", &jetAK4_cisv, &b_jetAK4_cisv);
+   //fChain->SetBranchAddress("jetAK4_vtxMass", &jetAK4_vtxMass, &b_jetAK4_vtxMass);
+   //fChain->SetBranchAddress("jetAK4_vtxNtracks", &jetAK4_vtxNtracks, &b_jetAK4_vtxNtracks);
+   //fChain->SetBranchAddress("jetAK4_vtx3DVal", &jetAK4_vtx3DVal, &b_jetAK4_vtx3DVal);
+   //fChain->SetBranchAddress("jetAK4_vtx3DSig", &jetAK4_vtx3DSig, &b_jetAK4_vtx3DSig);
+   ////fChain->SetBranchAddress("jetAK4_partonFlavour", &jetAK4_partonFlavour, &b_jetAK4_partonFlavour);
+   ////fChain->SetBranchAddress("jetAK4_hadronFlavour", &jetAK4_hadronFlavour, &b_jetAK4_hadronFlavour);
+   ////fChain->SetBranchAddress("jetAK4_genParton_pdgID", &jetAK4_genParton_pdgID, &b_jetAK4_genParton_pdgID);
+   ////fChain->SetBranchAddress("jetAK4_nbHadrons", &jetAK4_nbHadrons, &b_jetAK4_nbHadrons);
+   ////fChain->SetBranchAddress("jetAK4_ncHadrons", &jetAK4_ncHadrons, &b_jetAK4_ncHadrons);
    fChain->SetBranchAddress("jetAK8_N", &jetAK8_N, &b_jetAK8_N);
    fChain->SetBranchAddress("jetAK8_pt", &jetAK8_pt, &b_jetAK8_pt);
    fChain->SetBranchAddress("jetAK8_eta", &jetAK8_eta, &b_jetAK8_eta);
@@ -919,9 +899,9 @@ void HgammaSelector::Init(TTree *tree)
    fChain->SetBranchAddress("jetAK8_jecDown", &jetAK8_jecDown, &b_jetAK8_jecDown);
    fChain->SetBranchAddress("jetAK8_IDLoose", &jetAK8_IDLoose, &b_jetAK8_IDLoose);
    fChain->SetBranchAddress("jetAK8_IDTight", &jetAK8_IDTight, &b_jetAK8_IDTight);
-   fChain->SetBranchAddress("jetAK8_IDTightLepVeto", &jetAK8_IDTightLepVeto, &b_jetAK8_IDTightLepVeto);
+   //fChain->SetBranchAddress("jetAK8_IDTightLepVeto", &jetAK8_IDTightLepVeto, &b_jetAK8_IDTightLepVeto);
    fChain->SetBranchAddress("jetAK8_charge", &jetAK8_charge, &b_jetAK8_charge);
-   fChain->SetBranchAddress("jetAK8_Hbbtag", &jetAK8_Hbbtag, &b_jetAK8_Hbbtag);
+   fChain->SetBranchAddress("jetAK8_DDB", &jetAK8_DDB, &b_jetAK8_DDB);
    //fChain->SetBranchAddress("jetAK8_partonFlavour", &jetAK8_partonFlavour, &b_jetAK8_partonFlavour);
    //fChain->SetBranchAddress("jetAK8_hadronFlavour", &jetAK8_hadronFlavour, &b_jetAK8_hadronFlavour);
    //fChain->SetBranchAddress("jetAK8_genParton_pdgID", &jetAK8_genParton_pdgID, &b_jetAK8_genParton_pdgID);
@@ -931,14 +911,14 @@ void HgammaSelector::Init(TTree *tree)
    fChain->SetBranchAddress("jetAK8_tau1", &jetAK8_tau1, &b_jetAK8_tau1);
    fChain->SetBranchAddress("jetAK8_tau2", &jetAK8_tau2, &b_jetAK8_tau2);
    fChain->SetBranchAddress("jetAK8_tau3", &jetAK8_tau3, &b_jetAK8_tau3);
-   fChain->SetBranchAddress("jetAK8_puppi_pt", &jetAK8_puppi_pt, &b_jetAK8_puppi_pt);
-   fChain->SetBranchAddress("jetAK8_puppi_eta", &jetAK8_puppi_eta, &b_jetAK8_puppi_eta);
-   fChain->SetBranchAddress("jetAK8_puppi_phi", &jetAK8_puppi_phi, &b_jetAK8_puppi_phi);
-   fChain->SetBranchAddress("jetAK8_puppi_e", &jetAK8_puppi_e, &b_jetAK8_puppi_e);
-   fChain->SetBranchAddress("jetAK8_puppi_tau1", &jetAK8_puppi_tau1, &b_jetAK8_puppi_tau1);
-   fChain->SetBranchAddress("jetAK8_puppi_tau2", &jetAK8_puppi_tau2, &b_jetAK8_puppi_tau2);
-   fChain->SetBranchAddress("jetAK8_puppi_softdrop_mass", &jetAK8_puppi_softdrop_mass, &b_jetAK8_puppi_softdrop_mass);
-   fChain->SetBranchAddress("jetAK8_puppi_softdrop_massCorr", &jetAK8_puppi_softdrop_massCorr, &b_jetAK8_puppi_softdrop_massCorr);
+   fChain->SetBranchAddress("jetAK8_pt", &jetAK8_pt, &b_jetAK8_pt);
+   fChain->SetBranchAddress("jetAK8_eta", &jetAK8_eta, &b_jetAK8_eta);
+   fChain->SetBranchAddress("jetAK8_phi", &jetAK8_phi, &b_jetAK8_phi);
+   fChain->SetBranchAddress("jetAK8_e", &jetAK8_e, &b_jetAK8_e);
+   fChain->SetBranchAddress("jetAK8_tau1", &jetAK8_tau1, &b_jetAK8_tau1);
+   fChain->SetBranchAddress("jetAK8_tau2", &jetAK8_tau2, &b_jetAK8_tau2);
+   fChain->SetBranchAddress("jetAK8_softdrop_mass", &jetAK8_softdrop_mass, &b_jetAK8_softdrop_mass);
+   fChain->SetBranchAddress("jetAK8_softdrop_massCorr", &jetAK8_softdrop_massCorr, &b_jetAK8_softdrop_massCorr);
    fChain->SetBranchAddress("jetAK8_softdrop_mass", &jetAK8_softdrop_mass, &b_jetAK8_softdrop_mass);
    fChain->SetBranchAddress("jetAK8_softdrop_massCorr", &jetAK8_softdrop_massCorr, &b_jetAK8_softdrop_massCorr);
    fChain->SetBranchAddress("jetAK8_softdrop_jec", &jetAK8_softdrop_jec, &b_jetAK8_softdrop_jec);
