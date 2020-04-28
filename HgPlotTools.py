@@ -48,6 +48,7 @@ def getRangesDict(fineBinning=False):
   return rangesDict
 
 def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
+  print "entering makeAllHists"
   if fineBinning != useReweighting:
     print "there was something funny happening... fineBinning and useReweighting were different..."
     exit(1)
@@ -57,6 +58,7 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
   rangesDict = getRangesDict(fineBinning)
   nonEmptyFilesDict={}
   for key in getWeightsDict(getSamplesDirs()["bkgSmall3sDir"]).keys():
+    print "  -> working on sample", key
     sampleType = getWeightsDict(getSamplesDirs()["bkgSmall3sDir"])[key][1]
     useTrigger = True
     if sampleType == "sig":
@@ -73,6 +75,7 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
         if not "csvValues" in branch.GetName() and not "subjetCut" in branch.GetName() and not "triggerFired" in branch.GetName():
           varNames.append(branch.GetName())
       for var in varNames:
+        print "    -> working on var:", var
         iRange = 1
         firstRange = True
         for rng in rangesDict[var]:
@@ -84,7 +87,10 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
           else:
             nBins = 100
           hist = TH1F(histName,histName,nBins,rng[0],rng[1])
-          if var == "higgsJet_HbbTag":
+          if sampleType == "bkg":
+            #print "setting bkg", key, "fill color to", getMCbgColors()[key]
+            hist.SetFillColor(getMCbgColors()[key])
+          if var == "higgsJet_DDBtag":
             hist.Rebin(5)
           #print "cutName is:", cutName
           if   cutName in "btag":
@@ -94,10 +100,12 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
           elif cutName in "antibtag":
             cut = getAntiBtagComboCut(region, useTrigger, sideband, useScaleFactors, windowEdges)
           elif cutName in "nobtag":
-            #print "going to pass getNoBtagComboCut windowEdges" 
+            print "going to pass getNoBtagComboCut windowEdges", windowEdges 
             cut = getNoBtagComboCut(region, useTrigger, sideband, windowEdges)
           elif cutName in "nMinus1":
+            print "going to pass getNminus1ComboCut windowEdges", windowEdges 
             cut = getNminus1ComboCut(region, var, withBtag, useTrigger, sideband, windowEdges)
+            print cut
           elif cutName in "preselection":
             cut = getPreselectionComboCut(region, useTrigger, sideband, [30.0, 99999.9])
           else:
@@ -177,7 +185,7 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
           else:
             nonEmptyFilesDict[filename]="empty"
             nonEmptyFilesDict[hackFilename]="empty"
-            #print "the histogram %s was empty for" % histName, filename
+            print "      the histogram %s was empty for" % histName, filename
           iRange += 1
           firstRange = False;
   return nonEmptyFilesDict

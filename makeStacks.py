@@ -1,6 +1,7 @@
 from os import path, makedirs, getcwd
 from optparse import OptionParser
 from copy import deepcopy
+from pyrootTools import isOrIsNot
 
 # new script to make all stackplots.
 # John Hakala 7/14/16
@@ -54,12 +55,6 @@ if not options.cutName in validCutNames:
   print "please select a cutName with the -c option, options are: %s" % str(validCutNames )
   exit(1)
 
-def isOrIsNot(boolean, singularOrPlural):
-  if singularOrPlural == "singular":
-    return "is" if boolean else "isn't"
-  else:
-    return "are" if boolean else "aren't"
-
 print "Making stackplots for %s cuts." % options.cutName,
 if options.cutName != "preselection":
   print "The btagging cut %s being applied%s" % (
@@ -72,6 +67,11 @@ if options.cutName != "preselection":
   if options.showSigs:
     print "and signals",
   print "%s being shown in the signal region [110.0, 140.0]." % isOrIsNot(True, "plural")
+
+if windowEdges[0] == windowEdges[1]:
+  print "something is funny with the windowEdges", windowEdges
+  #print "exiting"
+  #exit(1)
 
 from ROOT import *
 if not options.graphics:
@@ -268,20 +268,23 @@ for withBtag in [options.withBtag]:
         thstacks[-1].SetMinimum(0.08)
         thstacks[-1].SetMaximum(thstacks[-1].GetMaximum()*45)
         #print thstacks[-1]
-        hasAxis = True;
-        if varkey in varDict.keys():
-          #print "going to set title for thstacks[-1] to %s " % varkey
-          #print "varkey:", varkey
-          #print "varDict:", varDict
-          #print "varDict[varkey]:", varDict[varkey]
-          #print thstacks[-1].GetXaxis()
+        hasAxis = False
+        if thstacks[-1].GetXaxis():
+          hasAxis = True
+        if varkey in varDict.keys() and hasAxis:
+          print "going to set title for thstacks[-1] to %s " % varkey
+          print "varkey:", varkey
+          print "varDict:", varDict
+          print "varDict[varkey]:", varDict[varkey]
+          print "thstacks[-1]", thstacks[-1]
+          print "thstacks[-1].GetXaxis()", thstacks[-1].GetXaxis()
           #print "working on thstack with name: ", thstacks[-1].GetName()
           #print type(thstacks[-1].GetXaxis().GetTitle())
           thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
-        thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
-        thstacks[-1].GetYaxis().SetLabelSize(0.04)
-        thstacks[-1].GetYaxis().SetTitleSize(0.04)
-        thstacks[-1].GetYaxis().SetTitleOffset(1.2)
+          thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
+          thstacks[-1].GetYaxis().SetLabelSize(0.04)
+          thstacks[-1].GetYaxis().SetTitleSize(0.04)
+          thstacks[-1].GetYaxis().SetTitleOffset(1.2)
 
         dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
         dName = "weightedMCbgHists_%s" % cutName
@@ -294,12 +297,13 @@ for withBtag in [options.withBtag]:
           if not cutName in "preselection":
             dName += "_sideband%i%i" % (windowEdges[0], windowEdges[1])
         datafiles.append(TFile("%s/%s"%(dName, dataFileName)))
-        #print "going to use data file",  datafiles[-1].GetName(), "for the plot"
+        print "going to use data file",  datafiles[-1].GetName(), "for the plot"
         datahists.append(datafiles[-1].Get("hist_%s"%dataFileName))
         #print datahists[-1]
         if not blindData:
           datahists[-1].Draw("PE SAME")
-        #datahists[-1].SetMarkerStyle(20)
+          datahists[-1].SetMarkerStyle(20)
+          datahists[-1].SetMarkerSize(datahists[-1].GetMarkerSize()*.7)
         datahistsCopies.append(datahists[-1].Clone())
         #for sigMass in [650, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000]:
         if showSigs:

@@ -5,6 +5,12 @@ from ROOT import *
 
 debugFlag = False
 
+def isOrIsNot(boolean, singularOrPlural):
+  if singularOrPlural == "singular":
+    return "is" if boolean else "isn't"
+  else:
+    return "are" if boolean else "aren't"
+
 def deleteLibs(macroName):
         # remove the previously compiled libraries
    if os.path.exists(macroName+"_C_ACLiC_dict_rdict.pcm"):
