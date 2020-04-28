@@ -1,17 +1,15 @@
 from os import listdir, makedirs
 from os.path import isfile, join, exists, basename
 from shutil import rmtree
-from optparse import OptionParser
+from argparse import ArgumentParser
 
 
-parser = OptionParser()
-parser.add_option("-i", "--inDir", dest="inDir",
-                  help = "the input directory")
-parser.add_option("-b", action="store_true", dest="batch", default=False, 
+parser = ArgumentParser()
+parser.add_argument("-i", "--inDir", dest="inDir",
+                  help = "the input directory", required=True)
+parser.add_argument("-b", action="store_true", dest="batch", default=False, 
                   help = "turn on batch mode")
-(options, args) = parser.parse_args()
-if options.inDir is None:  
-    parser.error('Input dir not given')
+options = parser.parse_args()
 
 from tcanvasTDR import TDRify
 from ROOT import *

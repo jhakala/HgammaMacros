@@ -1,6 +1,6 @@
 from math import sqrt
 from ROOT import *
-from testpy import getRangesDict, getHiggsRangesDict
+from HgPlotTools import getRangesDict, getHiggsRangesDict
 from getMCbgWeights import getMCbgLabels
 from os import path, makedirs
 

@@ -6,7 +6,7 @@ from HgCuts import *
 from os import path
 
 # John Hakala, 12/1/2016
-# A poorly-named collection of functions that churns out all the possible histograms from DDtrees
+# A renamed collection of functions that churns out all the possible histograms from DDtrees
 
 printCuts = False
 
@@ -24,75 +24,28 @@ def getHiggsRangesDict(fineBinning=False):
   rangesDict["btagSF"]                       = [[0.0, 1.0]]
   rangesDict["weightFactor"]                 = [[0.0, 2.0]]
   label = "higgs"
-  rangesDict["%sJet_HbbTag"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_puppi_abseta"%label]=[[0., 3]]
-  rangesDict["%sJet_puppi_eta"%label]       = [[-3., 3.]]
-  rangesDict["%sJet_puppi_phi"%label]       = [[-3.5, 3.5]]
-  rangesDict["%sJet_puppi_pt"%label]        = [[0., 4000.]]
+  rangesDict["%sJet_DDBtag"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_abseta"%label]=[[0., 3]]
+  rangesDict["%sJet_eta"%label]       = [[-3., 3.]]
+  rangesDict["%sJet_phi"%label]       = [[-3.5, 3.5]]
+  rangesDict["%sJet_pt"%label]        = [[0., 4000.]]
   rangesDict["%sJett2t1"%label]              = [[0.0, 1.0]]
   #rangesDict["%sPrunedJetCorrMass"%label]    = [[0.,200.], [0.,1000.]]
   #rangesDict["%sPuppi_softdropJetCorrMass"%label]=[[50.,150.]]
-  rangesDict["%sPuppi_softdropJetCorrMass"%label]    = [[0.,1000.]]
+  rangesDict["%s_softdropJetCorrMass"%label]    = [[0.,1000.]]
   rangesDict["phJetDeltaR_%s"%label]         = [[0.,6.]]
   if fineBinning:
-    rangesDict["phJetInvMass_puppi_softdrop_%s"%label]=[[700., 4700.]]
+    rangesDict["phJetInvMass_softdrop_%s"%label]=[[700., 4700.]]
   else:
-    rangesDict["phJetInvMass_puppi_softdrop_%s"%label]=[[0., 10000.]]
+    rangesDict["phJetInvMass_softdrop_%s"%label]=[[0., 10000.]]
   return rangesDict
-
-## this is for making stackplots from the ddTrees
-#def getSidebandRangesDict(sideband):
-#  rangesDict = {}
-#  if sideband == "100110":
-#    index="Four"
-#  elif sideband == "5070":
-#    index="Three"
-#  else:
-#    print "Invalid sideband! Either 100110 or 5070."
-#    quit()
-#  label="sideLow%s"%index
-#  rangesDict["cosThetaStar"] = [0., 1.]
-#  rangesDict["phPtOverMgammaj"]=[0., 2.]
-#  rangesDict["leadingPhPhi"]=[-3.5, 3.5]
-#  rangesDict["leadingPhPt"]=[0., 2000.]
-#  rangesDict["leadingPhAbsEta"]=[0.,2.5]
-#  rangesDict["leadingPhEta"]=[-2.8,2.8]
-#  rangesDict["%sJet_HbbTag"%label]=[-1. , 1.]
-#  rangesDict["%sJet_puppi_softdrop_abseta"%label]=[0., 3]
-#  rangesDict["%sJett2t1"%label]=[0, 1]
-#  rangesDict["%sPuppi_softdropJetCorrMass"%label]=[0, 4000]
-#  rangesDict["phJetDeltaR_%s"%label]=[0,6]
-#  rangesDict["phJetInvMass_puppi_softdrop_%s"%label]=[0,4000]
-#  return rangesDict
 
 def getRangesDict(fineBinning=False):
   rangesDict = {}
   higgsRangesDict = getHiggsRangesDict(fineBinning)
   for key in higgsRangesDict.keys():
     rangesDict[key]=higgsRangesDict[key]
-  #lowFourRangesDict = getSidebandRangesDict("100110")
-  #for key in lowFourRangesDict.keys():
-  #  rangesDict[key]=lowFourRangesDict[key]
-  #lowThreeRangesDict = getSidebandRangesDict("5070")
-  ##print lowThreeRangesDict
-  #for key in lowThreeRangesDict.keys():
-  #  rangesDict[key]=lowThreeRangesDict[key]
-  #print rangesDict
   return rangesDict
-
-#def makeHist(tree, hist, var, key, region):
-#  nEntries = tree.Draw("%s>> hist"%var, getAntiBtagComboCut(region))
-#  if nEntries == 0:
-#    return False
-#  else:
-#    outFile = TFile("weightedMCbgHists/%s_%s_%s"%(key, region, var), "RECREATE")
-#    outFile.cd()
-#    for histBin in range (0,hist.GetXaxis().GetNbins()):
-#      hist.SetBinContent(histBin, hist.GetBinContent(histBin)*weightsDict[key])
-#    hist.Draw()
-#    hist.Write()
-#    outFile.Close()
-#    return True
 
 def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
   if fineBinning != useReweighting:
@@ -100,7 +53,6 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
     exit(1)
   sampleDirs = getSamplesDirs()
   weightsDict = getWeightsDict(sampleDirs["bkgSmall3sDir"])
-  #regions = ["higgs", "side100110", "side5070"]
   regions = ["higgs"]
   rangesDict = getRangesDict(fineBinning)
   nonEmptyFilesDict={}

@@ -11,16 +11,16 @@ def getSmallPrefix():
 
 def getMCbgSampleKfactors():
   sampleXsects = {}
-  sampleXsects[   "gJets100To200.root"   ]   = 1.6*0.8
-  sampleXsects[   "gJets200To400.root"   ]   = 1.6*0.8
-  sampleXsects[   "gJets400To600.root"   ]   = 1.4*0.8
-  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*0.8
-  sampleXsects[   "qcd300To500.root"     ]   = .7 *0.8
-  sampleXsects[   "qcd500To700.root"     ]   = .7 *0.8
-  sampleXsects[   "qcd700To1000.root"    ]   = .7 *0.8
-  sampleXsects[   "qcd1000To1500.root"   ]   = .7 *0.8
-  sampleXsects[   "qcd1500To2000.root"   ]   = .7 *0.8
-  sampleXsects[   "qcd2000ToInf.root"    ]   = .7 *0.8
+  sampleXsects[   "gJets100To200.root"   ]   = 1.6*.8
+  sampleXsects[   "gJets200To400.root"   ]   = 1.6*.8
+  sampleXsects[   "gJets400To600.root"   ]   = 1.4*.8
+  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*.8
+  sampleXsects[   "qcd300To500.root"     ]   = .7 *.8
+  sampleXsects[   "qcd500To700.root"     ]   = .7 *.8
+  sampleXsects[   "qcd700To1000.root"    ]   = .7 *.8
+  sampleXsects[   "qcd1000To1500.root"   ]   = .7 *.8
+  sampleXsects[   "qcd1500To2000.root"   ]   = .7 *.8
+  sampleXsects[   "qcd2000ToInf.root"    ]   = .7 *.8
   #sampleXsects[   "qcd200to300.root"     ]  = 1   
   #sampleXsects[   "dyJetsQQ-180.root"    ]  = 1.23  
   #sampleXsects[ "wJetsQQ-180.root" ]        = 1.21*0.8 
@@ -64,7 +64,7 @@ def getSignalsToInclude():
             "Hg-1200.root",
             "Hg-1400.root",
             "Hg-1600.root",
-            "Hg-1800.root",
+            #"Hg-1800.root",
             "Hg-2000.root",
             "Hg-2200.root",
             "Hg-2400.root",
@@ -78,7 +78,7 @@ def getWeightsDict(bkgSmall3Dir):
   sampleXsects   = getMCbgSampleXsects() 
   sampleEvents   = getMCbgSampleEvents(bkgSmall3Dir)
 
-  lumi = 35900
+  lumi = 41860
 
   sampleWeights = {}
   for key in sampleXsects:
@@ -95,7 +95,7 @@ def getWeightsDict(bkgSmall3Dir):
   sampleWeights[ "Hg-1200.root"  ] = (.7*0.4, "sig")
   sampleWeights[ "Hg-1400.root"  ] = (.7*0.4, "sig")
   sampleWeights[ "Hg-1600.root"  ] = (.6*0.4, "sig")
-  sampleWeights[ "Hg-1800.root"  ] = (.6*0.4, "sig")
+  #sampleWeights[ "Hg-1800.root"  ] = (.6*0.4, "sig")
   sampleWeights[ "Hg-2000.root"  ] = (.5*0.4, "sig")
   sampleWeights[ "Hg-2200.root"  ] = (.5*0.4, "sig")
   sampleWeights[ "Hg-2400.root"  ] = (.4*0.4, "sig")
@@ -122,7 +122,7 @@ def getMCbgOrderedList():
     "qcd700To1000.root"     ,
     "qcd500To700.root"      ,
     "qcd300To500.root"      ,
-    #"qcd200to300.root"      ,
+    "qcd200to300.root"      ,
     "gJets600ToInf.root"    ,
     "gJets400To600.root"    ,
     "gJets200To400.root"    ,
@@ -137,7 +137,8 @@ def getMCbgColors():
   sampleColors["gJets200To400.root" ] = color.GetColor(.475, .6, 1.0)
   sampleColors["gJets400To600.root" ] = color.GetColor(.35, .5, 0.85)
   sampleColors["gJets600ToInf.root" ] = color.GetColor(.225, .3, 0.7) 
-  #sampleColors["qcd200to300.root"   ] = color.GetColor(.31*1.2, 1.0, 0.425*1.2)
+  sampleColors["qcd100To200.root"   ] = color.GetColor(.31, 1.0, 0.425)
+  sampleColors["qcd200To300.root"   ] = color.GetColor(.31*1.2, 1.0, 0.425*1.2)
   sampleColors["qcd300To500.root"   ] = color.GetColor(.31, .95, 0.425)
   sampleColors["qcd500To700.root"   ] = color.GetColor(.28, .9, 0.4)
   sampleColors["qcd700To1000.root"  ] = color.GetColor(.25, .8, 0.375)
@@ -155,7 +156,7 @@ def getMCbgLabels():
   legendLabels["gJets200To400.root" ] = "#gamma#plusjets[200,400]"
   legendLabels["gJets400To600.root" ] = "#gamma#plusjets[400,600]"
   legendLabels["gJets600ToInf.root" ] = "#gamma#plusjets[600,#infty]"
-  #legendLabels["qcd200to300.root"   ] = "QCD[200,300]"
+  legendLabels["qcd200to300.root"   ] = "QCD[200,300]"
   legendLabels["qcd300To500.root"   ] = "QCD[300,500]"
   legendLabels["qcd500To700.root"   ] = "QCD[500,700]"
   legendLabels["qcd700To1000.root"  ] = "QCD[700,1000]"
@@ -164,7 +165,7 @@ def getMCbgLabels():
   legendLabels["qcd2000ToInf.root"  ] = "QCD[2000,#infty]"
   #legendLabels["dyJetsQQ-180.root"  ] = "DY#plusjets[180,#infty]"
   #legendLabels["wJetsQQ-180.root"   ] = "W#plusjets[600,#infty]"
-  #legendLabels["QCD_HT100to200"       ] = "QCD[100,200]"
+  legendLabels["QCD_HT100to200"       ] = "QCD[100,200]"
   return legendLabels
 
 def getSmall3ddTreeDict(ddDir):

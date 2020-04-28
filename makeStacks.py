@@ -78,7 +78,7 @@ if not options.graphics:
   gROOT.SetBatch()
 
 from pyrootTools import getSortedDictKeys, drawInNewCanvas
-from testpy import getRangesDict, getHiggsRangesDict, makeAllHists
+from HgPlotTools import getRangesDict, getHiggsRangesDict, makeAllHists
 from HgParameters import getSamplesDirs, getVariableDict
 from getMCbgWeights import getWeightsDict, getMCbgWeightsDict, getMCbgColors, getMCbgOrderedList, getMCbgLabels
 from tcanvasTDR import TDRify
@@ -190,7 +190,11 @@ for withBtag in [options.withBtag]:
         thstackCopies.append(THStack("thstackCopy_%s_%s%s"%(cutName, varkey, indexLabel),""))
         integralsDict={}
         namesDict={}
+        iFile = -1
         for filekey in mcBgWeights.keys():
+          iFile += 1
+          if iFile == -1:
+            break
           filenameDefault = varkey+"_"+treekey+"_"+filekey
           filename = varkey+"_"+treekey+"_"+filekey.replace(".root", "%s.root"%indexLabel)
           if printNonempties:
@@ -239,11 +243,11 @@ for withBtag in [options.withBtag]:
 
         if cutName in "nMinus1":
           if withBtag:
-            outDirName = "stackplots_puppiSoftdrop_%s_withBtag" % cutName
+            outDirName = "stackplots_softdrop_%s_withBtag" % cutName
           else:
-            outDirName = "stackplots_puppiSoftdrop_%s_noBtag" % cutName
+            outDirName = "stackplots_softdrop_%s_noBtag" % cutName
         else:
-          outDirName = "stackplots_puppiSoftdrop_%s" % cutName
+          outDirName = "stackplots_softdrop_%s" % cutName
         if sideband:
           if not cutName in "preselection":
             outDirName +="_sideband%i%i" %(windowEdges[0], windowEdges[1])
@@ -273,14 +277,13 @@ for withBtag in [options.withBtag]:
           #print thstacks[-1].GetXaxis()
           #print "working on thstack with name: ", thstacks[-1].GetName()
           #print type(thstacks[-1].GetXaxis().GetTitle())
-          #thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
-          pass
-        #thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
-        #thstacks[-1].GetYaxis().SetLabelSize(0.04)
-        #thstacks[-1].GetYaxis().SetTitleSize(0.04)
-        #thstacks[-1].GetYaxis().SetTitleOffset(1.2)
+          thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
+        thstacks[-1].GetYaxis().SetTitle("Events/%g"%thstacks[-1].GetXaxis().GetBinWidth(1))
+        thstacks[-1].GetYaxis().SetLabelSize(0.04)
+        thstacks[-1].GetYaxis().SetTitleSize(0.04)
+        thstacks[-1].GetYaxis().SetTitleOffset(1.2)
 
-        dataFileName = varkey+"_"+treekey+"_data2016SinglePhoton%s.root" % indexLabel
+        dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
         dName = "weightedMCbgHists_%s" % cutName
         if cutName in "nMinus1":
           if withBtag:
@@ -301,12 +304,12 @@ for withBtag in [options.withBtag]:
         #for sigMass in [650, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000]:
         if showSigs:
           colors={}
-          colors[750]=kCyan-6
+          colors[700]=kCyan-6
           colors[1000]=kOrange
-          colors[2050]=kMagenta
-          colors[3250]=kRed
-          for sigMass in [750, 1000, 2050, 3250]:
-            sigFileName = varkey+"_"+treekey+"_sig_m%i%s.root"%(sigMass, indexLabel)
+          colors[2000]=kMagenta
+          colors[3000]=kRed
+          for sigMass in [700, 1000, 2000, 3000]:
+            sigFileName = varkey+"_"+treekey+"_Hg-%i%s.root"%(sigMass, indexLabel)
             rName = "weightedMCbgHists_%s" % cutName
             if cutName in "nMinus1":
               if withBtag:
@@ -319,7 +322,7 @@ for withBtag in [options.withBtag]:
               rName += "_SF"
             if vgMC:
               rName += "_vgMC"
-            outDirName = "stackplots_puppiSoftdrop_%s" % rName
+            outDirName = "stackplots_softdrop_%s" % rName
             sigfiles.append(TFile("%s/%s"%(rName, sigFileName)))
             #print "adding signal file", sigfiles[-1].GetName(), "to the plot"
             sighists.append(sigfiles[-1].Get("hist_%s"%sigFileName))
@@ -348,7 +351,7 @@ for withBtag in [options.withBtag]:
                 if key in subprim.GetLabel():
                   subprim.SetLabel(legendLabels[key])
                   subprim.SetOption("lf")
-                elif "SinglePhoton" in subprim.GetLabel():
+                elif "data" in subprim.GetLabel():
                   #print "found something named SinglePhoton"
                   subprim.SetLabel("data")
                   subprim.SetOption("pe")
@@ -364,7 +367,7 @@ for withBtag in [options.withBtag]:
             fullStack.GetXaxis().SetTitle(varDict[varkey])
           ### HEREHERE
           if sideband:
-            if dinkoMethod:
+            if dinkoMethod or cutName=="preselection":
               sbScale = 1
             else:
               sbScale = fullStack.GetSumOfWeights()/datahists[-1].GetSumOfWeights()

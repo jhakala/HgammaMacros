@@ -24,7 +24,7 @@ def getNormalizations():
   normalizations["1200"] = 0.8
   normalizations["1400"] = 0.4
   normalizations["1600"] = 0.4
-  normalizations["1800"] = 0.4
+  #normalizations["1800"] = 0.4
   normalizations["2000"] = 0.2
   normalizations["2200"] = 0.2
   normalizations["2600"] = 0.2
@@ -42,7 +42,7 @@ def getMassWindows():
   massWindows[1200] = [1100, 1300]
   massWindows[1400] = [1300, 1600]
   massWindows[1600] = [1400, 1800]
-  massWindows[1800] = [1600, 2000]
+  #massWindows[1800] = [1600, 2000]
   massWindows[2000] = [1800, 2200]
   massWindows[2400] = [2100, 2700]
   massWindows[2600] = [2300, 2900]
@@ -65,7 +65,7 @@ def getVariableDict():
   varDict["higgsJet_phi"]       = "#phi_{J}"
   varDict["higgsJet_pt"]        = "p_{T}^{J}"
   varDict["leadingPhEta"]              = "#eta_{#gamma}"
-  varDict["higgsJet_HbbTag"]           = "Hb#bar{b} tagger discriminant"
+  varDict["higgsJet_DDBtag"]           = "Hb#bar{b} tagger discriminant"
   varDict["phJetDeltaR_higgs"]         = "#DeltaR(#gamma, jet)"
   varDict["leadingPhPt"]               = "p_{T}^{#gamma} (GeV)"
   varDict["higgsJett2t1"]              = "#tau_{21}"
