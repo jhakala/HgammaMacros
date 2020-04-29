@@ -117,6 +117,8 @@ def getDefaultCuts(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]
     return cuts
     
 def getBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100,110]):
+    if windowEdges == "signalRegion":
+      windowEdges = [110.0, 140.0]
     btagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
     btagCuts.pop("antibtag")
     if scaleFactors:
@@ -124,6 +126,8 @@ def getBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, wind
     return combineCuts(btagCuts)
 
 def getAntiBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100.0,110.0]):
+    if windowEdges == "signalRegion":
+      windowEdges = [110.0, 140.0]
     antibtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
     antibtagCuts.pop("btag")
     if scaleFactors:
@@ -131,12 +135,16 @@ def getAntiBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, 
     return combineCuts(antibtagCuts)
 
 def getNoBtagComboCut(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
+    if windowEdges == "signalRegion":
+      windowEdges = [110.0, 140.0]
     nobtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("btag")
     nobtagCuts.pop("antibtag")
     return combineCuts(nobtagCuts)
 
 def getNminus1ComboCut(region, popVar, withBtag, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
+    if windowEdges == "signalRegion":
+      windowEdges = [110.0, 140.0]
     nobtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("antibtag")
     if not withBtag:

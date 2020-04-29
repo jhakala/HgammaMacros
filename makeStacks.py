@@ -1,7 +1,6 @@
 from os import path, makedirs, getcwd
 from optparse import OptionParser
 from copy import deepcopy
-from pyrootTools import isOrIsNot
 
 # new script to make all stackplots.
 # John Hakala 7/14/16
@@ -27,10 +26,12 @@ parser.add_option("-v", action="store_true", dest="vgMC", default=False,
                   help = "if -v is used, make a stackplot for MC BG limits"            )
 (options, args) = parser.parse_args()
 
+
+from pyrootTools import isOrIsNot
 dinkoMethod = False
 
 if options.sideband is False:
-  windowEdges=[0,0]
+  windowEdges="signalRegion"
 if options.edges is not None and options.sideband is False:
   print "cannot specify a sideband window without the -s option."
   exit(1)
@@ -74,6 +75,7 @@ if windowEdges[0] == windowEdges[1]:
   #exit(1)
 
 from ROOT import *
+TColor.SetColorThreshold(0.1)
 if not options.graphics:
   gROOT.SetBatch()
 
@@ -100,6 +102,9 @@ for withBtag in [options.withBtag]:
     blindData       = False
   else:
     blindData    = True
+
+  if windowEdges == "signalRegion":
+    blindData = True
 
   sampleDirs = getSamplesDirs()
 
@@ -286,7 +291,6 @@ for withBtag in [options.withBtag]:
           thstacks[-1].GetYaxis().SetTitleSize(0.04)
           thstacks[-1].GetYaxis().SetTitleOffset(1.2)
 
-        dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
         dName = "weightedMCbgHists_%s" % cutName
         if cutName in "nMinus1":
           if withBtag:
@@ -296,15 +300,16 @@ for withBtag in [options.withBtag]:
         if sideband:
           if not cutName in "preselection":
             dName += "_sideband%i%i" % (windowEdges[0], windowEdges[1])
-        datafiles.append(TFile("%s/%s"%(dName, dataFileName)))
-        print "going to use data file",  datafiles[-1].GetName(), "for the plot"
-        datahists.append(datafiles[-1].Get("hist_%s"%dataFileName))
-        #print datahists[-1]
         if not blindData:
+          dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
+          print "going to use data file",  dataFileName, "for the plot"
+          datafiles.append(TFile("%s/%s"%(dName, dataFileName)))
+          datahists.append(datafiles[-1].Get("hist_%s"%dataFileName))
+          #print datahists[-1]
           datahists[-1].Draw("PE SAME")
           datahists[-1].SetMarkerStyle(20)
           datahists[-1].SetMarkerSize(datahists[-1].GetMarkerSize()*.7)
-        datahistsCopies.append(datahists[-1].Clone())
+          datahistsCopies.append(datahists[-1].Clone())
         #for sigMass in [650, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000]:
         if showSigs:
           colors={}

@@ -57,7 +57,10 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
   regions = ["higgs"]
   rangesDict = getRangesDict(fineBinning)
   nonEmptyFilesDict={}
-  for key in getWeightsDict(getSamplesDirs()["bkgSmall3sDir"]).keys():
+  thingsToProcess = getWeightsDict(getSamplesDirs()["bkgSmall3sDir"]).keys()
+  if windowEdges == "signalRegion":
+    thingsToProcess.remove("data_2017.root")
+  for key in thingsToProcess:
     print "  -> working on sample", key
     sampleType = getWeightsDict(getSamplesDirs()["bkgSmall3sDir"])[key][1]
     useTrigger = True
@@ -135,7 +138,7 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
               cutString = "1*(%s)" % cut
             else:
               cutString = "1*(%s)" % (cut)
-          #print "cuts:", cutString
+          print "cuts:", cutString
           nEntries = tree.Draw("%s>> %s"%(var, histName), cutString, "HIST")
           directory = ""
           bareDirectory = ""

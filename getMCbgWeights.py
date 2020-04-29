@@ -11,19 +11,19 @@ def getSmallPrefix():
 
 def getMCbgSampleKfactors():
   sampleXsects = {}
-  sampleXsects[   "gJets100To200.root"   ]   = 1.6*.8
-  sampleXsects[   "gJets200To400.root"   ]   = 1.6*.8
-  sampleXsects[   "gJets400To600.root"   ]   = 1.4*.8
-  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*.8
-  sampleXsects[   "qcd300To500.root"     ]   = .7 *.8
-  sampleXsects[   "qcd500To700.root"     ]   = .7 *.8
-  sampleXsects[   "qcd700To1000.root"    ]   = .7 *.8
-  sampleXsects[   "qcd1000To1500.root"   ]   = .7 *.8
-  sampleXsects[   "qcd1500To2000.root"   ]   = .7 *.8
-  sampleXsects[   "qcd2000ToInf.root"    ]   = .7 *.8
-  #sampleXsects[   "qcd200to300.root"     ]  = 1   
-  #sampleXsects[   "dyJetsQQ-180.root"    ]  = 1.23  
-  #sampleXsects[ "wJetsQQ-180.root" ]        = 1.21*0.8 
+  sampleXsects[   "gJets100To200.root"   ]   = 1.6*.82
+  sampleXsects[   "gJets200To400.root"   ]   = 1.6*.82
+  sampleXsects[   "gJets400To600.root"   ]   = 1.4*.82
+  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*.82
+  sampleXsects[   "qcd300To500.root"     ]   =.7 *.75
+  sampleXsects[   "qcd500To700.root"     ]   =.7 *.75
+  sampleXsects[   "qcd700To1000.root"    ]   =.7 *.75
+  sampleXsects[   "qcd1000To1500.root"   ]   =.7 *.75
+  sampleXsects[   "qcd1500To2000.root"   ]   =.7 *.75
+  sampleXsects[   "qcd2000ToInf.root"    ]   =.7 *.75
+  #sampleXsects[   "qcd200to300.root"     ]  =   # 1   
+  #sampleXsects[   "dyJetsQQ-180.root"    ]  =   # 1.23  
+  #sampleXsects[ "wJetsQQ-180.root" ]        =   # 1.21*0.8 
   return sampleXsects
 
 def getMCbgSampleXsects():
@@ -133,30 +133,30 @@ def getMCbgColors():
   color = TColor()
   sampleColors = {}
   #sampleColors["QCD_HT100to200.root"       ] = color.GetColor(.1, 0.3, 0.25)
-  #sampleColors["gJets100To200.root" ] = color.GetColor(.475*1.1, .6*1.2, 1.0)
-  sampleColors["gJets100To200.root" ] = kBlue-2
-  #sampleColors["gJets200To400.root" ] = color.GetColor(.475, .6, 1.0)
-  sampleColors["gJets200To400.root" ] = kBlue-1
-  #sampleColors["gJets400To600.root" ] = color.GetColor(.35, .5, 0.85)
-  sampleColors["gJets400To600.root" ] = kBlue
-  #sampleColors["gJets600ToInf.root" ] = color.GetColor(.225, .3, 0.7) 
-  sampleColors["gJets600ToInf.root" ] = kBlue+3
-  #sampleColors["qcd100To200.root"   ] = color.GetColor(.31, 1.0, 0.425)
-  sampleColors["qcd100To200.root"   ] = kGreen-6
-  #sampleColors["qcd200To300.root"   ] = color.GetColor(.31*1.2, 1.0, 0.425*1.2)
-  sampleColors["qcd200To300.root"   ] = kGreen-5
-  #sampleColors["qcd300To500.root"   ] = color.GetColor(.31, .95, 0.425)
-  sampleColors["qcd300To500.root"   ] = kGreen-4
-  #sampleColors["qcd500To700.root"   ] = color.GetColor(.28, .9, 0.4)
-  sampleColors["qcd500To700.root"   ] = kGreen-2
-  #sampleColors["qcd700To1000.root"  ] = color.GetColor(.25, .8, 0.375)
-  sampleColors["qcd700To1000.root"  ] = kGreen
-  #sampleColors["qcd1000To1500.root" ] = color.GetColor(.22, .7, 0.35)
-  sampleColors["qcd1000To1500.root" ] = kGreen+3
-  #sampleColors["qcd1500To2000.root" ] = color.GetColor(.19, .6, 0.325)
-  sampleColors["qcd1500To2000.root" ] = kGreen+4
-  #sampleColors["qcd2000ToInf.root"  ] = color.GetColor(.16, .5, 0.3)
-  sampleColors["qcd2000ToInf.root"  ] = kGreen-7
+  sampleColors["gJets100To200.root" ] = color.GetColor(.475*1.1, .6*1.2, 1.0)
+  #sampleColors["gJets100To200.root" ] = kBlue-2
+  sampleColors["gJets200To400.root" ] = color.GetColor(.475, .6, 1.0)
+  #sampleColors["gJets200To400.root" ] = kBlue-1
+  sampleColors["gJets400To600.root" ] = color.GetColor(.35, .5, 0.85)
+  #sampleColors["gJets400To600.root" ] = kBlue
+  sampleColors["gJets600ToInf.root" ] = color.GetColor(.225, .3, 0.7) 
+  #sampleColors["gJets600ToInf.root" ] = kBlue+3
+  sampleColors["qcd100To200.root"   ] = color.GetColor(.31, 1.0, 0.425)
+  #sampleColors["qcd100To200.root"   ] = kGreen-6
+  sampleColors["qcd200To300.root"   ] = color.GetColor(.31*1.2, 1.0, 0.425*1.2)
+  #sampleColors["qcd200To300.root"   ] = kGreen-5
+  sampleColors["qcd300To500.root"   ] = color.GetColor(.31, .95, 0.425)
+  #sampleColors["qcd300To500.root"   ] = kGreen-4
+  sampleColors["qcd500To700.root"   ] = color.GetColor(.28, .9, 0.4)
+  #sampleColors["qcd500To700.root"   ] = kGreen-2
+  sampleColors["qcd700To1000.root"  ] = color.GetColor(.25, .8, 0.375)
+  #sampleColors["qcd700To1000.root"  ] = kGreen
+  sampleColors["qcd1000To1500.root" ] = color.GetColor(.2, .6, 0.3)
+  #sampleColors["qcd1000To1500.root" ] = kGreen+3
+  sampleColors["qcd1500To2000.root" ] = color.GetColor(.15, .45, 0.225)
+  #sampleColors["qcd1500To2000.root" ] = kGreen+4
+  sampleColors["qcd2000ToInf.root"  ] = color.GetColor(.1, .3, 0.15)
+  #sampleColors["qcd2000ToInf.root"  ] = kGreen-7
   #sampleColors["dyJetsQQ-180.root"  ] = color.GetColor(.6, .2, .2)
   #sampleColors["wJetsQQ-180.root"   ] = color.GetColor(.85, .85, 0.3)
   return sampleColors
