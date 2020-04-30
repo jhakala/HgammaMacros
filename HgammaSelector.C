@@ -9,7 +9,15 @@ using namespace std;
 // The trees differ in the AK8 jet mass cuts -- different windows are used for different bosons 
 // John Hakala -- May 11, 2016
 
-void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvariation, float mcWeight) {
+void HgammaSelector::Loop(int analysis, string outputFileName, int btagVariation, int phSFvariation, float mcWeight) {
+  std::cout << "\n===========================\nHgammaSelector starting!\n===========================" << std::endl;
+  if      (analysis == 25) std::cout << "Working on Hg analysis" << std::endl;
+  else if (analysis == 23) std::cout << "Working on Zg analysis" << std::endl;
+  else                   {
+                           std::cout << "Invalid analysis, either 25 for Hgamma or 23 for Zgamma" << std::endl;
+                           exit(EXIT_FAILURE);
+                         }
+                            
   cout << "output filename is: " << outputFileName << endl;
   // Flags for running this macro
   bool debugFlag                     =  false ;  // If debugFlag is false, the trigger checking couts won't appear and the loop won't stop when it reaches entriesToCheck
@@ -45,35 +53,39 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
   //  b_eventMap->GetEntry(tentry);
   //  cout << "Finished GetEntry" << endl;
   //}
-
+  float bosonMass;
+  if (analysis == 25)      bosonMass = 125.0;
+  else if (analysis == 23) bosonMass = 91.2;
+  else                     {std::cout << "illegal bosonMass" << std::endl; exit(EXIT_FAILURE);}
+  
   TFile* outputFile                 = new TFile(outputFileName.c_str(), "RECREATE");
   outputFile->cd();
 
   //TTree* outputTreeSig    = new TTree("sig",               "sig");
-  TTree* outputTreeHiggs  = new TTree("higgs",           "higgs");
-  outputTreeHiggs -> SetAutoSave(-500000000);
+  TTree* outputTreeBoost  = new TTree("ddboost",           "ddboost");
+  outputTreeBoost -> SetAutoSave(-500000000);
 
-  outputTreeHiggs->Branch("higgsJett2t1", &higgsJett2t1);
-  outputTreeHiggs->Branch("higgsJet_DDBtag", &higgsJet_DDBtag);
-  outputTreeHiggs->Branch("cosThetaStar", &cosThetaStar);
-  outputTreeHiggs->Branch("phPtOverMgammaj", &phPtOverMgammaj);
-  outputTreeHiggs->Branch("leadingPhEta", &leadingPhEta);
-  outputTreeHiggs->Branch("leadingPhPhi", &leadingPhPhi);
-  outputTreeHiggs->Branch("leadingPhPt", &leadingPhPt);
-  outputTreeHiggs->Branch("leadingPhAbsEta", &leadingPhAbsEta);
-  outputTreeHiggs->Branch("phJetInvMass_softdrop_higgs", &phJetInvMass_softdrop_higgs);
-  outputTreeHiggs->Branch("phJetDeltaR_higgs", &phJetDeltaR_higgs);
-  outputTreeHiggs->Branch("higgsJet_abseta", &higgsJet_abseta);
-  outputTreeHiggs->Branch("higgsJet_eta", &higgsJet_eta);
-  outputTreeHiggs->Branch("higgsJet_phi", &higgsJet_phi);
-  outputTreeHiggs->Branch("higgsJet_pt", &higgsJet_pt);
-  outputTreeHiggs->Branch("higgs_softdropJetCorrMass", &higgs_softdropJetCorrMass);
-  outputTreeHiggs->Branch("triggerFired_165HE10", &triggerFired_165HE10);
-  outputTreeHiggs->Branch("triggerFired_200", &triggerFired_200);
-  outputTreeHiggs->Branch("antibtagSF", &antibtagSF);
-  outputTreeHiggs->Branch("btagSF", &btagSF);
-  outputTreeHiggs->Branch("weightFactor", &weightFactor);
-  outputTreeHiggs->Branch("mcWeight", &mcWeight);
+  outputTreeBoost->Branch("bJett2t1", &bJett2t1);
+  outputTreeBoost->Branch("bJet_DDBtag", &bJet_DDBtag);
+  outputTreeBoost->Branch("cosThetaStar", &cosThetaStar);
+  outputTreeBoost->Branch("phPtOverMgammaj", &phPtOverMgammaj);
+  outputTreeBoost->Branch("leadingPhEta", &leadingPhEta);
+  outputTreeBoost->Branch("leadingPhPhi", &leadingPhPhi);
+  outputTreeBoost->Branch("leadingPhPt", &leadingPhPt);
+  outputTreeBoost->Branch("leadingPhAbsEta", &leadingPhAbsEta);
+  outputTreeBoost->Branch("phJetInvMass_softdrop", &phJetInvMass_softdrop);
+  outputTreeBoost->Branch("phJetDeltaR", &phJetDeltaR);
+  outputTreeBoost->Branch("bJet_abseta", &bJet_abseta);
+  outputTreeBoost->Branch("bJet_eta", &bJet_eta);
+  outputTreeBoost->Branch("bJet_phi", &bJet_phi);
+  outputTreeBoost->Branch("bJet_pt", &bJet_pt);
+  outputTreeBoost->Branch("softdropJetCorrMass", &softdropJetCorrMass);
+  outputTreeBoost->Branch("triggerFired_165HE10", &triggerFired_165HE10);
+  outputTreeBoost->Branch("triggerFired_200", &triggerFired_200);
+  outputTreeBoost->Branch("antibtagSF", &antibtagSF);
+  outputTreeBoost->Branch("btagSF", &btagSF);
+  outputTreeBoost->Branch("weightFactor", &weightFactor);
+  outputTreeBoost->Branch("mcWeight", &mcWeight);
 
 
   // Branches from EXOVVNtuplizer tree
@@ -136,7 +148,7 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
 
 
     // internal variables used for computation
-    eventHasHiggs_softdropJet           = false ;
+    eventHasBoost_softdropJet           = false ;
     leadingPhMVA                     = -999. ;
     leadingPhCat                     = -999. ;
     phoIsTight                       = false ;
@@ -144,21 +156,21 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
     phoPtPassesCut                   = false ;
     eventHasTightPho                 = false ;
     leadingPhE                       = 0.    ;
-    softdrop_higgsJetTau1              = -999. ;
-    softdrop_higgsJetTau2              = -999. ;
-    //softdrop_higgsJetTau3              = -999. ;
+    softdrop_bJetTau1              = -999. ;
+    softdrop_bJetTau2              = -999. ;
+    //softdrop_bJetTau3              = -999. ;
 
     // final output variables
     leadingPhPt                      = 0.    ;
     leadingPhEta                     = -999  ;
     leadingPhPhi                     = -999  ;
     leadingPhAbsEta                  = -999. ;
-    higgsJet_abseta           = -999. ;
-    higgsJet_eta              = -999. ;
-    higgsJet_phi              = -999. ;
-    higgsJet_pt               = -999. ;
-    higgs_softdropJetCorrMass           = -999. ;
-    higgsJet_DDBtag                  = -999. ;
+    bJet_abseta           = -999. ;
+    bJet_eta              = -999. ;
+    bJet_phi              = -999. ;
+    bJet_pt               = -999. ;
+    softdropJetCorrMass           = -999. ;
+    bJet_DDBtag                  = -999. ;
     cosThetaStar                     =  -99. ; 
     phPtOverMgammaj                  =  -99. ; 
     triggerFired_200                 = false ; 
@@ -172,8 +184,8 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
     boostedJet           .SetPtEtaPhiE( 0., 0., 0., 0.) ;
     boostedPho           .SetPtEtaPhiE( 0., 0., 0., 0.) ;
 
-    //higgs_csvValues.leading=-10.;
-    //higgs_csvValues.subleading=-10.;
+    //csvValues.leading=-10.;
+    //csvValues.subleading=-10.;
 
     // Print out trigger information
     if (jentry%reportEvery==0) {
@@ -235,34 +247,34 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
       // Get leading jet variables, requiring tight jet ID
         tmpLeadingJet.SetPtEtaPhiE(jetAK8_pt->at(iJet), jetAK8_eta->at(iJet), jetAK8_phi->at(iJet), jetAK8_e->at(iJet));
 
-        if (!eventHasHiggs_softdropJet) { 
-          eventHasHiggs_softdropJet = true;
+        if (!eventHasBoost_softdropJet) { 
+          eventHasBoost_softdropJet = true;
           if(debugFlag && dumpEventInfo) {
-            cout << "    softdrop higgs AK8 jet e is: "    << jetAK8_e->at(iJet)    << endl ;
-            cout << "    softdrop higgs AK8 jet mass is: " << jetAK8_softdrop_mass->at(iJet) << endl ;
-            cout << "    softdrop higgs AK8 jet eta is: "  << jetAK8_eta->at(iJet)  << endl ;
-            cout << "    softdrop higgs AK8 jet phi is: "  << jetAK8_phi->at(iJet)  << endl ;
-            cout << "    softdrop higgs AK8 jet pt is: "   << jetAK8_pt->at(iJet)   << endl ;
+            cout << "    softdrop AK8 jet e is: "    << jetAK8_e->at(iJet)    << endl ;
+            cout << "    softdrop AK8 jet mass is: " << jetAK8_softdrop_mass->at(iJet) << endl ;
+            cout << "    softdrop AK8 jet eta is: "  << jetAK8_eta->at(iJet)  << endl ;
+            cout << "    softdrop AK8 jet phi is: "  << jetAK8_phi->at(iJet)  << endl ;
+            cout << "    softdrop AK8 jet pt is: "   << jetAK8_pt->at(iJet)   << endl ;
           }
-          higgsJet_softdrop.SetPtEtaPhiE(jetAK8_pt->at(iJet), jetAK8_eta->at(iJet), jetAK8_phi->at(iJet), jetAK8_e->at(iJet));
-          if (higgsJet_softdrop.DeltaR(leadingPhoton) < 0.8) {
-            higgsJet_softdrop.SetPtEtaPhiE(0,0,0,0);
-            eventHasHiggs_softdropJet = false;
+          bJet_softdrop.SetPtEtaPhiE(jetAK8_pt->at(iJet), jetAK8_eta->at(iJet), jetAK8_phi->at(iJet), jetAK8_e->at(iJet));
+          if (bJet_softdrop.DeltaR(leadingPhoton) < 0.8) {
+            bJet_softdrop.SetPtEtaPhiE(0,0,0,0);
+            eventHasBoost_softdropJet = false;
           }
           else {
-            if  ( iJet<jetAK8_softdrop_massCorr->size() && abs(jetAK8_softdrop_massCorr->at(iJet) - 125) <  abs(higgs_softdropJetCorrMass -  125 )) {
-              higgs_softdropJetCorrMass = jetAK8_softdrop_massCorr->at(iJet);
-              higgsJet_DDBtag = jetAK8_DDB->at(iJet);
-              softdrop_higgsJetTau1 = jetAK8_tau1 ->  at(iJet) ;
-              softdrop_higgsJetTau2 = jetAK8_tau2 ->  at(iJet) ;
-              //softdrop_higgsJetTau3 = jetAK8_tau3 ->  at(iJet) ;
-              //higgs_csvValues = getLeadingSubjets(subjetAK8_softdrop_csv->at(iJet));
-              //cout << "    for higgs jet, get csv values " << higgs_csvValues.leading << ", " << higgs_csvValues.subleading << endl;
-              //higgs_subjetCutDecisions = getSubjetCutDecisions(higgs_csvValues);
+            if  ( iJet<jetAK8_softdrop_massCorr->size() && abs(jetAK8_softdrop_massCorr->at(iJet) - bosonMass) <  abs(softdropJetCorrMass -  bosonMass )) {
+              softdropJetCorrMass = jetAK8_softdrop_massCorr->at(iJet);
+              bJet_DDBtag = jetAK8_DDB->at(iJet);
+              softdrop_bJetTau1 = jetAK8_tau1 ->  at(iJet) ;
+              softdrop_bJetTau2 = jetAK8_tau2 ->  at(iJet) ;
+              //softdrop_bJetTau3 = jetAK8_tau3 ->  at(iJet) ;
+              //csvValues = getLeadingSubjets(subjetAK8_softdrop_csv->at(iJet));
+              //cout << "    for jet, get csv values " << csvValues.leading << ", " << csvValues.subleading << endl;
+              //subjetCutDecisions = getSubjetCutDecisions(csvValues);
             }
           }
         }
-        else if (debugFlag && dumpEventInfo) cout << " this event failed the jet requirement for the higgs branch!" << endl;
+        else if (debugFlag && dumpEventInfo) cout << " this event failed the jet requirement!" << endl;
       } 
     }
 
@@ -273,43 +285,43 @@ void HgammaSelector::Loop(string outputFileName, int btagVariation, int phSFvari
     // Fill histograms with events that have a photon passing ID and a loose jet
     // TODO: photon pT cut applied here. unhardcode
     if ( (eventHasTightPho  && leadingPhoton.Pt()>180 && abs(leadingPhoton.Eta()) < 2.6)) {
-      if( (eventHasHiggs_softdropJet && higgsJet_softdrop.Pt() > 250 && abs(higgsJet_softdrop.Eta()) < 2.6 )) {
-        sumVector = leadingPhoton + higgsJet_softdrop;
+      if( (eventHasBoost_softdropJet && bJet_softdrop.Pt() > 250 && abs(bJet_softdrop.Eta()) < 2.6 )) {
+        sumVector = leadingPhoton + bJet_softdrop;
         if (debugFlag && dumpEventInfo) {
           cout << "    using matching with softdrop,   sumvector E is: " << sumVector.E() << endl;
           cout << "                                  sumvector M is: " << sumVector.M() << endl;
-          cout << "                                    tau2/tau1 is: " << softdrop_higgsJetTau2/softdrop_higgsJetTau1 << endl;
+          cout << "                                    tau2/tau1 is: " << softdrop_bJetTau2/softdrop_bJetTau1 << endl;
         }
-        higgsJett2t1 = softdrop_higgsJetTau2/softdrop_higgsJetTau1;
-        antibtagSF = computeOverallSF("antibtag" , higgsJet_softdrop.Pt(), higgsJet_DDBtag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
-        btagSF     = computeOverallSF("btag"     , higgsJet_softdrop.Pt(), higgsJet_DDBtag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
+        bJett2t1 = softdrop_bJetTau2/softdrop_bJetTau1;
+        antibtagSF = computeOverallSF("antibtag" , bJet_softdrop.Pt(), bJet_DDBtag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
+        btagSF     = computeOverallSF("btag"     , bJet_softdrop.Pt(), bJet_DDBtag, leadingPhoton.Pt(), leadingPhoton.Eta(), debugSF, btagVariation, phSFvariation);
         //weightFactor = 1/trigEffHist->GetBinContent(trigEffHist->GetXaxis()->FindBin(leadingPhoton.Pt()));
         weightFactor = 1.0/(turnOnCurve->Eval(leadingPhoton.Pt()));
         boostedPho = leadingPhoton;
         boostedPho.Boost(-(sumVector.BoostVector()));
-        boostedJet = higgsJet_softdrop;
+        boostedJet = bJet_softdrop;
         boostedJet.Boost(-(sumVector.BoostVector()));
         cosThetaStar = std::abs(boostedPho.Pz()/boostedPho.P());
         phPtOverMgammaj = leadingPhPt/sumVector.M();
-        higgsJet_abseta=std::abs(higgsJet_softdrop.Eta());
-        higgsJet_eta=higgsJet_softdrop.Eta();
-        higgsJet_phi=higgsJet_softdrop.Phi();
-        higgsJet_pt=higgsJet_softdrop.Pt();
+        bJet_abseta=std::abs(bJet_softdrop.Eta());
+        bJet_eta=bJet_softdrop.Eta();
+        bJet_phi=bJet_softdrop.Phi();
+        bJet_pt=bJet_softdrop.Pt();
         leadingPhAbsEta = std::abs(leadingPhEta);
-        phJetInvMass_softdrop_higgs=sumVector.M();
-        phJetDeltaR_higgs=leadingPhoton.DeltaR(higgsJet_softdrop);
-        if ( phJetDeltaR_higgs<0.8 ) {
+        phJetInvMass_softdrop=sumVector.M();
+        phJetDeltaR=leadingPhoton.DeltaR(bJet_softdrop);
+        if ( phJetDeltaR<0.8 ) {
           if (debugFlag && dumpEventInfo) cout << "this event failed the DR cut!" << endl;
           continue;
         }
         //if (loadEventMap && FindEvent(EVENT_run, EVENT_lumiBlock, EVENT_event)!=0) cout << "found an event that passed selection but did not fire the trigger" << endl;
-        outputTreeHiggs->Fill();
-        //higgsJet_softdrop.SetT(90);
-        //sumVector = leadingPhoton + higgsJet_softdrop;
+        outputTreeBoost->Fill();
+        //bJet_softdrop.SetT(90);
+        //sumVector = leadingPhoton + bJet_softdrop;
       }
       else if (debugFlag && dumpEventInfo) {
-        cout << " this event failed 'if( (eventHasHiggs_softdropJet && higgsJet_softdrop.Pt() > 250 && abs(higgsJet_softdrop.Eta()) < 2.6 ))'" << endl;
-        cout << "eventHasHiggs_softdropJet="  << eventHasHiggs_softdropJet << ", higgsJet_softdrop.Pt()=" << higgsJet_softdrop.Pt() << ", abs(higgsJet_softdrop.Eta())=" << higgsJet_softdrop.Eta() << endl;
+        cout << " this event failed 'if( (eventHasBoost_softdropJet && bJet_softdrop.Pt() > 250 && abs(bJet_softdrop.Eta()) < 2.6 ))'" << endl;
+        cout << "eventHasBoost_softdropJet="  << eventHasBoost_softdropJet << ", bJet_softdrop.Pt()=" << bJet_softdrop.Pt() << ", abs(bJet_softdrop.Eta())=" << bJet_softdrop.Eta() << endl;
       }
     }
     if (debugFlag && entriesToCheck == jentry) break; // when debugFlag is true, break the event loop after reaching entriesToCheck 

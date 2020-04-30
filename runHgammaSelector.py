@@ -23,7 +23,7 @@ def deleteLibs(macroName):
   if os.path.exists(macroName+"_C.so"):
      os.remove(macroName+"_C.so")
 
-def processHg(inputFileName, outputFileName, load, loopMode = False, btagVariation=0, phSFvariation=0):
+def processHg(analysis, inputFileName, outputFileName, load, loopMode = False, btagVariation=0, phSFvariation=0):
   if inputFileName is None:
     print "\nPlease specify the input file with the -i option."
     exit(1)
@@ -73,24 +73,34 @@ def processHg(inputFileName, outputFileName, load, loopMode = False, btagVariati
     weight = weights[shortName][0]
   print "weight for this sample:", weight
   
+  pdgCodeForBoson = None
+  if "Hg" in analysis:
+    pdgCodeForBoson = 25
+  elif "Zg" in analysis:
+    pdgCodeForBoson = 23
+  else:
+    print "invalid analysis, either 'Zg' or 'Hg'"
+    exit(1)
   # get the ntuplizer/tree tree from the file specified by argument 1
   tree = inputFile.Get("ntuplizer/tree")
   instance = HgammaSelector(tree)
   # run the HgammaSelector::Loop method
-  instance.Loop(outputFileName, btagVariation, phSFvariation, weight)
+  instance.Loop(pdgCodeForBoson, outputFileName, btagVariation, phSFvariation, weight)
 
 if __name__=="__main__":
-  from optparse import OptionParser
-  parser = OptionParser()
-  parser.add_option("-l", dest="load", action="store_true", default=False,
+  from argparse import ArgumentParser
+  parser = ArgumentParser()
+  parser.add_argument("-l", dest="load", action="store_true", default=False,
                     help="use this if you want to load the macro from a compiled library"  )
-  parser.add_option("-i",  dest="inputFileName",
+  parser.add_argument("-i",  dest="inputFileName",
                     help="the input file name"                                             )
-  parser.add_option("-o",  dest="outputFileName",
+  parser.add_argument("-o",  dest="outputFileName",
                     help="the output file name"                                            )
-  parser.add_option("-b",  type=int, dest="btagVariation", default=0,
+  parser.add_argument("-b",  type=int, dest="btagVariation", default=0,
                     help="vary the b-tagging SFs, 1 to vary up and -1 to vary down"        )
-  parser.add_option("-p",  type=int, dest="phSFVariation", default=0,
+  parser.add_argument("-p",  type=int, dest="phSFVariation", default=0,
                     help="vary the photon SFs, 1 to vary up and -1 to vary down"        )
-  (options, args) = parser.parse_args()
-  processHg(options.inputFileName, options.outputFileName, options.load, options.btagVariation, options.phSFvariation)
+  parser.add_argument("-a",  dest="analysis", required=True,
+                    help="the analysis, either 'Hg' or 'Zg'"        )
+  options = parser.parse_args()
+  processHg(analysis, options.inputFileName, options.outputFileName, options.load, options.btagVariation, options.phSFvariation)

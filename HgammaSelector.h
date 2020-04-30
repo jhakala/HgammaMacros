@@ -41,7 +41,7 @@ public :
   bool  phoEtaPassesCut                  = false ; 
   bool  phoPtPassesCut                   = false ; 
   bool  eventHasTightPho                 = false ; 
-  bool  eventHasHiggs_softdropJet           = false ; 
+  bool  eventHas_softdropJet           = false ; 
   int   eventsPassingTrigger_200         =    0  ;
   int   eventsPassingTrigger_165HE10     =    0  ;
   //int   eventsWithTightPho               =    0  ;
@@ -58,16 +58,15 @@ public :
   //float HT                             =    0. ;
   //float HT_ak4                         =    0. ;
   float leadingJetTau1                   = -999. ;
-  float higgs_softdropJetCorrMass           = -999. ;
-  float higgsJet_DDBtag                  = -999. ;
+  float softdropJetCorrMass           = -999. ;
+  float bJet_DDBtag                  = -999. ;
   //float test_looseloose                = -1.   ;
-  //bool higgs_looseloose                = false ;
-  float higgsSoftdropJetCorrMass    = -999. ;
-  float softdrop_higgsJetTau1         = -999. ;
+  //bool looseloose                = false ;
+  float softdrop_bJetTau1         = -999. ;
   float leadingJetTau2              = -999. ;
-  float softdrop_higgsJetTau2       = -999. ;
+  float softdrop_bJetTau2       = -999. ;
   float leadingJetTau3              = -999. ;
-  //float pruned_higgsJetTau3         = -999. ;
+  //float pruned_bJetTau3         = -999. ;
   float leadingPhPt                 =    0. ;
   float leadingPhEta                =    0. ;
   float leadingPhPhi                =    0. ;
@@ -75,23 +74,23 @@ public :
   float leadingPhMVA                =    0. ;
   float leadingPhCat                =    0. ;
   float matchedJett2t1              = -999. ;
-  float higgsJett2t1                = -999. ;
-  float higgsJet_abseta      = -999. ;
-  float higgsJet_eta         = -999. ;
-  float higgsJet_phi         = -999. ;
-  float higgsJet_pt          = -999. ;
+  float bJett2t1                = -999. ;
+  float bJet_abseta      = -999. ;
+  float bJet_eta         = -999. ;
+  float bJet_phi         = -999. ;
+  float bJet_pt          = -999. ;
   float leadingPhAbsEta             = -999. ;
   float cosThetaStar                =  -99. ;
   float phPtOverMgammaj             =  -99. ;
-  float phJetInvMass_softdrop_higgs   =  -99. ;
-  float phJetDeltaR_higgs           =  -99. ;
+  float phJetInvMass_softdrop   =  -99. ;
+  float phJetDeltaR           =  -99. ;
   float antibtagSF                  =  -99. ;
   float btagSF                      =  -99. ;
   float weightFactor                =  -99. ;
 
   TLorentzVector leadingPhoton              ;
   TLorentzVector tmpLeadingJet              ;
-  TLorentzVector higgsJet_softdrop            ;
+  TLorentzVector bJet_softdrop            ;
   TLorentzVector sumVector                  ;
   TLorentzVector boostedJet                 ;
   TLorentzVector boostedPho                 ;
@@ -109,9 +108,9 @@ public :
      bool tight_medium;
      bool tight_tight;
    }; 
-   leadingSubjets higgs_csvValues;
+   leadingSubjets csvValues;
    leadingSubjets sideLowFour_csvValues;
-   passSubjetCuts higgs_subjetCutDecisions;
+   passSubjetCuts subjetCutDecisions;
    passSubjetCuts sideLowFour_subjetCutDecisions;
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
@@ -542,7 +541,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop(string outputFileName, int btagVariation=0, int phSFvariation = 0, float mcWeight=1);
+   virtual void     Loop(int analysis, string outputFileName, int btagVariation=0, int phSFvariation = 0, float mcWeight=1);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    //virtual unsigned short     FindEvent(unsigned int run, unsigned int lumiBlock, unsigned long long event);

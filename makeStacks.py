@@ -1,34 +1,46 @@
 from os import path, makedirs, getcwd
-from optparse import OptionParser
+from argparse import ArgumentParser
 from copy import deepcopy
 
 # new script to make all stackplots.
 # John Hakala 7/14/16
 
-parser = OptionParser()
-parser.add_option("-c", "--cutName", dest="cutName",
+parser = ArgumentParser()
+parser.add_argument("-c", "--cutName", dest="cutName",
                   help="the set of cuts to apply"                                      )
-parser.add_option("-w", action="store_true", dest="withBtag"  , default=False,
+parser.add_argument("-a", dest="analysis"  , required=True,
+                  help="the analysis in question, either 'Hg' or 'Zg'"                 )
+parser.add_argument("-w", action="store_true", dest="withBtag"  , default=False,
                   help="if -w is used, then apply the btag cut"                        )
-parser.add_option("-r", action="store_false", dest="showSigs" , default=True,
+parser.add_argument("-r", action="store_false", dest="showSigs" , default=True,
                   help="if -r is used, then do not show signals overlaid."             )
-parser.add_option("-s", action="store_true", dest="sideband"  , default=False,
-                  help="if -s is used, then look in sideband, not Higgs window."       )
-parser.add_option("-f", action="store_true", dest="useScaleFactors" , default=False,
+parser.add_argument("-s", action="store_true", dest="sideband"  , default=False,
+                  help="if -s is used, then look in sideband, not signal window."       )
+parser.add_argument("-f", action="store_true", dest="useScaleFactors" , default=False,
                   help = "use Btagging scalefactors"                                   )
-parser.add_option("-l", action="store_false", dest="addLines"     , default=True,
+parser.add_argument("-l", action="store_false", dest="addLines"     , default=True,
                   help = "if -l is used, then do not draw a line at 1 in the ratios"   )
-parser.add_option("-g", action="store_true", dest="graphics"     , default=False,
+parser.add_argument("-g", action="store_true", dest="graphics"     , default=False,
                   help = "turn off batch mode"                                         )
-parser.add_option("-e", dest="edges",     
-                  help = "the higgs mass window edges: either 100110, 5070, or 80100"  )
-parser.add_option("-v", action="store_true", dest="vgMC", default=False,     
+parser.add_argument("-e", dest="edges",     
+                  help = "the signal mass window edges: either 100110, 5070, or 80100"  )
+parser.add_argument("-v", action="store_true", dest="vgMC", default=False,     
                   help = "if -v is used, make a stackplot for MC BG limits"            )
-(options, args) = parser.parse_args()
+options = parser.parse_args()
 
 
 from pyrootTools import isOrIsNot
 dinkoMethod = False
+
+higgsSigBand = [110.0, 140.0]
+zSigBand = [80.0, 100.0] # TODO: double check this against 2016 Zg
+if "Hg" in options.analysis:
+  sigBand = higgsSigBand
+elif "Zg" in options.analysis:
+  sigBand = zSigBand
+else:
+  print "invalid analysis, either 'Hg' or 'Zg'"
+  exit(1)
 
 if options.sideband is False:
   windowEdges="signalRegion"
@@ -42,8 +54,8 @@ if options.sideband is True:
     windowEdges = [100.0,110.0]
   elif options.edges in "5070":
     windowEdges = [50.0,70.0]
-  elif options.edges in "80100":
-    windowEdges = [80.0,100.0]
+  #elif options.edges in "80100":
+  #  windowEdges = [80.0,100.0]
   else:
     print "invalid higgs mass window supplied."
     exit(1)
@@ -67,7 +79,7 @@ if options.cutName != "preselection":
   print "MC backgrounds",
   if options.showSigs:
     print "and signals",
-  print "%s being shown in the signal region [110.0, 140.0]." % isOrIsNot(True, "plural")
+  print "%s being shown in the signal region:" % isOrIsNot(True, "plural"), str(sigBand)
 
 if windowEdges[0] == windowEdges[1]:
   print "something is funny with the windowEdges", windowEdges
@@ -148,8 +160,8 @@ for withBtag in [options.withBtag]:
       histsDir += "_vgMC"
 
     #print "going to pass makeAllHists windowEdges", windowEdges
-    print "calling makeAllHists(" + str(cutName)  + ", " +  str(withBtag) + ", " + str(sideband) + ", " + str(useScaleFactors) + ", " + str(windowEdges) +", " + str(vgMC) + ",  " + str(vgMC) + ")"
-    nonEmptyFilesDict = makeAllHists(cutName, withBtag, sideband, useScaleFactors, windowEdges, vgMC, vgMC)
+    print "calling makeAllHists(" + str(options.analysis) + ", " + str(cutName)  + ", " +  str(withBtag) + ", " + str(sideband) + ", " + str(useScaleFactors) + ", " + str(windowEdges) +", " + str(vgMC) + ",  " + str(vgMC) + ")"
+    nonEmptyFilesDict = makeAllHists(options.analysis, cutName, withBtag, sideband, useScaleFactors, windowEdges, vgMC, vgMC)
     #print "done making all histograms."
     thstacks=[]
     thstackCopies=[]
@@ -205,7 +217,7 @@ for withBtag in [options.withBtag]:
           if printNonempties:
             print "The nonempty files dict is:"
             print nonEmptyFilesDict
-          dirName = "weightedMCbgHists_%s" % cutName
+          dirName = "%s_weightedMCbgHists_%s" % (options.analysis, cutName)
           if cutName in "nMinus1":
             if withBtag:
               dirName += "_withBtag"
@@ -248,11 +260,11 @@ for withBtag in [options.withBtag]:
 
         if cutName in "nMinus1":
           if withBtag:
-            outDirName = "stackplots_softdrop_%s_withBtag" % cutName
+            outDirName = "%s_stackplots_softdrop_%s_withBtag" % (options.analysis, cutName)
           else:
-            outDirName = "stackplots_softdrop_%s_noBtag" % cutName
+            outDirName = "%s_stackplots_softdrop_%s_noBtag" % (options.analysis, cutName)
         else:
-          outDirName = "stackplots_softdrop_%s" % cutName
+          outDirName = "%s_stackplots_softdrop_%s" % (options.analysis, cutName)
         if sideband:
           if not cutName in "preselection":
             outDirName +="_sideband%i%i" %(windowEdges[0], windowEdges[1])
@@ -291,7 +303,7 @@ for withBtag in [options.withBtag]:
           thstacks[-1].GetYaxis().SetTitleSize(0.04)
           thstacks[-1].GetYaxis().SetTitleOffset(1.2)
 
-        dName = "weightedMCbgHists_%s" % cutName
+        dName = "%s_weightedMCbgHists_%s" % (options.analysis, cutName)
         if cutName in "nMinus1":
           if withBtag:
             dName += "_withBtag"
@@ -331,7 +343,7 @@ for withBtag in [options.withBtag]:
               rName += "_SF"
             if vgMC:
               rName += "_vgMC"
-            outDirName = "stackplots_softdrop_%s" % rName
+            outDirName = "%s_stackplots_softdrop_%s" % (analysis, rName)
             sigfiles.append(TFile("%s/%s"%(rName, sigFileName)))
             #print "adding signal file", sigfiles[-1].GetName(), "to the plot"
             sighists.append(sigfiles[-1].Get("hist_%s"%sigFileName))

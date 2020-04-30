@@ -3,17 +3,25 @@ from ROOT import TCut
 # functions to define the selection cuts for H(bb)Gamma 
 # John Hakala 7/13/16
 
-def getCutValues():
+def getCutValues(analysis):
   cutValues = {}
-  cutValues["minInvMass"]     = 720.0
+  cutValues["minInvMass"]     = 700.0
   #cutValues["minInvMass"]     = 500.0
   cutValues["phEta"]          = 1.4442
   cutValues["phPt"]           = 200.0
   cutValues["jetAbsEta"]      = 2.2
-  cutValues["jetPt"]          = 250.0
   cutValues["deltaR"]         = 1.1
   cutValues["ptOverM"]        = 0.35
   cutValues["DDB"]            = 0.9
+  print "analysis:", analysis
+  print "Hg in analysis", "Hg" in analysis
+  if "Hg" in analysis:
+    cutValues["jetPt"]          = 250.0
+  elif "Zg" in analysis:
+    cutValues["jetPt"]          = 180.0
+  else:
+    print "invalid analysis for HgCuts, either 'Hg' or 'Zg'"
+    exit(1)
   #cutValues["higgsWindow"]    = [110.0, 140.0]
   #cutValues["sidebandWindow"] = [100.0, 110.0]
   #cutValues["sideband5070Window"] = [50.0, 70.0]
@@ -30,26 +38,26 @@ def combineCuts(cutDict):
 
 def getVarKeys():
   varKeys = {}
-  varKeys["higgsJett2t1"]              = "t2t1"
-  varKeys["higgsJet_DDBtag"]           = "btagHolder"
-  varKeys["cosThetaStar"]              = "cosThetaStar"
-  varKeys["phPtOverMgammaj"]           = "ptOverM"
-  varKeys["leadingPhEta"]              = "phEta"
-  varKeys["leadingPhPhi"]              = "phPhi"
-  varKeys["leadingPhPt"]               = "phPt"
-  varKeys["leadingPhAbsEta"]           = "phEta"
+  varKeys["higgsJett2t1"]                = "t2t1"
+  varKeys["higgsJet_DDBtag"]             = "btagHolder"
+  varKeys["cosThetaStar"]                = "cosThetaStar"
+  varKeys["phPtOverMgammaj"]             = "ptOverM"
+  varKeys["leadingPhEta"]                = "phEta"
+  varKeys["leadingPhPhi"]                = "phPhi"
+  varKeys["leadingPhPt"]                 = "phPt"
+  varKeys["leadingPhAbsEta"]             = "phEta"
   varKeys["phJetInvMass_softdrop_higgs"] = "turnon"
-  varKeys["phJetDeltaR_higgs"]         = "deltaR"
-  varKeys["higgsJet_abseta"]    = "jetAbsEta"
-  varKeys["higgsJet_eta"]       = "jetEta"
-  varKeys["higgsJet_phi"]       = "jetPhi"
-  varKeys["higgsJet_pt"]        = "jetPt"
-  varKeys["higgs_softdropJetCorrMass"]    = "higgsWindow"
+  varKeys["phJetDeltaR_higgs"]           = "deltaR"
+  varKeys["higgsJet_abseta"]             = "jetAbsEta"
+  varKeys["higgsJet_eta"]                = "jetEta"
+  varKeys["higgsJet_phi"]                = "jetPhi"
+  varKeys["higgsJet_pt"]                 = "jetPt"
+  varKeys["higgs_softdropJetCorrMass"]   = "higgsWindow"
   return varKeys
 
-def makeHiggsWindow(sideband=False, windowEdges=[100.0,110.0]):
+def makeHiggsWindow(analysis, sideband=False, windowEdges=[100.0,110.0]):
     #print "makeHiggsWindow got sideband =", sideband, "and windowEdges =", windowEdges
-    cutValues = getCutValues()
+    cutValues = getCutValues(analysis)
     cuts = {}
     #window = "higgsWindow"
     #if sideband:
@@ -66,9 +74,9 @@ def makeHiggsWindow(sideband=False, windowEdges=[100.0,110.0]):
     #print "will return combineCuts(cuts)=", combineCuts(cuts)
     return combineCuts(cuts)
 
-def makeTrigger(which = "OR"):
+def makeTrigger(analysis, which = "OR"):
   # TODO TODO fix this "which = OR" business
-  cutValues = getCutValues()
+  cutValues = getCutValues(analysis)
   cuts = {}
   if which == "OR":
     #cuts["trigger"] = TCut( "triggerFired_175 > 0.5 || triggerFired_165HE10 > 0.5" )
@@ -76,8 +84,8 @@ def makeTrigger(which = "OR"):
   return combineCuts(cuts)
     
 
-def getDefaultCuts(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
-    cutValues = getCutValues()
+def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
+    cutValues = getCutValues(analysis)
 
     cuts = {} 
     cuts["phEta"]           = TCut( "leadingPhAbsEta<%f"           % cutValues["phEta"]      )
@@ -90,7 +98,7 @@ def getDefaultCuts(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]
     cuts ["btagHolder"]     = TCut()
     cuts ["cosThetaStar"]   = TCut()
     if useTrigger: 
-      cuts["trigger"]         = makeTrigger()
+      cuts["trigger"]         = makeTrigger(analysis)
     if region is "higgs":
       cuts["turnon"]   = TCut( "phJetInvMass_softdrop_higgs>%f"      % cutValues["minInvMass"]     )
       cuts["deltaR"]   = TCut( "phJetDeltaR_higgs>%f"              % cutValues["deltaR"]         )
@@ -100,7 +108,7 @@ def getDefaultCuts(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]
       cuts ["jetPt"]          = TCut("higgsJet_pt>%f"          % cutValues["jetPt"]      )
       #cuts["higgsWindowLow"] = TCut( "higgsPuppi_softdropJetCorrMass>%f"   % cutValues["higgsWindow"][0] )
       #cuts["higgsWindowHi"]  = TCut( "higgsPuppi_softdropJetCorrMass<%f"   % cutValues["higgsWindow"][1] )
-      cuts["higgsWindow"]     = makeHiggsWindow(sideband, windowEdges)
+      cuts["higgsWindow"]     = makeHiggsWindow(analysis, sideband, windowEdges)
     elif region is "side5070" or region is "side100110":
       if region is "side5070":
         index = "Three"
@@ -116,36 +124,36 @@ def getDefaultCuts(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]
       quit()
     return cuts
     
-def getBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100,110]):
+def getBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100,110]):
     if windowEdges == "signalRegion":
       windowEdges = [110.0, 140.0]
-    btagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
+    btagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     btagCuts.pop("antibtag")
     if scaleFactors:
       btagCuts.pop("btag")
     return combineCuts(btagCuts)
 
-def getAntiBtagComboCut(region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100.0,110.0]):
+def getAntiBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
       windowEdges = [110.0, 140.0]
-    antibtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
+    antibtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     antibtagCuts.pop("btag")
     if scaleFactors:
       antibtagCuts.pop("antibtag")
     return combineCuts(antibtagCuts)
 
-def getNoBtagComboCut(region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
+def getNoBtagComboCut(analysis, region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
       windowEdges = [110.0, 140.0]
-    nobtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
+    nobtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("btag")
     nobtagCuts.pop("antibtag")
     return combineCuts(nobtagCuts)
 
-def getNminus1ComboCut(region, popVar, withBtag, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
+def getNminus1ComboCut(analysis, region, popVar, withBtag, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
       windowEdges = [110.0, 140.0]
-    nobtagCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
+    nobtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("antibtag")
     if not withBtag:
       nobtagCuts.pop("btag")
@@ -153,8 +161,8 @@ def getNminus1ComboCut(region, popVar, withBtag, useTrigger, sideband=False, win
       nobtagCuts.pop(getVarKeys()[popVar])
     return combineCuts(nobtagCuts)
 
-def getPreselectionComboCut(region, useTrigger, sideband=False, windowEdges=[30.0,99999.9] ):
-    preselectionCuts = copy.deepcopy(getDefaultCuts(region, useTrigger, sideband, windowEdges))
+def getPreselectionComboCut(analysis, region, useTrigger, sideband=False, windowEdges=[30.0,99999.9] ):
+    preselectionCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     preselectionCuts.pop("phEta")
     preselectionCuts.pop("ptOverM")
     preselectionCuts.pop("turnon")

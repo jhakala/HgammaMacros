@@ -47,7 +47,7 @@ def getRangesDict(fineBinning=False):
     rangesDict[key]=higgsRangesDict[key]
   return rangesDict
 
-def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
+def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
   print "entering makeAllHists"
   if fineBinning != useReweighting:
     print "there was something funny happening... fineBinning and useReweighting were different..."
@@ -97,26 +97,26 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
             hist.Rebin(5)
           #print "cutName is:", cutName
           if   cutName in "btag":
-            cut = getBtagComboCut(region, useTrigger, sideband, useScaleFactors, windowEdges)
+            cut = getBtagComboCut(analysis, region, useTrigger, sideband, useScaleFactors, windowEdges)
             print "\n\n"
             print cut
           elif cutName in "antibtag":
-            cut = getAntiBtagComboCut(region, useTrigger, sideband, useScaleFactors, windowEdges)
+            cut = getAntiBtagComboCut(analysis, region, useTrigger, sideband, useScaleFactors, windowEdges)
           elif cutName in "nobtag":
             print "going to pass getNoBtagComboCut windowEdges", windowEdges 
-            cut = getNoBtagComboCut(region, useTrigger, sideband, windowEdges)
+            cut = getNoBtagComboCut(analysis, region, useTrigger, sideband, windowEdges)
           elif cutName in "nMinus1":
             print "going to pass getNminus1ComboCut windowEdges", windowEdges 
-            cut = getNminus1ComboCut(region, var, withBtag, useTrigger, sideband, windowEdges)
+            cut = getNminus1ComboCut(analysis, region, var, withBtag, useTrigger, sideband, windowEdges)
             print cut
           elif cutName in "preselection":
-            cut = getPreselectionComboCut(region, useTrigger, sideband, [30.0, 99999.9])
+            cut = getPreselectionComboCut(analysis, region, useTrigger, sideband, [30.0, 99999.9])
           else:
             print "Invalid category: %s" % cutName
             print "Must be btag, antibtag, nMinus1, or preselection."
             exit(1)
           if useTrigger:
-            cut += makeTrigger()
+            cut += makeTrigger(analysis)
           #print "cut is now", cut
             
           #if cutName is "preselection":
@@ -144,17 +144,17 @@ def makeAllHists(cutName, withBtag=True, sideband=False, useScaleFactors=False, 
           bareDirectory = ""
           if cutName in "nMinus1":
             if withBtag:
-                directory = "weightedMCbgHists_%s_withBtag"%cutName
+                directory = "%s_weightedMCbgHists_%s_withBtag"%(analysis, cutName)
                 bareDirectory = directory
             else:
-                directory = "weightedMCbgHists_%s_noBtag"%cutName
+                directory = "%s_weightedMCbgHists_%s_noBtag"%(analysis, cutName)
                 bareDirectory = directory
           else:
             if useScaleFactors:
-              directory = "weightedMCbgHists_%s"%cutName
+              directory = "%s_weightedMCbgHists_%s"%(analysis, cutName)
               bareDirectory = directory
             else:
-              directory = "weightedMCbgHists_%s"%cutName
+              directory = "%s_weightedMCbgHists_%s"%(analysis, cutName)
               bareDirectory = directory
           if sideband:
             if not cutName in "preselection":

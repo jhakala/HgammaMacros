@@ -1,10 +1,20 @@
 from os import path, makedirs, getcwd
+from sys import argv
 from glob import glob
 from runHgammaSelector import processHg
 from pprint import pprint
 
 debug = False
 first = True
+
+argvGood = False
+if len(argv) == 2:
+  if argv[1] == "Hg" or argv[1] == "Zg":
+    argvGood = True
+
+if not argvGood:
+  print "must supply the analysis, either 'Hg' or 'Zg'"
+  exit(1)
 
 #for variation in [("nom", 0), ("up", 1), ("down", -1)]:
 for btagVariation in [("nom", 0)]:
