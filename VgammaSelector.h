@@ -5,8 +5,8 @@
 // found on file: flatTuple.root
 //////////////////////////////////////////////////////////
 
-#ifndef HgammaSelector_h
-#define HgammaSelector_h
+#ifndef VgammaSelector_h
+#define VgammaSelector_h
 
 #include <math.h>
 
@@ -27,7 +27,7 @@
 #include "map"
 #include "unordered_map"
 
-class HgammaSelector {
+class VgammaSelector {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
@@ -41,7 +41,7 @@ public :
   bool  phoEtaPassesCut                  = false ; 
   bool  phoPtPassesCut                   = false ; 
   bool  eventHasTightPho                 = false ; 
-  bool  eventHas_softdropJet           = false ; 
+  bool  eventHasBoost_softdropJet           = false ; 
   int   eventsPassingTrigger_200         =    0  ;
   int   eventsPassingTrigger_165HE10     =    0  ;
   //int   eventsWithTightPho               =    0  ;
@@ -252,7 +252,7 @@ public :
    //vector<int>     *jetAK8_genParton_pdgID;
    //vector<int>     *jetAK8_nbHadrons;
    //vector<int>     *jetAK8_ncHadrons;
-   vector<float>   *jetAK8_csv;
+   //vector<float>   *jetAK8_csv;
    vector<float>   *jetAK8_tau1;
    vector<float>   *jetAK8_tau2;
    vector<float>   *jetAK8_tau3;
@@ -295,12 +295,12 @@ public :
    //vector<float>   *genJetAK8_prunedmass;
    //vector<float>   *genJetAK8_softdropmass;
    map<string,bool> *HLT_isFired;
-   Bool_t          passFilter_HBHE;
-   Bool_t          passFilter_HBHEIso;
-   Bool_t          passFilter_CSCTightHalo2015;
-   Bool_t          passFilter_GoodVtx;
-   Bool_t          passFilter_EEBadSc;
-   Bool_t          passFilter_muonBadTrack;
+   //Bool_t          passFilter_HBHE;
+   //Bool_t          passFilter_HBHEIso;
+   //Bool_t          passFilter_CSCTightHalo2015;
+   //Bool_t          passFilter_GoodVtx;
+   //Bool_t          passFilter_EEBadSc;
+   //Bool_t          passFilter_muonBadTrack;
    Int_t           EVENT_event;
    Int_t           EVENT_run;
    Int_t           EVENT_lumiBlock;
@@ -497,12 +497,12 @@ public :
    //TBranch        *b_genJetAK8_softdropmass;   //!
    //TBranch        *b_subjetAK8_pruned_csv;   //!
    TBranch        *b_HLT_isFired;   //!
-   TBranch        *b_passFilter_HBHE_;   //!
-   TBranch        *b_passFilter_HBHEIso_;   //!
-   TBranch        *b_passFilter_CSCTightHalo2015_;   //!
-   TBranch        *b_passFilter_GoodVtx_;   //!
-   TBranch        *b_passFilter_EEBadSc_;   //!
-   TBranch        *b_passFilter_muonBadTrack_;   //!
+   //TBranch        *b_passFilter_HBHE_;   //!
+   //TBranch        *b_passFilter_HBHEIso_;   //!
+   //TBranch        *b_passFilter_CSCTightHalo2015_;   //!
+   //TBranch        *b_passFilter_GoodVtx_;   //!
+   //TBranch        *b_passFilter_EEBadSc_;   //!
+   //TBranch        *b_passFilter_muonBadTrack_;   //!
    TBranch        *b_EVENT_event;   //!
    TBranch        *b_EVENT_run;   //!
    TBranch        *b_EVENT_lumiBlock;   //!
@@ -535,8 +535,8 @@ public :
 
    //std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::vector<unsigned long long> > >* eventMap;
 
-   HgammaSelector(TTree *tree=0);
-   virtual ~HgammaSelector();
+   VgammaSelector(TTree *tree=0);
+   virtual ~VgammaSelector();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
@@ -557,8 +557,8 @@ public :
 
 #endif
 
-#ifdef HgammaSelector_cxx
-HgammaSelector::HgammaSelector(TTree *tree) : fChain(0) 
+#ifdef VgammaSelector_cxx
+VgammaSelector::VgammaSelector(TTree *tree) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -569,19 +569,19 @@ HgammaSelector::HgammaSelector(TTree *tree) : fChain(0)
    Init(tree);
 }
 
-HgammaSelector::~HgammaSelector()
+VgammaSelector::~VgammaSelector()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
 }
 
-Int_t HgammaSelector::GetEntry(Long64_t entry)
+Int_t VgammaSelector::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
    if (!fChain) return 0;
    return fChain->GetEntry(entry);
 }
-Long64_t HgammaSelector::LoadTree(Long64_t entry)
+Long64_t VgammaSelector::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
    if (!fChain) return -5;
@@ -594,7 +594,7 @@ Long64_t HgammaSelector::LoadTree(Long64_t entry)
    return centry;
 }
 
-void HgammaSelector::Init(TTree *tree)
+void VgammaSelector::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -714,7 +714,7 @@ void HgammaSelector::Init(TTree *tree)
    //jetAK8_genParton_pdgID = 0;
    //jetAK8_nbHadrons = 0;
    //jetAK8_ncHadrons = 0;
-   jetAK8_csv = 0;
+   //jetAK8_csv = 0;
    jetAK8_tau1 = 0;
    jetAK8_tau2 = 0;
    jetAK8_tau3 = 0;
@@ -906,7 +906,7 @@ void HgammaSelector::Init(TTree *tree)
    //fChain->SetBranchAddress("jetAK8_genParton_pdgID", &jetAK8_genParton_pdgID, &b_jetAK8_genParton_pdgID);
    //fChain->SetBranchAddress("jetAK8_nbHadrons", &jetAK8_nbHadrons, &b_jetAK8_nbHadrons);
    //fChain->SetBranchAddress("jetAK8_ncHadrons", &jetAK8_ncHadrons, &b_jetAK8_ncHadrons);
-   fChain->SetBranchAddress("jetAK8_csv", &jetAK8_csv, &b_jetAK8_csv);
+   //fChain->SetBranchAddress("jetAK8_csv", &jetAK8_csv, &b_jetAK8_csv);
    fChain->SetBranchAddress("jetAK8_tau1", &jetAK8_tau1, &b_jetAK8_tau1);
    fChain->SetBranchAddress("jetAK8_tau2", &jetAK8_tau2, &b_jetAK8_tau2);
    fChain->SetBranchAddress("jetAK8_tau3", &jetAK8_tau3, &b_jetAK8_tau3);
@@ -958,12 +958,12 @@ void HgammaSelector::Init(TTree *tree)
    //fChain->SetBranchAddress("genJetAK8_prunedmass", &genJetAK8_prunedmass, &b_genJetAK8_prunedmass);
    //fChain->SetBranchAddress("genJetAK8_softdropmass", &genJetAK8_softdropmass, &b_genJetAK8_softdropmass);
    fChain->SetBranchAddress("HLT_isFired", &HLT_isFired, &b_HLT_isFired);
-   fChain->SetBranchAddress("passFilter_HBHE", &passFilter_HBHE, &b_passFilter_HBHE_);
-   fChain->SetBranchAddress("passFilter_HBHEIso", &passFilter_HBHEIso, &b_passFilter_HBHEIso_);
-   fChain->SetBranchAddress("passFilter_CSCTightHalo2015", &passFilter_CSCTightHalo2015, &b_passFilter_CSCTightHalo2015_);
-   fChain->SetBranchAddress("passFilter_GoodVtx", &passFilter_GoodVtx, &b_passFilter_GoodVtx_);
-   fChain->SetBranchAddress("passFilter_EEBadSc", &passFilter_EEBadSc, &b_passFilter_EEBadSc_);
-   fChain->SetBranchAddress("passFilter_muonBadTrack", &passFilter_muonBadTrack, &b_passFilter_muonBadTrack_);
+   //fChain->SetBranchAddress("passFilter_HBHE", &passFilter_HBHE, &b_passFilter_HBHE_);
+   //fChain->SetBranchAddress("passFilter_HBHEIso", &passFilter_HBHEIso, &b_passFilter_HBHEIso_);
+   //fChain->SetBranchAddress("passFilter_CSCTightHalo2015", &passFilter_CSCTightHalo2015, &b_passFilter_CSCTightHalo2015_);
+   //fChain->SetBranchAddress("passFilter_GoodVtx", &passFilter_GoodVtx, &b_passFilter_GoodVtx_);
+   //fChain->SetBranchAddress("passFilter_EEBadSc", &passFilter_EEBadSc, &b_passFilter_EEBadSc_);
+   //fChain->SetBranchAddress("passFilter_muonBadTrack", &passFilter_muonBadTrack, &b_passFilter_muonBadTrack_);
    //fChain->SetBranchAddress("passFilter_ECALlaser", &passFilter_ECALlaser, &b_passFilter_ECALlaser_);
    //fChain->SetBranchAddress("passFilter_TrkPOG", &passFilter_TrkPOG, &b_passFilter_TrkPOG_);
    //fChain->SetBranchAddress("passFilter_TrkPOG_manystrip", &passFilter_TrkPOG_manystrip, &b_passFilter_TrkPOG_manystrip_);
@@ -993,7 +993,7 @@ void HgammaSelector::Init(TTree *tree)
    Notify();
 }
 
-Bool_t HgammaSelector::Notify()
+Bool_t VgammaSelector::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -1004,18 +1004,18 @@ Bool_t HgammaSelector::Notify()
    return kTRUE;
 }
 
-void HgammaSelector::Show(Long64_t entry)
+void VgammaSelector::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t HgammaSelector::Cut(Long64_t entry)
+Int_t VgammaSelector::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
 // returns  1 if entry is accepted.
 // returns -1 otherwise.
    return 1;
 }
-#endif // #ifdef HgammaSelector_cxx
+#endif // #ifdef VgammaSelector_cxx

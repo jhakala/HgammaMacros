@@ -23,7 +23,7 @@ def deleteLibs(macroName):
   if os.path.exists(macroName+"_C.so"):
      os.remove(macroName+"_C.so")
 
-def processHg(analysis, inputFileName, outputFileName, load, loopMode = False, btagVariation=0, phSFvariation=0):
+def processVg(analysis, inputFileName, outputFileName, load, loopMode = False, btagVariation=0, phSFvariation=0, debug=False):
   if inputFileName is None:
     print "\nPlease specify the input file with the -i option."
     exit(1)
@@ -35,43 +35,44 @@ def processHg(analysis, inputFileName, outputFileName, load, loopMode = False, b
     exit(1)
   
   
-  print "\nInput file is %s\n" % inputFileName
+  print "    Input file: %s" % inputFileName
   presentTense = "load" if load else "compile"
   pastTense  = "loaded" if load else "compiled"
-  print "\nAttempting to %s HgammaSelector.\n" % presentTense
+  if debug:
+    print "\nAttempting to %s VgammaSelector.\n" % presentTense
   
-  # call the compiling function to compile the HgammaSelector, then run its Loop() method
+  # call the compiling function to compile the VgammaSelector, then run its Loop() method
   if presentTense=="compile" and not loopMode:
-     deleteLibs("HgammaSelector")
+     deleteLibs("VgammaSelector")
      # compile the macro using g++ and check compilation status
-     exitCode = gSystem.CompileMacro("HgammaSelector.C", "gOck")
+     exitCode = gSystem.CompileMacro("VgammaSelector.C", "gOck")
      success=(exitCode==1)
   elif presentTense=="load" and not loopMode:
-     exitCode = gSystem.Load('HgammaSelector_C')
+     exitCode = gSystem.Load('VgammaSelector_C')
      success=(exitCode>=-1)
   if not loopMode:
     if not success:
-       print "\nError... HgammaSelector failed to %s. :-("%presentTense
-       print "Make sure you're using an up-to-date version of ROOT by running cmsenv in a 7_4_X>=16 CMSSW area."
+       print "\nError... VgammaSelector failed to %s. :-("%presentTense
        exit(1)
   
-  print "\nHgammaSelector %s successfully."%pastTense
+  if debug:
+    print "\nVgammaSelector %s successfully."%pastTense
   if presentTense=="compile" and not loopMode:
-     gSystem.Load('HgammaSelector_C')
+     gSystem.Load('VgammaSelector_C')
   inputFile = TFile(inputFileName)
   
-  print "testing"
+  #print "testing"
   from pprint import pprint
   from os.path import basename
   sampleDirs = getSamplesDirs()
   weights = getMCbgWeightsDict(sampleDirs["bkgSmall3sDir"])
-  pprint(weights)
+  #pprint(weights)
   shortName = basename(inputFile.GetName()).replace("smallified_", "")
-  print shortName
+  #print shortName
   weight = 1.
   if shortName in weights.keys():
     weight = weights[shortName][0]
-  print "weight for this sample:", weight
+  print "    weight for this sample:", weight
   
   pdgCodeForBoson = None
   if "Hg" in analysis:
@@ -83,8 +84,8 @@ def processHg(analysis, inputFileName, outputFileName, load, loopMode = False, b
     exit(1)
   # get the ntuplizer/tree tree from the file specified by argument 1
   tree = inputFile.Get("ntuplizer/tree")
-  instance = HgammaSelector(tree)
-  # run the HgammaSelector::Loop method
+  instance = VgammaSelector(tree)
+  # run the VgammaSelector::Loop method
   instance.Loop(pdgCodeForBoson, outputFileName, btagVariation, phSFvariation, weight)
 
 if __name__=="__main__":
@@ -103,4 +104,4 @@ if __name__=="__main__":
   parser.add_argument("-a",  dest="analysis", required=True,
                     help="the analysis, either 'Hg' or 'Zg'"        )
   options = parser.parse_args()
-  processHg(analysis, options.inputFileName, options.outputFileName, options.load, options.btagVariation, options.phSFvariation)
+  processVg(analysis, options.inputFileName, options.outputFileName, options.load, options.btagVariation, options.phSFvariation)

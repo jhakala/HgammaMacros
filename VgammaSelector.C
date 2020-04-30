@@ -1,5 +1,5 @@
-#define HgammaSelector_cxx
-#include "HgammaSelector.h"
+#define VgammaSelector_cxx
+#include "VgammaSelector.h"
 #include "LinkDef.h"
 
 using namespace std;
@@ -9,16 +9,15 @@ using namespace std;
 // The trees differ in the AK8 jet mass cuts -- different windows are used for different bosons 
 // John Hakala -- May 11, 2016
 
-void HgammaSelector::Loop(int analysis, string outputFileName, int btagVariation, int phSFvariation, float mcWeight) {
-  std::cout << "\n===========================\nHgammaSelector starting!\n===========================" << std::endl;
-  if      (analysis == 25) std::cout << "Working on Hg analysis" << std::endl;
-  else if (analysis == 23) std::cout << "Working on Zg analysis" << std::endl;
+void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation, int phSFvariation, float mcWeight) {
+  if      (analysis == 25) std::cout << "    -> VgammaSelector - Working on Hg analysis" << std::endl;
+  else if (analysis == 23) std::cout << "    -> VgammaSelector - working on Zg analysis" << std::endl;
   else                   {
                            std::cout << "Invalid analysis, either 25 for Hgamma or 23 for Zgamma" << std::endl;
                            exit(EXIT_FAILURE);
                          }
                             
-  cout << "output filename is: " << outputFileName << endl;
+  cout << "    -> output filename is: " << outputFileName << endl;
   // Flags for running this macro
   bool debugFlag                     =  false ;  // If debugFlag is false, the trigger checking couts won't appear and the loop won't stop when it reaches entriesToCheck
   bool debugSF                       =  false ; 
@@ -139,7 +138,7 @@ void HgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
   TF1* turnOnCurve = new TF1("erf", "[0]*TMath::Erf((x-[1])/[2])+[3]", 0, 5000);
   turnOnCurve->SetParameters(0.493428, 197.58, 62.6643, 0.500232);
   
-  cout << "\n\nStarting HgammaSelector::Loop().\n" << endl;
+  cout << "    -> starting VgammaSelector::Loop()" << endl;
   // Loop over all events
   for (Long64_t jentry=0; jentry<nentries;++jentry) {
     Long64_t ientry = LoadTree(jentry);
@@ -190,7 +189,7 @@ void HgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
     // Print out trigger information
     if (jentry%reportEvery==0) {
       cout.flush();
-      cout << fixed << setw(4) << setprecision(2) << (float(jentry)/float(nentries))*100 << "% done: Scanned " << jentry << " events.        " << '\r';
+      cout << "    -> " << fixed << setw(4) << setprecision(2) << (float(jentry)/float(nentries))*100 << "% done: Scanned " << jentry << " events.        " << '\r';
     }
     if (debugFlag && dumpEventInfo) cout << "\nIn event number " << jentry << ":" << endl;
     if (checkTrigger && debugFlag) cout << "     Trigger info is: " << endl;
@@ -333,19 +332,17 @@ void HgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
   outputFile->Close();
 
   cout.flush();
-  cout << "100% done: Scanned " << nentries << " events.       " << endl;
-  cout << "HLT_Photon200 fired " << eventsPassingTrigger_200 << " times" << endl;
-  cout << "The HLT_Photon200 efficiency was " << (float) eventsPassingTrigger_200/ (float)nentries << endl;
-  cout << "HLT_Photon165_HE10 fired " << eventsPassingTrigger_165HE10 << " times" << endl;
-  cout << "The HLT_Photon165_HE10 efficiency was " << (float) eventsPassingTrigger_165HE10/ (float)nentries << endl;
-  cout << "\nCompleted output file is " << outputFileName.c_str() <<".\n" << endl;
+  cout << "    -> 100% done: Scanned " << nentries << " events.       " << endl;
+  cout << "      ->HLT_Photon200 fired " << eventsPassingTrigger_200 << " times";
+  cout << "(efficiency " << (float) eventsPassingTrigger_200/ (float)nentries << ")" << endl;
+  cout << "    -> Completed output file is " << outputFileName.c_str() <<"." << endl;
 }
 
-float HgammaSelector::computeOverallSF(std::string category, float jetPt, float jetDDBtag, float photonPt, float photonEta, bool debug, int variation, int phSFvariation) {
+float VgammaSelector::computeOverallSF(std::string category, float jetPt, float jetDDBtag, float photonPt, float photonEta, bool debug, int variation, int phSFvariation) {
   return computePhotonSF(photonPt, photonEta, debug, phSFvariation)*computeBtagSF(category, jetPt, jetDDBtag, debug, variation);
 }
 
-float HgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debug, int phSFvariation) {
+float VgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debug, int phSFvariation) {
   float variedSF = 1.;
   if (phSFvariation != 0 && phSFvariation != 1 && phSFvariation != -1) {
     std::cout << "Error, photon SF variation must be 0 (unvaried), +1 (varied up), or -1 (varied down)" << std::endl;
@@ -376,7 +373,7 @@ float HgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debu
   }
   return variedSF;
 }
-float HgammaSelector::computeBtagSF(std::string category, float jetPt, float jetDDBtag, bool debug, int variation) {
+float VgammaSelector::computeBtagSF(std::string category, float jetPt, float jetDDBtag, bool debug, int variation) {
   //  variation:
   //  0 = no variation
   //  1 = upward variation
@@ -439,7 +436,7 @@ float HgammaSelector::computeBtagSF(std::string category, float jetPt, float jet
 }
 
 
-//HgammaSelector::leadingSubjets HgammaSelector::getLeadingSubjets(vector<float> softdropJet) {
+//VgammaSelector::leadingSubjets VgammaSelector::getLeadingSubjets(vector<float> softdropJet) {
 //  // Note: in miniaod, there are only two subjets stored since the declustering is done recursively and miniaod's declustering stops after splitting into two subjets
 //  leadingSubjets topCSVs;
 //  topCSVs.leading = -10.;
@@ -457,7 +454,7 @@ float HgammaSelector::computeBtagSF(std::string category, float jetPt, float jet
 //}
 
 
-//HgammaSelector::passSubjetCuts HgammaSelector::getSubjetCutDecisions(leadingSubjets subjets) {
+//VgammaSelector::passSubjetCuts VgammaSelector::getSubjetCutDecisions(leadingSubjets subjets) {
 //  float looseWP  = 0.605;
 //  float mediumWP = 0.89;
 //  float tightWP  = 0.97;
@@ -481,7 +478,7 @@ float HgammaSelector::computeBtagSF(std::string category, float jetPt, float jet
 //  return decisions;
 //}
 
-//unsigned short HgammaSelector::FindEvent(unsigned int run, unsigned int lumiBlock, unsigned long long event) {
+//unsigned short VgammaSelector::FindEvent(unsigned int run, unsigned int lumiBlock, unsigned long long event) {
 //  std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::vector<unsigned long long> > >::iterator runIt = eventMap->find(run);
 //  if (runIt != eventMap->end()) {
 //    std::unordered_map<unsigned int, std::vector<unsigned long long> >::iterator lumiIt = eventMap->at(run).find(lumiBlock);
