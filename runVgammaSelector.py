@@ -64,7 +64,7 @@ def processVg(analysis, inputFileName, outputFileName, load, loopMode = False, b
   #print "testing"
   from pprint import pprint
   from os.path import basename
-  sampleDirs = getSamplesDirs()
+  sampleDirs = getSamplesDirs(analysis)
   weights = getMCbgWeightsDict(sampleDirs["bkgSmall3sDir"])
   #pprint(weights)
   shortName = basename(inputFile.GetName()).replace("smallified_", "")

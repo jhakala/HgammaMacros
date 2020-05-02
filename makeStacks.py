@@ -6,7 +6,7 @@ from copy import deepcopy
 # John Hakala 7/14/16
 
 parser = ArgumentParser()
-parser.add_argument("-c", "--cutName", dest="cutName",
+parser.add_argument("-c", "--cutName", dest="cutName", required=True,
                   help="the set of cuts to apply"                                      )
 parser.add_argument("-a", dest="analysis"  , required=True,
                   help="the analysis in question, either 'Hg' or 'Zg'"                 )
@@ -118,7 +118,7 @@ for withBtag in [options.withBtag]:
   if windowEdges == "signalRegion":
     blindData = True
 
-  sampleDirs = getSamplesDirs()
+  sampleDirs = getSamplesDirs(options.analysis)
 
   rangesDict = getRangesDict(vgMC)
   #print ""
@@ -140,17 +140,17 @@ for withBtag in [options.withBtag]:
   #print ""
   #print ""
   #print "getMCbgWeights(): "
-  mcBgWeights = getMCbgWeightsDict(sampleDirs["bkgSmall3sDir"])
+  mcBgWeights = getMCbgWeightsDict(options.analysis, sampleDirs["bkgSmall3sDir"])
   #print mcBgWeights
-  treekey="higgs"
+  treekey="ddboost"
   for cutName in [options.cutName]:
     if cutName in [ "nMinus1" ]:
       if withBtag:
-        histsDir = "%s/weightedMCbgHists_%s_withBtag"%(getcwd(), cutName )
+        histsDir = "%s/%s_weightedMCbgHists_%s_withBtag"%(getcwd(), options.analysis, cutName )
       if not withBtag:
-        histsDir = "%s/weightedMCbgHists_%s_noBtag"%(getcwd(), cutName )
+        histsDir = "%s/%s_weightedMCbgHists_%s_noBtag"%(getcwd(), options.analysis, cutName )
     else:
-      histsDir = "%s/weightedMCbgHists_%s"%(getcwd(), cutName)
+      histsDir = "%s/%s_weightedMCbgHists_%s"%(getcwd(), options.analysis, cutName)
     if sideband:
       if not cutName in "preselection":
         histsDir += "_sideband%i%i" % (windowEdges[0], windowEdges[1])
@@ -330,8 +330,8 @@ for withBtag in [options.withBtag]:
           colors[2000]=kMagenta
           colors[3000]=kRed
           for sigMass in [700, 1000, 2000, 3000]:
-            sigFileName = varkey+"_"+treekey+"_Hg-%i%s.root"%(sigMass, indexLabel)
-            rName = "weightedMCbgHists_%s" % cutName
+            sigFileName = varkey+"_"+treekey+"_%s-%i%s.root"%(options.analysis, sigMass, indexLabel)
+            rName = "%s_weightedMCbgHists_%s" % (options.analysis, cutName)
             if cutName in "nMinus1":
               if withBtag:
                 rName += "_withBtag"
@@ -343,14 +343,14 @@ for withBtag in [options.withBtag]:
               rName += "_SF"
             if vgMC:
               rName += "_vgMC"
-            outDirName = "%s_stackplots_softdrop_%s" % (analysis, rName)
+            outDirName = "%s_stackplots_softdrop_%s" % (options.analysis, rName)
             sigfiles.append(TFile("%s/%s"%(rName, sigFileName)))
             #print "adding signal file", sigfiles[-1].GetName(), "to the plot"
             sighists.append(sigfiles[-1].Get("hist_%s"%sigFileName))
             sighists[-1].SetLineStyle(3)
             sighists[-1].SetLineWidth(2)
             sighists[-1].SetLineColor(colors[sigMass])
-            sighists[-1].SetTitle("H#gamma(%r TeV)"%(sigMass/float(1000)))
+            sighists[-1].SetTitle("%s#gamma(%r TeV)"%(options.analysis[0],sigMass/float(1000)))
             #sighists[-1].SetMarkerSize(0)
             sighists[-1].Draw("hist SAME")
 

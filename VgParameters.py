@@ -2,17 +2,17 @@
 # John Hakala -  May 16, 2016
 from ROOT import *
 
-def getSamplesDirs():
+def getSamplesDirs(analysis):
   response = {}
   response["signalsSmall3sDir"] = "/Users/jhakala/HgammaMacros/organize_smallifications/signals"
   response["bkgSmall3sDir"]       = "/Users/jhakala/HgammaMacros/organize_smallifications/backgrounds"
   response["dataSmall3Dir"]       = "/Users/jhakala/HgammaMacros/organize_smallifications/data"
   response["dataSmall3File"]       = "/Users/jhakala/HgammaMacros/organize_smallifications/data/smallified_data_2017.root"
 
-  response["bkgDDdir"]            = "/Users/jhakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/backgrounds"
-  response["sigDDdir"]         = "/Users/jhakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/signals"
-  response["dataDDdir"]          = "/Users/jhakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/data/"
-  response["dataDDFile"]          = "/Users/jhakala/HgammaMacros/organize_DDs_btag-nom_phSF-nom/data/ddTree_data_2017.root"
+  response["bkgDDdir"]            = "/Users/jhakala/HgammaMacros/organize_%s_DDs_btag-nom_phSF-nom/backgrounds" % analysis
+  response["sigDDdir"]            = "/Users/jhakala/HgammaMacros/organize_%s_DDs_btag-nom_phSF-nom/signals" % analysis
+  response["dataDDdir"]           = "/Users/jhakala/HgammaMacros/organize_%s_DDs_btag-nom_phSF-nom/data/" % analysis
+  response["dataDDFile"]          = "/Users/jhakala/HgammaMacros/organize_%s_DDs_btag-nom_phSF-nom/data/ddTree_data_2017.root" % analysis
   return response
 
 def getNormalizations():
@@ -50,31 +50,31 @@ def getMassWindows():
   massWindows[3500] = [2800, 4200]
   return massWindows
 
-def getSigNevents():
+def getSigNevents(analysis):
   sigNevents = {}
   for mass in getNormalizations().keys():
-    flattuple = TFile("%s/smallified_Hg-%s.root"%(getSamplesDirs()["signalsSmall3sDir"], mass))
+    flattuple = TFile("%s/smallified_%s-%s.root"%(getSamplesDirs()["signalsSmall3sDir"], analysis, mass))
     hCounter = flattuple.Get("ntuplizer/hCounter")
     sigNevents[mass] = hCounter.GetBinContent(1)
   return sigNevents
 
 def getVariableDict():
   varDict = {}
-  varDict["higgsJet_abseta"]    = "#||{#eta_{J}}"
-  varDict["higgsJet_eta"]       = "#eta_{J}"
-  varDict["higgsJet_phi"]       = "#phi_{J}"
-  varDict["higgsJet_pt"]        = "p_{T}^{J}"
+  varDict["bJet_abseta"]    = "#||{#eta_{J}}"
+  varDict["bJet_eta"]       = "#eta_{J}"
+  varDict["bJet_phi"]       = "#phi_{J}"
+  varDict["bJet_pt"]        = "p_{T}^{J}"
   varDict["leadingPhEta"]              = "#eta_{#gamma}"
-  varDict["higgsJet_DDBtag"]           = "Hb#bar{b} tagger discriminant"
-  varDict["phJetDeltaR_higgs"]         = "#DeltaR(#gamma, jet)"
+  varDict["bJet_DDBtag"]           = "DDB discriminant"
+  varDict["phJetDeltaR"]         = "#DeltaR(#gamma, jet)"
   varDict["leadingPhPt"]               = "p_{T}^{#gamma} (GeV)"
-  varDict["higgsJett2t1"]              = "#tau_{21}"
+  varDict["bJett2t1"]              = "#tau_{21}"
   varDict["leadingPhAbsEta"]           = "#||{#eta_{#gamma}}"
   varDict["phPtOverMgammaj"]           = "p_{T}^{#gamma}/m_{#gammaJ}  "
   varDict["leadingPhPhi"]              = "#phi_{#gamma}"
   varDict["cosThetaStar"]              = "#||{cos(#theta*)}"
-  varDict["phJetInvMass_softdrop_higgs"] = "m_{#gammaJ} (GeV)"
-  varDict["higgs_softdropJetCorrMass"]    = "m_{J}^{PUPPI+SD} (GeV)"
+  varDict["phJetInvMass_softdrop"] = "m_{#gammaJ} (GeV)"
+  varDict["softdropJetCorrMass"]    = "m_{J}^{PUPPI+SD} (GeV)"
   varDict["mcWeight"]    = "weight on MC background event"
   return varDict
 

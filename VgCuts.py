@@ -38,21 +38,21 @@ def combineCuts(cutDict):
 
 def getVarKeys():
   varKeys = {}
-  varKeys["higgsJett2t1"]                = "t2t1"
-  varKeys["higgsJet_DDBtag"]             = "btagHolder"
+  varKeys["bJett2t1"]                = "t2t1"
+  varKeys["bJet_DDBtag"]             = "btagHolder"
   varKeys["cosThetaStar"]                = "cosThetaStar"
   varKeys["phPtOverMgammaj"]             = "ptOverM"
   varKeys["leadingPhEta"]                = "phEta"
   varKeys["leadingPhPhi"]                = "phPhi"
   varKeys["leadingPhPt"]                 = "phPt"
   varKeys["leadingPhAbsEta"]             = "phEta"
-  varKeys["phJetInvMass_softdrop_higgs"] = "turnon"
-  varKeys["phJetDeltaR_higgs"]           = "deltaR"
-  varKeys["higgsJet_abseta"]             = "jetAbsEta"
-  varKeys["higgsJet_eta"]                = "jetEta"
-  varKeys["higgsJet_phi"]                = "jetPhi"
-  varKeys["higgsJet_pt"]                 = "jetPt"
-  varKeys["higgs_softdropJetCorrMass"]   = "higgsWindow"
+  varKeys["phJetInvMass_softdrop"] = "turnon"
+  varKeys["phJetDeltaR"]           = "deltaR"
+  varKeys["bJet_abseta"]             = "jetAbsEta"
+  varKeys["bJet_eta"]                = "jetEta"
+  varKeys["bJet_phi"]                = "jetPhi"
+  varKeys["bJet_pt"]                 = "jetPt"
+  varKeys["softdropJetCorrMass"]   = "higgsWindow"
   return varKeys
 
 def makeHiggsWindow(analysis, sideband=False, windowEdges=[100.0,110.0]):
@@ -69,8 +69,8 @@ def makeHiggsWindow(analysis, sideband=False, windowEdges=[100.0,110.0]):
     #    window = "sideband80100Window"
     #  elif windowEdges == [30.0,99999.9]:
     #    window = "preselectionWindow"
-    cuts["higgsWindowLow"] = TCut( "higgs_softdropJetCorrMass>%f"   % windowEdges[0] )
-    cuts["higgsWindowHi"]  = TCut( "higgs_softdropJetCorrMass<%f"   % windowEdges[1] )
+    cuts["higgsWindowLow"] = TCut( "softdropJetCorrMass>%f"   % windowEdges[0] )
+    cuts["higgsWindowHi"]  = TCut( "softdropJetCorrMass<%f"   % windowEdges[1] )
     #print "will return combineCuts(cuts)=", combineCuts(cuts)
     return combineCuts(cuts)
 
@@ -99,26 +99,26 @@ def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[10
     cuts ["cosThetaStar"]   = TCut()
     if useTrigger: 
       cuts["trigger"]         = makeTrigger(analysis)
-    if region is "higgs":
-      cuts["turnon"]   = TCut( "phJetInvMass_softdrop_higgs>%f"      % cutValues["minInvMass"]     )
-      cuts["deltaR"]   = TCut( "phJetDeltaR_higgs>%f"              % cutValues["deltaR"]         )
-      cuts["jetAbsEta"]       = TCut( "higgsJet_abseta<%f"         % cutValues["jetAbsEta"]      )
-      cuts["btag"]     = TCut( "higgsJet_DDBtag>%f"                % cutValues["DDB"]            )
-      cuts["antibtag"] = TCut( "higgsJet_DDBtag<%f"                % cutValues["DDB"]            )
-      cuts ["jetPt"]          = TCut("higgsJet_pt>%f"          % cutValues["jetPt"]      )
+    if region is "ddboost":
+      cuts["turnon"]   = TCut( "phJetInvMass_softdrop>%f"      % cutValues["minInvMass"]     )
+      cuts["deltaR"]   = TCut( "phJetDeltaR>%f"              % cutValues["deltaR"]         )
+      cuts["jetAbsEta"]       = TCut( "bJet_abseta<%f"         % cutValues["jetAbsEta"]      )
+      cuts["btag"]     = TCut( "bJet_DDBtag>%f"                % cutValues["DDB"]            )
+      cuts["antibtag"] = TCut( "bJet_DDBtag<%f"                % cutValues["DDB"]            )
+      cuts ["jetPt"]          = TCut("bJet_pt>%f"          % cutValues["jetPt"]      )
       #cuts["higgsWindowLow"] = TCut( "higgsPuppi_softdropJetCorrMass>%f"   % cutValues["higgsWindow"][0] )
       #cuts["higgsWindowHi"]  = TCut( "higgsPuppi_softdropJetCorrMass<%f"   % cutValues["higgsWindow"][1] )
       cuts["higgsWindow"]     = makeHiggsWindow(analysis, sideband, windowEdges)
-    elif region is "side5070" or region is "side100110":
-      if region is "side5070":
-        index = "Three"
-      else:
-        index = "Four"
-      cuts["turnon"]   = TCut( "phJetInvMass_softdrop_sideLow%s>%f" % (index, cutValues["minInvMass"] ))
-      cuts["deltaR"]   = TCut( "phJetDeltaR_sideLow%s>%f"         % (index, cutValues["deltaR"]     ))
-      cuts["jetEta"]   = TCut( "sideLow%sJet_abseta<%f"    % (index, cutValues["jetEta"]     ))
-      cuts["btag"]     = TCut( "sideLow%sJet_DDBtag>%f"           % (index, cutValues["DDB"]        ))
-      cuts["antibtag"] = TCut( "sideLow%sJet_DDBtag<%f"           % (index, cutValues["DDB"]        ))
+    #elif region is "side5070" or region is "side100110":
+    #  if region is "side5070":
+    #    index = "Three"
+    #  else:
+    #    index = "Four"
+    #  cuts["turnon"]   = TCut( "phJetInvMass_softdrop_sideLow%s>%f" % (index, cutValues["minInvMass"] ))
+    #  cuts["deltaR"]   = TCut( "phJetDeltaR_sideLow%s>%f"         % (index, cutValues["deltaR"]     ))
+    #  cuts["jetEta"]   = TCut( "sideLow%sJet_abseta<%f"    % (index, cutValues["jetEta"]     ))
+    #  cuts["btag"]     = TCut( "sideLow%sJet_DDBtag>%f"           % (index, cutValues["DDB"]        ))
+    #  cuts["antibtag"] = TCut( "sideLow%sJet_DDBtag<%f"           % (index, cutValues["DDB"]        ))
     else:
       print "Invalid region!!!"
       quit()

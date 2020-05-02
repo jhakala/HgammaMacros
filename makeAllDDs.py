@@ -17,8 +17,8 @@ if not argvGood:
   exit(1)
 
 if argvGood:
-  print"""  -----------------------------  
-|  making all ddTrees for %s" |
+  print""" -----------------------------  
+|  making all ddTrees for %s  |
  -----------------------------"""% argv[1] 
 
 #for variation in [("nom", 0), ("up", 1), ("down", -1)]:
@@ -51,9 +51,9 @@ for btagVariation in [("nom", 0)]:
       for inputFile in inputFiles:
         if first:
           print "  about to call the first processVg" 
-          processVg(argv[1], inputFile, inputFile.replace("smallified", "ddTree").replace("smallifications", "DDs_btag-%s_phSF-%s" % (btagVariation[0], phSFvariation[0])), False, False, btagVariation[1], phSFvariation[1])
+          processVg(argv[1], inputFile, inputFile.replace("smallified", "ddTree").replace("smallifications", "%s_DDs_btag-%s_phSF-%s" % (argv[1], btagVariation[0], phSFvariation[0])), False, False, btagVariation[1], phSFvariation[1])
           first = False
         elif not debug:
-          processVg(argv[1], inputFile, inputFile.replace("smallified", "ddTree").replace("smallifications", "DDs_btag-%s_phSF-%s" % (btagVariation[0], phSFvariation[0])), True, True, btagVariation[1], phSFvariation[1])
+          processVg(argv[1], inputFile, inputFile.replace("smallified", "ddTree").replace("smallifications", "%s_DDs_btag-%s_phSF-%s" % (argv[1], btagVariation[0], phSFvariation[0])), True, True, btagVariation[1], phSFvariation[1])
 
 print "\n\ndone making all ddTrees for %s\n---------------------------------------" % argv[1]

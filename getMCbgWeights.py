@@ -13,14 +13,14 @@ def getMCbgSampleKfactors():
   sampleXsects = {}
   sampleXsects[   "gJets100To200.root"   ]   = 1.6*.82
   sampleXsects[   "gJets200To400.root"   ]   = 1.6*.82
-  sampleXsects[   "gJets400To600.root"   ]   = 1.4*.82
-  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*.82
+  sampleXsects[   "gJets400To600.root"   ]   = 1.4*.95
+  sampleXsects[   "gJets600ToInf.root"   ]   = 1.0*.95
   sampleXsects[   "qcd300To500.root"     ]   =.7 *.75
   sampleXsects[   "qcd500To700.root"     ]   =.7 *.75
   sampleXsects[   "qcd700To1000.root"    ]   =.7 *.75
-  sampleXsects[   "qcd1000To1500.root"   ]   =.7 *.75
-  sampleXsects[   "qcd1500To2000.root"   ]   =.7 *.75
-  sampleXsects[   "qcd2000ToInf.root"    ]   =.7 *.75
+  sampleXsects[   "qcd1000To1500.root"   ]   =.7 *.6
+  sampleXsects[   "qcd1500To2000.root"   ]   =.7 *.45
+  sampleXsects[   "qcd2000ToInf.root"    ]   =.7 *.45
   #sampleXsects[   "qcd200to300.root"     ]  =   # 1   
   #sampleXsects[   "dyJetsQQ-180.root"    ]  =   # 1.23  
   #sampleXsects[ "wJetsQQ-180.root" ]        =   # 1.21*0.8 
@@ -57,23 +57,23 @@ def getMCbgSampleEvents(small3Dir):
     sampleEvents[key]=nEvents;
   return sampleEvents
 
-def getSignalsToInclude():
-  return [  "Hg-700.root",
-            "Hg-800.root",
-            "Hg-1000.root",
-            "Hg-1200.root",
-            "Hg-1400.root",
-            "Hg-1600.root",
-            #"Hg-1800.root",
-            "Hg-2000.root",
-            "Hg-2200.root",
-            "Hg-2400.root",
-            "Hg-2600.root",
-            "Hg-3000.root",
-            "Hg-3500.root",
+def getSignalsToInclude(analysis):
+  return [  "%s-700.root"%analysis,
+            "%s-800.root"%analysis,
+            "%s-1000.root"%analysis,
+            "%s-1200.root"%analysis,
+            "%s-1400.root"%analysis,
+            "%s-1600.root"%analysis,
+            #%s-1800.root"%analysis,
+            "%s-2000.root"%analysis,
+            "%s-2200.root"%analysis,
+            "%s-2400.root"%analysis,
+            "%s-2600.root"%analysis,
+            "%s-3000.root"%analysis,
+            "%s-3500.root"%analysis,
           ]
 
-def getWeightsDict(bkgSmall3Dir):
+def getWeightsDict(analysis, bkgSmall3Dir):
   sampleKfactors = getMCbgSampleKfactors() 
   sampleXsects   = getMCbgSampleXsects() 
   sampleEvents   = getMCbgSampleEvents(bkgSmall3Dir)
@@ -89,24 +89,24 @@ def getWeightsDict(bkgSmall3Dir):
   #for signalToInclude in getSignalsToInclude():
   #  sampleWeights[signalToInclude] = signalWeight
   sampleWeights["data_2017.root"] = (1 , "data")
-  sampleWeights[ "Hg-700.root"   ] = (.8*0.4, "sig")
-  sampleWeights[ "Hg-800.root"   ] = (.8*0.4, "sig")
-  sampleWeights[ "Hg-1000.root"  ] = (.7*0.4, "sig")
-  sampleWeights[ "Hg-1200.root"  ] = (.7*0.4, "sig")
-  sampleWeights[ "Hg-1400.root"  ] = (.7*0.4, "sig")
-  sampleWeights[ "Hg-1600.root"  ] = (.6*0.4, "sig")
-  #sampleWeights[ "Hg-1800.root"  ] = (.6*0.4, "sig")
-  sampleWeights[ "Hg-2000.root"  ] = (.5*0.4, "sig")
-  sampleWeights[ "Hg-2200.root"  ] = (.5*0.4, "sig")
-  sampleWeights[ "Hg-2400.root"  ] = (.4*0.4, "sig")
-  sampleWeights[ "Hg-2600.root"  ] = (.4*0.4, "sig")
-  sampleWeights[ "Hg-3000.root"  ] = (.4*0.4, "sig")
-  sampleWeights[ "Hg-3500.root"  ] = (.4*0.4, "sig")
+  sampleWeights[ "%s-700.root"  % analysis] = (.8*0.4, "sig")
+  sampleWeights[ "%s-800.root"  % analysis] = (.8*0.4, "sig")
+  sampleWeights[ "%s-1000.root" % analysis] = (.7*0.4, "sig")
+  sampleWeights[ "%s-1200.root" % analysis] = (.7*0.4, "sig")
+  sampleWeights[ "%s-1400.root" % analysis] = (.7*0.4, "sig")
+  sampleWeights[ "%s-1600.root" % analysis] = (.6*0.4, "sig")
+  #sampleWeights["%s-1800.root" % analysis] = (.6*0.4, "sig")
+  sampleWeights[ "%s-2000.root" % analysis] = (.5*0.4, "sig")
+  sampleWeights[ "%s-2200.root" % analysis] = (.5*0.4, "sig")
+  sampleWeights[ "%s-2400.root" % analysis] = (.4*0.4, "sig")
+  sampleWeights[ "%s-2600.root" % analysis] = (.4*0.4, "sig")
+  sampleWeights[ "%s-3000.root" % analysis] = (.4*0.4, "sig")
+  sampleWeights[ "%s-3500.root" % analysis] = (.4*0.4, "sig")
   return sampleWeights
 
-def getMCbgWeightsDict(bkgSmall3Dir):
- weights = getWeightsDict(bkgSmall3Dir) 
- nonMCbgs = getSignalsToInclude()
+def getMCbgWeightsDict(analysis, bkgSmall3Dir):
+ weights = getWeightsDict(analysis, bkgSmall3Dir) 
+ nonMCbgs = getSignalsToInclude(analysis)
  nonMCbgs.append("data_2017.root")
  for nonMCbg in nonMCbgs:
    weights.pop(nonMCbg)
