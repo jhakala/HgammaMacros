@@ -13,8 +13,6 @@ def getCutValues(analysis):
   cutValues["deltaR"]         = 1.1
   cutValues["ptOverM"]        = 0.35
   cutValues["DDB"]            = 0.9
-  print "analysis:", analysis
-  print "Hg in analysis", "Hg" in analysis
   if "Hg" in analysis:
     cutValues["jetPt"]          = 250.0
   elif "Zg" in analysis:

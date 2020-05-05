@@ -1,14 +1,6 @@
-from math import sqrt
-from ROOT import *
-from HgPlotTools import getRangesDict, getHiggsRangesDict
-from getMCbgWeights import getMCbgLabels
-from os import path, makedirs
-
 # John Hakala, 12/1/2016
 # Makes optimization plots by sliding cuts over N-1 stackplots from makeStacks.py
 
-gROOT.SetBatch()
-debugOneVar = False
 
 def whichVarAmI(inFileName):
   for key in getRangesDict().keys():
@@ -32,7 +24,7 @@ def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag):
   else:
     return "b=0"
 
-def makeOpt(inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges):
+def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges):
   
   debug=True
   inFile_higgswindow     = TFile(inFileName_higgswindow)
@@ -205,8 +197,8 @@ def makeOpt(inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCan
   #graphPoints4000 = []
   nSteps = total.GetNbinsX()
   # HACK HACK
-  lowerBound = getRangesDict()[whichVarAmI(inFileName_higgswindow)][0][0]
-  upperBound = getRangesDict()[whichVarAmI(inFileName_higgswindow)][0][1]
+  lowerBound = getRangesDict(analysis)[whichVarAmI(inFileName_higgswindow)][0][0]
+  upperBound = getRangesDict(analysis)[whichVarAmI(inFileName_higgswindow)][0][1]
   # END HACK HACK
   stepSize = (upperBound-lowerBound)/nSteps
   for i in range(0, total.GetNbinsX()):
@@ -354,62 +346,78 @@ def makeOpt(inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCan
   can_higgswindow.Print("%s_%r.pdf"%(outFileName, upDown))
   outFile.Close()
 
+if __name__ == "__main__":
+  from argparse import ArgumentParser
+  parser = ArgumentParser()
 
-import sys
-argv = sys.argv
-if not 3 is len(argv) :
-  print "please supply two arguments, with/without btag and the sideband name." 
-  exit(1)
-if not argv[1] in ["withBtag", "noBtag"] :
-  print "invalid first argument: either 'withBtag' or 'noBtag'"
-  exit(1)
-if not argv[2] in ["100110", "5070", "80100"]:
-  print 'invalid second argument, either "100110", "5070", or "80100"'
-  exit(1)
-withBtag = argv[1]
-if argv[2] in "100110":
-  windowEdges = [100.0, 110.0]
-elif argv[2] in "5070":
-  windowEdges = [50.0, 70.0]
-elif argv[2] in "80100":
-  windowEdges = [80.0, 100.0]
+  parser.add_argument("-b", "--tagoption", required=True,
+                      dest="tagoption", help="either 'withBtag' or 'noBtag'")
+  parser.add_argument("-s", "--sideband", required=True,
+                      dest="sideband", help="either 100110, 5070, or 80100")
+  parser.add_argument("-a", "--analysis", required=True,
+                      dest="analysis", help="either 'Hg' or 'Zg'")
+  arguments = parser.parse_args()
+  if not arguments.tagoption in ["withBtag", "noBtag"] :
+    print "invalid first argument: either 'withBtag' or 'noBtag'"
+    exit(1)
+  withBtag = arguments.tagoption
+  if arguments.sideband in "100110":
+    windowEdges = [100.0, 110.0]
+  elif arguments.sideband in "5070":
+    windowEdges = [50.0, 70.0]
+  elif arguments.sideband in "80100":
+    windowEdges = [80.0, 100.0]
+    print "this is a weird sideband:", arguments.sideband
+    exit(1)
+  else: 
+    print "bad sideband:", arguments.sideband
+    exit(1)
+  
+  from math import sqrt
+  from ROOT import *
+  from VgPlotTools import getRangesDict, getHiggsRangesDict
+  from getMCbgWeights import getMCbgLabels
+  from os import path, makedirs
 
-for direction in ["up", "down", "spacer"]:
-  if "spacer" in direction:
-    print "exiting"
-    from time import sleep
-    sleep(3)
-    exit()
-  srCans =  []
-  srPads =  []
-  sbCans =  []
-  sbPads =  []
-  stacks = []
-  sidebands = []
-  i=0
-  for key in getHiggsRangesDict().keys():
-    print "working on key:", key
-    if debugOneVar and not key=="phPtOverMgammaj":
-      continue
-    if "btagSF" in key or key=="mcWeight":
-      continue
-    # for withBtag / noBtag you need to change the next THREE lines
-    sideband_varName    = "stackplots_softdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( withBtag, windowEdges[0], windowEdges[1], key)
-    higgswindow_varName = "stackplots_softdrop_nMinus1_%s/nMinus1_stack_%s.root"%(withBtag, key)
-    makeOpt(sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges)
-    i+=1
-#for direction in ["up", "down"]:
-#  srCans =  []
-#  srPads =  []
-#  sbCans =  []
-#  sbPads =  []
-#  stacks = []
-#  sidebands = []
-#  i=0
-#  for key in getHiggsRangesDict().keys():
-#    sideband_varName = "stackplots_softdrop_nMinus1_noBtag_sideband/nMinus1_stack_%s.root"%key
-#    higgswindow_varName = "stackplots_softdrop_nMinus1_noBtag/nMinus1_stack_%s.root"%key
-#    makeOpt(sideband_varName, higgswindow_varName, direction, False, srCans, srPads, sbCans, sbPads, stacks, sidebands, i)
-#    i+=1
-#  if direction is direction[-1]:
-#    exit(0)
+  gROOT.SetBatch()
+  debugOneVar = False
+
+  for direction in ["up", "down", "spacer"]:
+    if "spacer" in direction:
+      print "exiting"
+      from time import sleep
+      sleep(3)
+      exit()
+    srCans =  []
+    srPads =  []
+    sbCans =  []
+    sbPads =  []
+    stacks = []
+    sidebands = []
+    i=0
+    for key in getHiggsRangesDict().keys():
+      print "working on key:", key
+      if debugOneVar and not key=="phPtOverMgammaj":
+        continue
+      if "btagSF" in key or key=="mcWeight":
+        continue
+      # for withBtag / noBtag you need to change the next THREE lines
+      sideband_varName    = "%s_stackplots_softdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( arguments.analysis, withBtag, windowEdges[0], windowEdges[1], key)
+      higgswindow_varName = "%s_stackplots_softdrop_nMinus1_%s/nMinus1_stack_%s.root"%(arguments.analysis, withBtag, key)
+      makeOpt(arguments.analysis, sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges)
+      i+=1
+  #for direction in ["up", "down"]:
+  #  srCans =  []
+  #  srPads =  []
+  #  sbCans =  []
+  #  sbPads =  []
+  #  stacks = []
+  #  sidebands = []
+  #  i=0
+  #  for key in getHiggsRangesDict().keys():
+  #    sideband_varName = "stackplots_softdrop_nMinus1_noBtag_sideband/nMinus1_stack_%s.root"%key
+  #    higgswindow_varName = "stackplots_softdrop_nMinus1_noBtag/nMinus1_stack_%s.root"%key
+  #    makeOpt(sideband_varName, higgswindow_varName, direction, False, srCans, srPads, sbCans, sbPads, stacks, sidebands, i)
+  #    i+=1
+  #  if direction is direction[-1]:
+  #    exit(0)

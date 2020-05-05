@@ -12,7 +12,7 @@ import os
 
 from ROOT import *
 from getMCbgWeights import getMCbgWeightsDict
-from HgParameters import getSamplesDirs
+from VgParameters import getSamplesDirs
 
 def deleteLibs(macroName):
   # remove the previously compiled libraries

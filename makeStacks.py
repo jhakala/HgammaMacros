@@ -68,7 +68,7 @@ if not options.cutName in validCutNames:
   print "please select a cutName with the -c option, options are: %s" % str(validCutNames )
   exit(1)
 
-print "Making stackplots for %s cuts." % options.cutName,
+print "Making stackplots for %s cuts." % options.cutName
 if options.cutName != "preselection":
   print "The btagging cut %s being applied%s" % (
          isOrIsNot(options.withBtag, "singular"), 
@@ -92,8 +92,8 @@ if not options.graphics:
   gROOT.SetBatch()
 
 from pyrootTools import getSortedDictKeys, drawInNewCanvas
-from HgPlotTools import getRangesDict, getHiggsRangesDict, makeAllHists
-from HgParameters import getSamplesDirs, getVariableDict
+from VgPlotTools import getRangesDict, getHiggsRangesDict, makeAllHists
+from VgParameters import getSamplesDirs, getVariableDict
 from getMCbgWeights import getWeightsDict, getMCbgWeightsDict, getMCbgColors, getMCbgOrderedList, getMCbgLabels
 from tcanvasTDR import TDRify
 #for withBtag in [True, False]:
@@ -160,9 +160,10 @@ for withBtag in [options.withBtag]:
       histsDir += "_vgMC"
 
     #print "going to pass makeAllHists windowEdges", windowEdges
-    print "calling makeAllHists(" + str(options.analysis) + ", " + str(cutName)  + ", " +  str(withBtag) + ", " + str(sideband) + ", " + str(useScaleFactors) + ", " + str(windowEdges) +", " + str(vgMC) + ",  " + str(vgMC) + ")"
+    print "making all histograms: VgPlotTools.makeAllHists(" + str(options.analysis) + ", " + str(cutName)  + ", " +  str(withBtag) + ", " + str(sideband) + ", " + str(useScaleFactors) + ", " + str(windowEdges) +", " + str(vgMC) + ",  " + str(vgMC) + ")"
     nonEmptyFilesDict = makeAllHists(options.analysis, cutName, withBtag, sideband, useScaleFactors, windowEdges, vgMC, vgMC)
-    #print "done making all histograms."
+    print "done making all histograms. \n"
+
     thstacks=[]
     thstackCopies=[]
     cans=[]
@@ -178,6 +179,7 @@ for withBtag in [options.withBtag]:
     legendLabels = getMCbgLabels()
     varDict = getVariableDict()
 
+    print "now making all stackplots."
     #for varkey in [higgsRangesDict.keys()[0]]:
     if "antibtag" in cutName and not useScaleFactors:
       for varkey in higgsRangesDict.keys():
@@ -190,7 +192,7 @@ for withBtag in [options.withBtag]:
       iRange = 1
       first = True
       for rng in higgsRangesDict[varkey]:
-        print "working on range", rng, "for varkey", varkey
+        print "  -> working on range", rng, "for varkey", varkey
         if "btagSF" in varkey:
           continue;
         indexLabel = ""
@@ -289,12 +291,12 @@ for withBtag in [options.withBtag]:
         if thstacks[-1].GetXaxis():
           hasAxis = True
         if varkey in varDict.keys() and hasAxis:
-          print "going to set title for thstacks[-1] to %s " % varkey
-          print "varkey:", varkey
-          print "varDict:", varDict
-          print "varDict[varkey]:", varDict[varkey]
-          print "thstacks[-1]", thstacks[-1]
-          print "thstacks[-1].GetXaxis()", thstacks[-1].GetXaxis()
+          #print "going to set title for thstacks[-1] to %s " % varkey
+          #print "varkey:", varkey
+          #print "varDict:", varDict
+          #print "varDict[varkey]:", varDict[varkey]
+          #print "thstacks[-1]", thstacks[-1]
+          #print "thstacks[-1].GetXaxis()", thstacks[-1].GetXaxis()
           #print "working on thstack with name: ", thstacks[-1].GetName()
           #print type(thstacks[-1].GetXaxis().GetTitle())
           thstacks[-1].GetXaxis().SetTitle(varDict[varkey])
@@ -314,7 +316,7 @@ for withBtag in [options.withBtag]:
             dName += "_sideband%i%i" % (windowEdges[0], windowEdges[1])
         if not blindData:
           dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
-          print "going to use data file",  dataFileName, "for the plot"
+          #print "going to use data file",  dataFileName, "for the plot"
           datafiles.append(TFile("%s/%s"%(dName, dataFileName)))
           datahists.append(datafiles[-1].Get("hist_%s"%dataFileName))
           #print datahists[-1]
@@ -392,7 +394,7 @@ for withBtag in [options.withBtag]:
               sbScale = 1
             else:
               sbScale = fullStack.GetSumOfWeights()/datahists[-1].GetSumOfWeights()
-              print "sbscale is: ", sbScale
+              #print "sbscale is: ", sbScale
             for iBin in range(0, datahists[-1].GetNbinsX()):
               #print "sbScale", sbScale 
               #print "old bin content", datahists[-1].GetBinContent(iBin)

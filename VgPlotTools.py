@@ -1,8 +1,8 @@
 from ROOT import *
 from pyrootTools import *
 from getMCbgWeights import *
-from HgParameters import *
-from HgCuts import *
+from VgParameters import *
+from VgCuts import *
 from os import path
 
 # John Hakala, 12/1/2016
@@ -63,8 +63,8 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
     print "  -> working on sample", key
     sampleType = getWeightsDict(analysis, getSamplesDirs(analysis)["bkgSmall3sDir"])[key][1]
     useTrigger = True
-    if sampleType == "sig":
-      useTrigger = False
+    #if sampleType == "sig":
+    #  useTrigger = False
     #print "making all histograms for: %s" % key
     #print "useTrigger is %r since sampleType is %s" % (useTrigger, sampleType)
     pre = getDDPrefix()
@@ -137,7 +137,7 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
             cutString = "1*(%s)" % cut
           else:
             cutString = "1*(%s)" % (cut)
-        print "cuts:", cutString
+        print "      -> cuts:", cutString
         nEntries = tree.Draw("%s>> %s"%(var, histName), cutString, "HIST")
         directory = ""
         bareDirectory = ""

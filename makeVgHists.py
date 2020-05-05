@@ -3,8 +3,8 @@ from sys import argv
 from shutil import rmtree
 from glob import glob
 from ROOT import *
-from HgCuts import getAntiBtagComboCut, getBtagComboCut
-from HgParameters import getSigNevents
+from VgCuts import getAntiBtagComboCut, getBtagComboCut
+from VgParameters import getSigNevents
 
 
 btagVariation = "nom"
