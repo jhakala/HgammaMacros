@@ -6,46 +6,9 @@ from VgCuts import *
 from os import path
 
 # John Hakala, 12/1/2016
-# A renamed collection of functions that churns out all the possible histograms from DDtrees
+# churns out all the possible histograms from DDtrees
 
 printCuts = False
-
-
-def getHiggsRangesDict(fineBinning=False):
-  rangesDict = {}
-  rangesDict["mcWeight"]                 = [[-9999999., 9999999.]]
-  rangesDict["cosThetaStar"]                 = [[0., 1.]]
-  rangesDict["phPtOverMgammaj"]              = [[0., 1.2]]
-  rangesDict["leadingPhPhi"]                 = [[-3.5, 3.5]]
-  rangesDict["leadingPhPt"]                  = [[0., 3000.]]
-  rangesDict["leadingPhAbsEta"]              = [[0.,2.5]]
-  rangesDict["leadingPhEta"]                 = [[-2.8,2.8]]
-  rangesDict["antibtagSF"]                   = [[0.0, 1.0]]
-  rangesDict["btagSF"]                       = [[0.0, 1.0]]
-  rangesDict["weightFactor"]                 = [[0.0, 2.0]]
-  label =   "b" # stands for "boost"
-  rangesDict["%sJet_DDBtag"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_abseta"%label]=[[0., 3]]
-  rangesDict["%sJet_eta"%label]       = [[-3., 3.]]
-  rangesDict["%sJet_phi"%label]       = [[-3.5, 3.5]]
-  rangesDict["%sJet_pt"%label]        = [[0., 4000.]]
-  rangesDict["%sJett2t1"%label]              = [[0.0, 1.0]]
-  #rangesDict["%sPrunedJetCorrMass"%label]    = [[0.,200.], [0.,1000.]]
-  #rangesDict["%sPuppi_softdropJetCorrMass"%label]=[[50.,150.]]
-  rangesDict["softdropJetCorrMass"]    = [[0.,1000.]]
-  rangesDict["phJetDeltaR"]         = [[0.,6.]]
-  if fineBinning:
-    rangesDict["phJetInvMass_softdrop"]=[[700., 4700.]]
-  else:
-    rangesDict["phJetInvMass_softdrop"]=[[0., 10000.]]
-  return rangesDict
-
-def getRangesDict(fineBinning=False):
-  rangesDict = {}
-  higgsRangesDict = getHiggsRangesDict(fineBinning)
-  for key in higgsRangesDict.keys():
-    rangesDict[key]=higgsRangesDict[key]
-  return rangesDict
 
 def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
   print "entering HgPlotTools.makeAllHists for analysis", analysis
@@ -69,7 +32,7 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
     #print "useTrigger is %r since sampleType is %s" % (useTrigger, sampleType)
     pre = getDDPrefix()
     print "      -> opening file:", path.join(sampleDirs["%sDDdir" % sampleType], pre+key)
-    tfile = TFile(path.join(sampleDirs["%sDDdir" % sampleType], pre+key))
+    tfile = TFile.Open(path.join(sampleDirs["%sDDdir" % sampleType], pre+key))
     #print "tfile is: ", tfile.GetName(), tfile
     tree = tfile.Get("ddboost")
     varNames = []
@@ -170,10 +133,11 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
           os.makedirs(directory)
         if not nEntries == 0:
           if firstRange:
-            outFile = TFile(filename, "RECREATE")
+            outFile = TFile.Open(filename, "RECREATE")
           else:
-            outFile = TFile(filename.replace(".root","")+"_%i.root"%iRange, "RECREATE")
+            outFile = TFile.Open(filename.replace(".root","")+"_%i.root"%iRange, "RECREATE")
           outFile.cd()
+          print "    -> output file is:", outFile.GetName()
           #print "applying weight %s to sample %s" % (weightsDict[key][0], filename )
           #print " weightsDict has keys: " 
           #print weightsDict.keys()
@@ -181,6 +145,7 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
             hist.SetBinContent(histBin, hist.GetBinContent(histBin)*weightsDict[key][0])  
           hist.Write()
           outFile.Close()
+          del outFile
           #print "closed outFile" , outFile.GetName()
           nonEmptyFilesDict[filename]="nonempty"
           nonEmptyFilesDict[hackFilename]="nonempty"
@@ -190,4 +155,6 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
           print "      the histogram %s was empty for" % histName, filename
         iRange += 1
         firstRange = False;
+    tfile.Close()
+    del tfile
   return nonEmptyFilesDict

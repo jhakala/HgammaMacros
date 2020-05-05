@@ -79,3 +79,51 @@ def getVariableDict():
   return varDict
 
 
+def getHiggsRangesDict(fineBinning=False):
+  rangesDict = {}
+  rangesDict["mcWeight"]                 = [[-9999999., 9999999.]]
+  rangesDict["cosThetaStar"]                 = [[0., 1.]]
+  rangesDict["phPtOverMgammaj"]              = [[0., 1.2]]
+  rangesDict["leadingPhPhi"]                 = [[-3.5, 3.5]]
+  rangesDict["leadingPhPt"]                  = [[0., 3000.]]
+  rangesDict["leadingPhAbsEta"]              = [[0.,2.5]]
+  rangesDict["leadingPhEta"]                 = [[-2.8,2.8]]
+  rangesDict["antibtagSF"]                   = [[0.0, 1.0]]
+  rangesDict["btagSF"]                       = [[0.0, 1.0]]
+  rangesDict["weightFactor"]                 = [[0.0, 2.0]]
+  label =   "b" # stands for "boost"
+  rangesDict["%sJet_DDBtag"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_decDDBtag"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_csvbb"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probHbb"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_HbbvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_H4qvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probZbb"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probZqq"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probZcc"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_ZvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_ZbbvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probWcq"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_probWqq"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_akx_WvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_abseta"%label]=[[0., 3]]
+  rangesDict["%sJet_eta"%label]       = [[-3., 3.]]
+  rangesDict["%sJet_phi"%label]       = [[-3.5, 3.5]]
+  rangesDict["%sJet_pt"%label]        = [[0., 4000.]]
+  rangesDict["%sJett2t1"%label]              = [[0.0, 1.0]]
+  #rangesDict["%sPrunedJetCorrMass"%label]    = [[0.,200.], [0.,1000.]]
+  #rangesDict["%sPuppi_softdropJetCorrMass"%label]=[[50.,150.]]
+  rangesDict["softdropJetCorrMass"]    = [[0.,1000.]]
+  rangesDict["phJetDeltaR"]         = [[0.,6.]]
+  if fineBinning:
+    rangesDict["phJetInvMass_softdrop"]=[[700., 4700.]]
+  else:
+    rangesDict["phJetInvMass_softdrop"]=[[0., 10000.]]
+  return rangesDict
+
+def getRangesDict(fineBinning=False):
+  rangesDict = {}
+  higgsRangesDict = getHiggsRangesDict(fineBinning)
+  for key in higgsRangesDict.keys():
+    rangesDict[key]=higgsRangesDict[key]
+  return rangesDict

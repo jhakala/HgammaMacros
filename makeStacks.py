@@ -92,8 +92,8 @@ if not options.graphics:
   gROOT.SetBatch()
 
 from pyrootTools import getSortedDictKeys, drawInNewCanvas
-from VgPlotTools import getRangesDict, getHiggsRangesDict, makeAllHists
-from VgParameters import getSamplesDirs, getVariableDict
+from VgPlotTools import makeAllHists
+from VgParameters import getSamplesDirs, getVariableDict, getRangesDict, getHiggsRangesDict
 from getMCbgWeights import getWeightsDict, getMCbgWeightsDict, getMCbgColors, getMCbgOrderedList, getMCbgLabels
 from tcanvasTDR import TDRify
 #for withBtag in [True, False]:
@@ -240,7 +240,7 @@ for withBtag in [options.withBtag]:
             #  print thisFileName
             #print "tfiles.append(TFile(path.join(", histsDir " ,", filename, ")))"
             #tfiles.append(TFile(path.join(histsDir , filename)))
-            tfiles.append(TFile(thisFileName))
+            tfiles.append(TFile.Open(thisFileName))
             #print "tfiles[-1]:", tfiles[-1].GetName()
             hists.append(tfiles[-1].Get("hist_%s" % filename))
             hists[-1].SetFillColor(getMCbgColors()[filekey])
@@ -277,7 +277,7 @@ for withBtag in [options.withBtag]:
         if not path.exists(outDirName):
           makedirs(outDirName)
         outfileName = "%s/%s_stack_%s%s.root"%(outDirName, cutName, varkey, indexLabel)
-        outfile=TFile(outfileName, "RECREATE")
+        outfile=TFile.Open(outfileName, "RECREATE")
         cans[-1].cd()
         pads[-1].Draw()
         if not "SF" in varkey:
@@ -317,7 +317,7 @@ for withBtag in [options.withBtag]:
         if not blindData:
           dataFileName = varkey+"_"+treekey+"_data_2017%s.root" % indexLabel
           #print "going to use data file",  dataFileName, "for the plot"
-          datafiles.append(TFile("%s/%s"%(dName, dataFileName)))
+          datafiles.append(TFile.Open("%s/%s"%(dName, dataFileName)))
           datahists.append(datafiles[-1].Get("hist_%s"%dataFileName))
           #print datahists[-1]
           datahists[-1].Draw("PE SAME")
@@ -327,11 +327,11 @@ for withBtag in [options.withBtag]:
         #for sigMass in [650, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000]:
         if showSigs:
           colors={}
-          colors[700]=kCyan-6
+          colors[800]=kCyan-6
           colors[1000]=kOrange
           colors[2000]=kMagenta
           colors[3000]=kRed
-          for sigMass in [700, 1000, 2000, 3000]:
+          for sigMass in [800, 1000, 2000, 3000]:
             sigFileName = varkey+"_"+treekey+"_%s-%i%s.root"%(options.analysis, sigMass, indexLabel)
             rName = "%s_weightedMCbgHists_%s" % (options.analysis, cutName)
             if cutName in "nMinus1":
@@ -346,7 +346,7 @@ for withBtag in [options.withBtag]:
             if vgMC:
               rName += "_vgMC"
             outDirName = "%s_stackplots_softdrop_%s" % (options.analysis, rName)
-            sigfiles.append(TFile("%s/%s"%(rName, sigFileName)))
+            sigfiles.append(TFile.Open("%s/%s"%(rName, sigFileName)))
             #print "adding signal file", sigfiles[-1].GetName(), "to the plot"
             sighists.append(sigfiles[-1].Get("hist_%s"%sigFileName))
             sighists[-1].SetLineStyle(3)
@@ -441,6 +441,11 @@ for withBtag in [options.withBtag]:
         outfile.cd()
         cans[-1].Write()
         outfile.Close()
+        del outfile
+        for fs in [sigfiles, datafiles, tfiles]:
+          for f in fs:
+            f.Close()
+            del f
         iRange += 1
         first = False
 print "done with makeStacks!"

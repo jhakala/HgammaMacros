@@ -66,6 +66,21 @@ void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
 
   outputTreeBoost->Branch("bJett2t1", &bJett2t1);
   outputTreeBoost->Branch("bJet_DDBtag", &bJet_DDBtag);
+  outputTreeBoost->Branch("bJet_decDDBtag", &bJet_decDDBtag);
+  outputTreeBoost->Branch("bJet_csvbb", &bJet_csvbb);
+
+outputTreeBoost->Branch("bJet_akx_probHbb",  &bJet_akx_probHbb);
+outputTreeBoost->Branch("bJet_akx_HbbvsQCD",  &bJet_akx_HbbvsQCD);
+outputTreeBoost->Branch("bJet_akx_H4qvsQCD",  &bJet_akx_H4qvsQCD);
+outputTreeBoost->Branch("bJet_akx_probZbb",  &bJet_akx_probZbb);
+outputTreeBoost->Branch("bJet_akx_probZqq",  &bJet_akx_probZqq);
+outputTreeBoost->Branch("bJet_akx_probZcc",  &bJet_akx_probZcc);
+outputTreeBoost->Branch("bJet_akx_ZvsQCD",  &bJet_akx_ZvsQCD);
+outputTreeBoost->Branch("bJet_akx_ZbbvsQCD",  &bJet_akx_ZbbvsQCD);
+outputTreeBoost->Branch("bJet_akx_probWcq",  &bJet_akx_probWcq);
+outputTreeBoost->Branch("bJet_akx_probWqq",  &bJet_akx_probWqq);
+outputTreeBoost->Branch("bJet_akx_WvsQCD",  &bJet_akx_WvsQCD);
+
   outputTreeBoost->Branch("cosThetaStar", &cosThetaStar);
   outputTreeBoost->Branch("phPtOverMgammaj", &phPtOverMgammaj);
   outputTreeBoost->Branch("leadingPhEta", &leadingPhEta);
@@ -111,6 +126,21 @@ void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
   fChain->SetBranchStatus( "jetAK8_IDTight"           ,  1 );  
   //fChain->SetBranchStatus( "jetAK8_IDTightLepVeto"    ,  1 );  
   fChain->SetBranchStatus( "jetAK8_DDB"            ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_decDDB"            ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_deep_csv_bb"            ,  1 );  
+
+  fChain->SetBranchStatus( "jetAK8_akx_probHbb"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_HbbvsQCD"             ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_H4qvsQCD"             ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_probZbb"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_probZqq"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_probZcc"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_ZvsQCD"               ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_ZbbvsQCD"             ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_probWcq"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_probWqq"              ,  1 );  
+  fChain->SetBranchStatus( "jetAK8_akx_WvsQCD"               ,  1 );  
+
   //fChain->SetBranchStatus("EVENT_run"      ,  1 );
   //fChain->SetBranchStatus("EVENT_lumiBlock"      ,  1 );
   //fChain->SetBranchStatus("EVENT_event"      ,  1 );
@@ -170,6 +200,21 @@ void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
     bJet_pt               = -999. ;
     softdropJetCorrMass           = -999. ;
     bJet_DDBtag                  = -999. ;
+    bJet_decDDBtag                  = -999. ;
+    bJet_csvbb                  = -999. ;
+
+    bJet_akx_probHbb                     = -999. ;
+    bJet_akx_HbbvsQCD                    = -999. ;
+    bJet_akx_H4qvsQCD                    = -999. ;
+    bJet_akx_probZbb                     = -999. ;
+    bJet_akx_probZqq                     = -999. ;
+    bJet_akx_probZcc                     = -999. ;
+    bJet_akx_ZvsQCD                      = -999. ;
+    bJet_akx_ZbbvsQCD                    = -999. ;
+    bJet_akx_probWcq                     = -999. ;
+    bJet_akx_probWqq                     = -999. ;
+    bJet_akx_WvsQCD                      = -999. ;
+
     cosThetaStar                     =  -99. ; 
     phPtOverMgammaj                  =  -99. ; 
     triggerFired_200                 = false ; 
@@ -264,6 +309,33 @@ void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
             if  ( iJet<jetAK8_softdrop_massCorr->size() && abs(jetAK8_softdrop_massCorr->at(iJet) - bosonMass) <  abs(softdropJetCorrMass -  bosonMass )) {
               softdropJetCorrMass = jetAK8_softdrop_massCorr->at(iJet);
               bJet_DDBtag = jetAK8_DDB->at(iJet);
+              bJet_decDDBtag = jetAK8_decDDB->at(iJet);
+              bJet_csvbb = jetAK8_deep_csv_bb->at(iJet);
+
+              bJet_akx_probHbb  = jetAK8_akx_probHbb  ->at(iJet);
+              bJet_akx_HbbvsQCD = jetAK8_akx_HbbvsQCD ->at(iJet);
+              bJet_akx_H4qvsQCD = jetAK8_akx_H4qvsQCD ->at(iJet);
+              bJet_akx_probZbb  = jetAK8_akx_probZbb  ->at(iJet);
+              bJet_akx_probZqq  = jetAK8_akx_probZqq  ->at(iJet);
+              bJet_akx_probZcc  = jetAK8_akx_probZcc  ->at(iJet);
+              bJet_akx_ZvsQCD   = jetAK8_akx_ZvsQCD   ->at(iJet);
+              bJet_akx_ZbbvsQCD = jetAK8_akx_ZbbvsQCD ->at(iJet);
+              bJet_akx_probWcq  = jetAK8_akx_probWcq  ->at(iJet);
+              bJet_akx_probWqq  = jetAK8_akx_probWqq  ->at(iJet);
+              bJet_akx_WvsQCD   = jetAK8_akx_WvsQCD   ->at(iJet);
+
+              bJet_akx_probHbb    = jetAK8_akx_probHbb ->at(iJet);
+              bJet_akx_HbbvsQCD   = jetAK8_akx_HbbvsQCD->at(iJet);
+              bJet_akx_H4qvsQCD   = jetAK8_akx_H4qvsQCD->at(iJet);
+              bJet_akx_probZbb    = jetAK8_akx_probZbb ->at(iJet);
+              bJet_akx_probZqq    = jetAK8_akx_probZqq ->at(iJet);
+              bJet_akx_probZcc    = jetAK8_akx_probZcc ->at(iJet);
+              bJet_akx_ZvsQCD     = jetAK8_akx_ZvsQCD  ->at(iJet);
+              bJet_akx_ZbbvsQCD   = jetAK8_akx_ZbbvsQCD->at(iJet);
+              bJet_akx_probWcq    = jetAK8_akx_probWcq ->at(iJet);
+              bJet_akx_probWqq    = jetAK8_akx_probWqq ->at(iJet);
+              bJet_akx_WvsQCD     = jetAK8_akx_WvsQCD  ->at(iJet);
+
               softdrop_bJetTau1 = jetAK8_tau1 ->  at(iJet) ;
               softdrop_bJetTau2 = jetAK8_tau2 ->  at(iJet) ;
               //softdrop_bJetTau3 = jetAK8_tau3 ->  at(iJet) ;
@@ -338,8 +410,8 @@ void VgammaSelector::Loop(int analysis, string outputFileName, int btagVariation
   cout << "    -> Completed output file is " << outputFileName.c_str() <<"." << endl;
 }
 
-float VgammaSelector::computeOverallSF(std::string category, float jetPt, float jetDDBtag, float photonPt, float photonEta, bool debug, int variation, int phSFvariation) {
-  return computePhotonSF(photonPt, photonEta, debug, phSFvariation)*computeBtagSF(category, jetPt, jetDDBtag, debug, variation);
+float VgammaSelector::computeOverallSF(std::string category, float jetPt, float jettag, float photonPt, float photonEta, bool debug, int variation, int phSFvariation) {
+  return computePhotonSF(photonPt, photonEta, debug, phSFvariation)*computeBtagSF(category, jetPt, jettag, debug, variation);
 }
 
 float VgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debug, int phSFvariation) {
@@ -373,7 +445,7 @@ float VgammaSelector::computePhotonSF(float photonPt, float photonEta, bool debu
   }
   return variedSF;
 }
-float VgammaSelector::computeBtagSF(std::string category, float jetPt, float jetDDBtag, bool debug, int variation) {
+float VgammaSelector::computeBtagSF(std::string category, float jetPt, float jettag, bool debug, int variation) {
   //  variation:
   //  0 = no variation
   //  1 = upward variation
@@ -407,27 +479,27 @@ float VgammaSelector::computeBtagSF(std::string category, float jetPt, float jet
   }
   float response = -1337.;
   if (category=="antibtag") {
-    if (jetDDBtag >= 0.9) {
+    if (jettag >= 0.9) {
       if (debug) std::cout << "passes btag! ";
       response =  1.-mistagSF;
     }
-    else if (isnan(jetDDBtag) || jetDDBtag < 0.9) {
+    else if (isnan(jettag) || jettag < 0.9) {
       if (debug) std::cout << "fails btag! ";
       response =  1.;
     }
   }
   else if (category=="btag") {
-    if (jetDDBtag >= 0.9) {
+    if (jettag >= 0.9) {
       if (debug) std::cout << "passes btag! ";
       response = mistagSF;
     }
-    else if (isnan(jetDDBtag) || jetDDBtag < 0.9) {
+    else if (isnan(jettag) || jettag < 0.9) {
       if (debug) std::cout << "fails btag! ";
       response = 0.;
     }
   }
   if (response == -1337.) {
-    std::cout << "jetDDBtag is: " << jetDDBtag << std::endl;
+    std::cout << "jettag is: " << jettag << std::endl;
     std::cout << "ERROR -- Something went horribly wrong!" << std::endl;
     exit(EXIT_FAILURE);
   }

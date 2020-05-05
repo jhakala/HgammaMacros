@@ -114,8 +114,8 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
 
   for subprim in pad_higgswindow.GetListOfPrimitives():
     #print "pad_higgswindow has primitive: %s" % subprim.GetName()
-    if "-700" in subprim.GetName():
-      name700 = subprim.GetName()
+    if "-800" in subprim.GetName():
+      name800 = subprim.GetName()
     if "-1000" in subprim.GetName():
       name1000 = subprim.GetName()
     if "-2000" in subprim.GetName():
@@ -163,11 +163,11 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   #print stack
 
   ## HERE?  can_higgswindow.Draw()
-  m700 = pad_higgswindow.GetPrimitive(name700)
-  color700 = kTeal
-  m700.SetLineColor(color700)
-  m700.SetLineStyle(2)
-  m700.SetLineWidth(3)
+  m800 = pad_higgswindow.GetPrimitive(name800)
+  color800 = kTeal
+  m800.SetLineColor(color800)
+  m800.SetLineStyle(2)
+  m800.SetLineWidth(3)
   m1000 = pad_higgswindow.GetPrimitive(name1000)
   color1000  = kOrange-3
   m1000.SetLineColor(color1000)
@@ -186,11 +186,11 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
 
   #m4000 = pad.GetPrimitive(name4000)
   total = sideband
-  if not m700.GetNbinsX() == total.GetNbinsX():
+  if not m800.GetNbinsX() == total.GetNbinsX():
     #print "nonmatching histograms!"
     quit()
 
-  graphPoints700 = []
+  graphPoints800 = []
   graphPoints1000 = []
   graphPoints2000 = []
   graphPoints3000 = []
@@ -203,13 +203,13 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   stepSize = (upperBound-lowerBound)/nSteps
   for i in range(0, total.GetNbinsX()):
     slideValue = lowerBound+i*stepSize
-    sOverRootB700= getSoverRootB(total, m700, slideValue, upDown, withBtag)
+    sOverRootB800= getSoverRootB(total, m800, slideValue, upDown, withBtag)
     sOverRootB1000= getSoverRootB(total, m1000, slideValue, upDown, withBtag)
     sOverRootB2000= getSoverRootB(total, m2000, slideValue, upDown, withBtag)
     sOverRootB3000= getSoverRootB(total, m3000, slideValue, upDown, withBtag)
-    if type(sOverRootB700) is float : 
-      graphPoints700.append([slideValue, sOverRootB700])
-      #print "filled point %f %f into graphPoints700" % ( slideValue, sOverRootB700)
+    if type(sOverRootB800) is float : 
+      graphPoints800.append([slideValue, sOverRootB800])
+      #print "filled point %f %f into graphPoints800" % ( slideValue, sOverRootB800)
     if type(sOverRootB1000) is float : 
       graphPoints1000.append([slideValue, sOverRootB1000])
       #print "filled point %f %f into graphPoints1000" % ( slideValue, sOverRootB1000)
@@ -245,11 +245,11 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
     graph1000.SetPoint(graph1000.GetN(), graphPoint1000[0], graphPoint1000[1])
     #print "set point in graph1000"
 
-  graph700 = TGraph()
-  graph700.SetName("optGraph_%s"%name700)
-  for graphPoint700 in graphPoints700:
-    graph700.SetPoint(graph700.GetN(), graphPoint700[0], graphPoint700[1])
-    #print "set point in graph700"
+  graph800 = TGraph()
+  graph800.SetName("optGraph_%s"%name800)
+  for graphPoint800 in graphPoints800:
+    graph800.SetPoint(graph800.GetN(), graphPoint800[0], graphPoint800[1])
+    #print "set point in graph800"
 
   #bottomPad_higgswindow.cd()
   #bottomPad_higgswindow.Clear()
@@ -305,11 +305,11 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   graph3000.SetLineWidth(2)
   graph3000.SetLineColor(color3000)
   graph3000.SetFillColor(kWhite)
-  graph700.Draw("SAME")
-  graph700.SetLineStyle(2)
-  graph700.SetLineWidth(2)
-  graph700.SetLineColor(color700)
-  graph700.SetFillColor(kWhite)
+  graph800.Draw("SAME")
+  graph800.SetLineStyle(2)
+  graph800.SetLineWidth(2)
+  graph800.SetLineColor(color800)
+  graph800.SetFillColor(kWhite)
   #bottomPad_higgswindow.BuildLegend()
   bottomPad_ratio.BuildLegend()
   legendLabels = getMCbgLabels()
@@ -321,9 +321,9 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
       prim.SetX2NDC(0.946)
       prim.SetY2NDC(0.911)
       for subprim in prim.GetListOfPrimitives():
-        for mass in ["700", "1000", "2000", "3000"]:
+        for mass in ["800", "1000", "2000", "3000"]:
           if mass in subprim.GetLabel():
-            subprim.SetLabel("H#gamma(%r TeV)"%(float(mass)/float(1000)))
+            subprim.SetLabel("%s#gamma(%r TeV)"%(arguments.analysis[0], (float(mass)/float(1000))))
             subprim.SetOption("lf")
   can_higgswindow.cd()
   #bottomPad_higgswindow.Draw()
@@ -375,7 +375,7 @@ if __name__ == "__main__":
   
   from math import sqrt
   from ROOT import *
-  from VgPlotTools import getRangesDict, getHiggsRangesDict
+  from VgParameters import getRangesDict, getHiggsRangesDict
   from getMCbgWeights import getMCbgLabels
   from os import path, makedirs
 

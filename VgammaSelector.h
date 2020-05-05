@@ -59,7 +59,23 @@ public :
   //float HT_ak4                         =    0. ;
   float leadingJetTau1                   = -999. ;
   float softdropJetCorrMass           = -999. ;
+
   float bJet_DDBtag                  = -999. ;
+  float bJet_decDDBtag                  = -999. ;
+  float bJet_csvbb                  = -999. ;
+
+  float bJet_akx_probHbb                  = -999. ;
+  float bJet_akx_HbbvsQCD                  = -999. ;
+  float bJet_akx_H4qvsQCD                  = -999. ;
+  float bJet_akx_probZbb                  = -999. ;
+  float bJet_akx_probZqq                  = -999. ;
+  float bJet_akx_probZcc                  = -999. ;
+  float bJet_akx_ZvsQCD                  = -999. ;
+  float bJet_akx_ZbbvsQCD                  = -999. ;
+  float bJet_akx_probWcq                  = -999. ;
+  float bJet_akx_probWqq                  = -999. ;
+  float bJet_akx_WvsQCD                  = -999. ;
+ 
   //float test_looseloose                = -1.   ;
   //bool looseloose                = false ;
   float softdrop_bJetTau1         = -999. ;
@@ -247,6 +263,21 @@ public :
    //vector<bool>    *jetAK8_IDTightLepVeto;
    vector<int>     *jetAK8_charge;
    vector<float>   *jetAK8_DDB;
+   vector<float>   *jetAK8_decDDB;
+   vector<float>   *jetAK8_deep_csv_bb;
+
+   vector<float>   *jetAK8_akx_probHbb; 
+   vector<float>   *jetAK8_akx_HbbvsQCD;
+   vector<float>   *jetAK8_akx_H4qvsQCD;
+   vector<float>   *jetAK8_akx_probZbb; 
+   vector<float>   *jetAK8_akx_probZqq; 
+   vector<float>   *jetAK8_akx_probZcc; 
+   vector<float>   *jetAK8_akx_ZvsQCD;  
+   vector<float>   *jetAK8_akx_ZbbvsQCD;
+   vector<float>   *jetAK8_akx_probWcq; 
+   vector<float>   *jetAK8_akx_probWqq; 
+   vector<float>   *jetAK8_akx_WvsQCD;  
+
    //vector<int>     *jetAK8_partonFlavour;
    //vector<int>     *jetAK8_hadronFlavour;
    //vector<int>     *jetAK8_genParton_pdgID;
@@ -448,6 +479,21 @@ public :
    //TBranch        *b_jetAK8_IDTightLepVeto;   //!
    TBranch        *b_jetAK8_charge;   //!
    TBranch        *b_jetAK8_DDB;   //!
+   TBranch        *b_jetAK8_decDDB;   //!
+   TBranch        *b_jetAK8_deep_csv_bb;   //!
+
+   TBranch        *b_jetAK8_akx_probHbb; 
+   TBranch        *b_jetAK8_akx_HbbvsQCD;
+   TBranch        *b_jetAK8_akx_H4qvsQCD;
+   TBranch        *b_jetAK8_akx_probZbb; 
+   TBranch        *b_jetAK8_akx_probZqq; 
+   TBranch        *b_jetAK8_akx_probZcc; 
+   TBranch        *b_jetAK8_akx_ZvsQCD;  
+   TBranch        *b_jetAK8_akx_ZbbvsQCD;
+   TBranch        *b_jetAK8_akx_probWcq; 
+   TBranch        *b_jetAK8_akx_probWqq; 
+   TBranch        *b_jetAK8_akx_WvsQCD;  
+
    //TBranch        *b_jetAK8_partonFlavour;   //!
    //TBranch        *b_jetAK8_hadronFlavour;   //!
    //TBranch        *b_jetAK8_genParton_pdgID;   //!
@@ -547,9 +593,9 @@ public :
    //virtual unsigned short     FindEvent(unsigned int run, unsigned int lumiBlock, unsigned long long event);
 
    
-   float computeOverallSF(std::string category, float jetPt, float jetDDBtag, float photonPt, float photonEta, bool debug = false, int btagVariation=0, int phSFvariation=0);
+   float computeOverallSF(std::string category, float jetPt, float jettag, float photonPt, float photonEta, bool debug = false, int btagVariation=0, int phSFvariation=0);
    float computePhotonSF(float photonPt, float photonEta, bool debug = false, int phSFvariation = 0);
-   float computeBtagSF(std::string category, float jetPt, float jetDDBtag, bool debug = false, int btagVariation=0);
+   float computeBtagSF(std::string category, float jetPt, float jettag, bool debug = false, int btagVariation=0);
 
    //leadingSubjets getLeadingSubjets(vector<float> prunedJet);
    //passSubjetCuts getSubjetCutDecisions(leadingSubjets subjets);
@@ -709,6 +755,21 @@ void VgammaSelector::Init(TTree *tree)
    //jetAK8_IDTightLepVeto = 0;
    jetAK8_charge = 0;
    jetAK8_DDB = 0;
+   jetAK8_decDDB = 0;
+   jetAK8_deep_csv_bb = 0;
+
+   jetAK8_akx_probHbb = 0; 
+   jetAK8_akx_HbbvsQCD = 0;
+   jetAK8_akx_H4qvsQCD = 0;
+   jetAK8_akx_probZbb = 0; 
+   jetAK8_akx_probZqq = 0; 
+   jetAK8_akx_probZcc = 0; 
+   jetAK8_akx_ZvsQCD = 0;  
+   jetAK8_akx_ZbbvsQCD = 0;
+   jetAK8_akx_probWcq = 0; 
+   jetAK8_akx_probWqq = 0; 
+   jetAK8_akx_WvsQCD = 0;  
+
    //jetAK8_partonFlavour = 0;
    //jetAK8_hadronFlavour = 0;
    //jetAK8_genParton_pdgID = 0;
@@ -901,6 +962,21 @@ void VgammaSelector::Init(TTree *tree)
    //fChain->SetBranchAddress("jetAK8_IDTightLepVeto", &jetAK8_IDTightLepVeto, &b_jetAK8_IDTightLepVeto);
    fChain->SetBranchAddress("jetAK8_charge", &jetAK8_charge, &b_jetAK8_charge);
    fChain->SetBranchAddress("jetAK8_DDB", &jetAK8_DDB, &b_jetAK8_DDB);
+   fChain->SetBranchAddress("jetAK8_decDDB", &jetAK8_decDDB, &b_jetAK8_decDDB);
+   fChain->SetBranchAddress("jetAK8_deep_csv_bb", &jetAK8_deep_csv_bb, &b_jetAK8_deep_csv_bb);
+
+   fChain->SetBranchAddress("jetAK8_akx_probHbb",  &jetAK8_akx_probHbb ,   &b_jetAK8_akx_probHbb  );
+   fChain->SetBranchAddress("jetAK8_akx_HbbvsQCD",  &jetAK8_akx_HbbvsQCD,   &b_jetAK8_akx_HbbvsQCD );
+   fChain->SetBranchAddress("jetAK8_akx_H4qvsQCD",  &jetAK8_akx_H4qvsQCD,   &b_jetAK8_akx_H4qvsQCD );
+   fChain->SetBranchAddress("jetAK8_akx_probZbb",  &jetAK8_akx_probZbb ,   &b_jetAK8_akx_probZbb  );
+   fChain->SetBranchAddress("jetAK8_akx_probZqq",  &jetAK8_akx_probZqq ,   &b_jetAK8_akx_probZqq  );
+   fChain->SetBranchAddress("jetAK8_akx_probZcc",  &jetAK8_akx_probZcc ,   &b_jetAK8_akx_probZcc  );
+   fChain->SetBranchAddress("jetAK8_akx_ZvsQCD",  &jetAK8_akx_ZvsQCD  ,   &b_jetAK8_akx_ZvsQCD   );
+   fChain->SetBranchAddress("jetAK8_akx_ZbbvsQCD",  &jetAK8_akx_ZbbvsQCD,   &b_jetAK8_akx_ZbbvsQCD );
+   fChain->SetBranchAddress("jetAK8_akx_probWcq",  &jetAK8_akx_probWcq ,   &b_jetAK8_akx_probWcq  );
+   fChain->SetBranchAddress("jetAK8_akx_probWqq",  &jetAK8_akx_probWqq ,   &b_jetAK8_akx_probWqq  );
+   fChain->SetBranchAddress("jetAK8_akx_WvsQCD",  &jetAK8_akx_WvsQCD  ,   &b_jetAK8_akx_WvsQCD   );
+
    //fChain->SetBranchAddress("jetAK8_partonFlavour", &jetAK8_partonFlavour, &b_jetAK8_partonFlavour);
    //fChain->SetBranchAddress("jetAK8_hadronFlavour", &jetAK8_hadronFlavour, &b_jetAK8_hadronFlavour);
    //fChain->SetBranchAddress("jetAK8_genParton_pdgID", &jetAK8_genParton_pdgID, &b_jetAK8_genParton_pdgID);
