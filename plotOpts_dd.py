@@ -12,7 +12,7 @@ def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag):
   bb=0.
   ss=0.
   if goUpOrDown in "up":
-    for iBin in range(bkg.FindBin(start), bkg.GetNbinsX()):
+    for iBin in range(bkg.FindBin(start), bkg.GetNbinsX()+1):
       bb+=bkg.GetBinContent(iBin)
       ss+=sig.GetBinContent(iBin)
   elif goUpOrDown in "down":
@@ -20,24 +20,26 @@ def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag):
       bb+=bkg.GetBinContent(iBin)
       ss+=sig.GetBinContent(iBin)
   if bb != 0:
-    return ss/sqrt(bb)
+    return (ss/sqrt(bb), [ss, bb])
   else:
     return "b=0"
 
-def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges):
+def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger):
   
-  debug=True
-  inFile_higgswindow     = TFile(inFileName_higgswindow)
+  debug=False
+  inFile_higgswindow     = TFile.Open(inFileName_higgswindow)
   if debug:
     print "inFile_higgswindow is: %s" % inFile_higgswindow.GetName()
-  inFile_sideband     = TFile(inFileName_sideband)
+  inFile_sideband     = TFile.Open(inFileName_sideband)
   if debug:
     print "inFile_sideband is: %s" % inFile_sideband.GetName()
 
   can_higgswindow = None
-  print "inFile_higgswindow.GetName()", inFile_higgswindow.GetName()
+  if debug:
+    print "inFile_higgswindow.GetName()", inFile_higgswindow.GetName()
   for key in inFile_higgswindow.GetListOfKeys():
-    print "can_higgsWindow has key:", key.GetName()
+    if debug:
+      print "can_higgsWindow has key:", key.GetName()
     if "c1" in key.GetName():
       can_higgswindow = inFile_higgswindow.Get(key.GetName()).DrawClone()
       can_higgswindow.SetName("%i_%s_c1_higgswindow" % (i, inFileName_higgswindow))
@@ -135,7 +137,8 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
       subprim.Delete()
 
   for subprim in pad_sideband.GetListOfPrimitives():
-    print "pad_sideband has primitive:", subprim.GetName()
+    if debug:
+      print "pad_sideband has primitive:", subprim.GetName()
     if "data" in subprim.GetName():
       subprim.SetName("%i_theSideband_%s" % (i, inFileName_sideband))
       sideband = subprim
@@ -153,9 +156,10 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   sbNorm = getSbNorm(stack, sideband)
   #sbNorm = stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
 
-  print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
-  print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
-  print "                       sbNorm is: %f" % sbNorm 
+  if debug:
+    print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
+    print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
+    print "                       sbNorm is: %f" % sbNorm 
   for sbBin in range (1, sideband.GetXaxis().GetNbins()+1):
     sideband.SetBinContent(sbBin, sideband.GetBinContent(sbBin)*sbNorm)
   #stack = stacks[-1]
@@ -201,23 +205,30 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   upperBound = getRangesDict(analysis)[whichVarAmI(inFileName_higgswindow)][0][1]
   # END HACK HACK
   stepSize = (upperBound-lowerBound)/nSteps
-  for i in range(0, total.GetNbinsX()):
+  for i in range(-1, total.GetNbinsX()):
     slideValue = lowerBound+i*stepSize
-    sOverRootB800= getSoverRootB(total, m800, slideValue, upDown, withBtag)
-    sOverRootB1000= getSoverRootB(total, m1000, slideValue, upDown, withBtag)
-    sOverRootB2000= getSoverRootB(total, m2000, slideValue, upDown, withBtag)
-    sOverRootB3000= getSoverRootB(total, m3000, slideValue, upDown, withBtag)
-    if type(sOverRootB800) is float : 
+    if i==-1:
+      sOverRootB800 = m800.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m800.GetSumOfWeights(), total.GetSumOfWeights()]
+      sOverRootB1000 = m1000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m1000.GetSumOfWeights(), total.GetSumOfWeights()]
+      sOverRootB2000 = m2000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m2000.GetSumOfWeights(), total.GetSumOfWeights()]
+      sOverRootB3000 = m3000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m3000.GetSumOfWeights(), total.GetSumOfWeights()]
+    if i>=0:
+      sOverRootB800  = getSoverRootB(total,  m800, slideValue, upDown, withBtag)
+      sOverRootB1000 = getSoverRootB(total, m1000, slideValue, upDown, withBtag)
+      sOverRootB2000 = getSoverRootB(total, m2000, slideValue, upDown, withBtag)
+      sOverRootB3000 = getSoverRootB(total, m3000, slideValue, upDown, withBtag)
+    if type(sOverRootB800[0]) is float : 
       graphPoints800.append([slideValue, sOverRootB800])
-      #print "filled point %f %f into graphPoints800" % ( slideValue, sOverRootB800)
-    if type(sOverRootB1000) is float : 
+      #print "filled point %f %f into graphPoints800 direction %s" % ( slideValue, sOverRootB800[0], upDown)
+    if type(sOverRootB1000[0]) is float : 
       graphPoints1000.append([slideValue, sOverRootB1000])
-      #print "filled point %f %f into graphPoints1000" % ( slideValue, sOverRootB1000)
-    if type(sOverRootB2000) is float : 
+      #print "filled point %f %f into graphPoints1000 direction %s" % ( slideValue, sOverRootB1000[0], upDown)
+    if type(sOverRootB2000[0]) is float : 
       graphPoints2000.append([slideValue, sOverRootB2000])
-      #print "filled point %f %f into graphPoints2000" % ( slideValue, sOverRootB2000)
-    if type(sOverRootB3000) is float : 
+      #print "filled point %f %f into graphPoints2000 direction %s" % ( slideValue, sOverRootB2000[0], upDown)
+    if type(sOverRootB3000[0]) is float : 
       graphPoints3000.append([slideValue, sOverRootB3000])
+      #print "filled point %f %f into graphPoints3000 direction %s" % ( slideValue, sOverRootB3000[0], upDown)
     #if type(sOverRootB4000) is float : 
     #  graphPoints4000.append([slideValue, sOverRootB2000])
 
@@ -226,37 +237,40 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
   #for graphPoint4000 in graphPoints4000:
   #  graph4000.SetPoint(graph4000.GetN(), graphPoint4000[0], graphPoint4000[1])
   #  #print "set point in graph4000"
-
+  if isTagger and upDown == "up":
+    graphData = {"graphPoints3000": graphPoints3000, "graphPoints2000": graphPoints2000, "graphPoints1000":graphPoints1000, "graphPoints800":graphPoints800}
+    pickle.dump(graphData, open("tagOpt_%s/tagOpt_%s.pkl" % (analysis, var), "wb"))
+  #  print graph[0], graph[1]
   graph3000 = TGraph()
   graph3000.SetName("optGraph_%s"%name3000)
   for graphPoint3000 in graphPoints3000:
-    graph3000.SetPoint(graph3000.GetN(), graphPoint3000[0], graphPoint3000[1])
+    graph3000.SetPoint(graph3000.GetN(), graphPoint3000[0], graphPoint3000[1][0])
     #print "set point in graph3000"
 
   graph2000 = TGraph()
   graph2000.SetName("optGraph_%s"%name2000)
   for graphPoint2000 in graphPoints2000:
-    graph2000.SetPoint(graph2000.GetN(), graphPoint2000[0], graphPoint2000[1])
+    graph2000.SetPoint(graph2000.GetN(), graphPoint2000[0], graphPoint2000[1][0])
     #print "set point in graph2000"
 
   graph1000 = TGraph()
   graph1000.SetName("optGraph_%s"%name1000)
   for graphPoint1000 in graphPoints1000:
-    graph1000.SetPoint(graph1000.GetN(), graphPoint1000[0], graphPoint1000[1])
+    graph1000.SetPoint(graph1000.GetN(), graphPoint1000[0], graphPoint1000[1][0])
     #print "set point in graph1000"
 
   graph800 = TGraph()
   graph800.SetName("optGraph_%s"%name800)
   for graphPoint800 in graphPoints800:
-    graph800.SetPoint(graph800.GetN(), graphPoint800[0], graphPoint800[1])
+    graph800.SetPoint(graph800.GetN(), graphPoint800[0], graphPoint800[1][0])
     #print "set point in graph800"
 
   #bottomPad_higgswindow.cd()
   #bottomPad_higgswindow.Clear()
   bottomPad_ratio.cd()
   bottomPad_ratio.Clear()
-  graph1000.Draw()
-  graph1000.GetXaxis().SetLimits(lowerBound, upperBound)
+  graph2000.Draw()
+  graph2000.GetXaxis().SetLimits(lowerBound, upperBound)
   #graph1000.Draw()
   #graph1000.GetXaxis().SetLimits(lowerBound, upperBound)
   #bottomPad_higgswindow.SetBottomMargin(0.18)
@@ -281,30 +295,30 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
 
   #bottomPad_higgswindow.cd()
   bottomPad_ratio.cd()
-  graph1000.GetYaxis().SetTitle("S/#sqrt{B} (a.u.)")
-  graph1000.GetYaxis().SetLabelSize(0)
-  graph1000.GetXaxis().SetLabelSize(0.1)
-  graph1000.GetYaxis().SetTitleSize(0.12)
-  graph1000.GetYaxis().SetTitleOffset(.3)
-  graph1000.GetXaxis().SetTitle("cut value")
-  graph1000.GetXaxis().SetTitleSize(0.12)
-  graph1000.GetXaxis().SetTitleOffset(0.65)
-  graph1000.SetLineStyle(2)
-  graph1000.SetLineWidth(2)
-  graph1000.SetLineColor(color1000)
-  graph1000.SetFillColor(kWhite)
-  graph1000.SetMarkerStyle(20)
-  graph1000.SetMarkerSize(0)
-  graph2000.Draw("SAME")
+  graph2000.GetYaxis().SetTitle("S/#sqrt{B} (a.u.)")
+  #graph2000.GetYaxis().SetLabelSize(0)
+  graph2000.GetXaxis().SetLabelSize(0.1)
+  graph2000.GetYaxis().SetTitleSize(0.12)
+  graph2000.GetYaxis().SetTitleOffset(.3)
+  graph2000.GetXaxis().SetTitle("cut value")
+  graph2000.GetXaxis().SetTitleSize(0.12)
+  graph2000.GetXaxis().SetTitleOffset(0.65)
   graph2000.SetLineStyle(2)
   graph2000.SetLineWidth(2)
   graph2000.SetLineColor(color2000)
   graph2000.SetFillColor(kWhite)
+  graph2000.SetMarkerStyle(20)
+  graph2000.SetMarkerSize(0)
   graph3000.Draw("SAME")
   graph3000.SetLineStyle(2)
   graph3000.SetLineWidth(2)
   graph3000.SetLineColor(color3000)
   graph3000.SetFillColor(kWhite)
+  graph1000.Draw("SAME")
+  graph1000.SetLineStyle(2)
+  graph1000.SetLineWidth(2)
+  graph1000.SetLineColor(color1000)
+  graph1000.SetFillColor(kWhite)
   graph800.Draw("SAME")
   graph800.SetLineStyle(2)
   graph800.SetLineWidth(2)
@@ -332,19 +346,23 @@ def makeOpt(analysis, inFileName_sideband, inFileName_higgswindow, upDown, withB
 
   
   if withBtag:
-    outDirName = "optplots_nMinus1_withBtag_dd_sb%i%i" % (windowEdges[0], windowEdges[1])
+    outDirName = "%s_optplots_nMinus1_withBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
     outFileName="%s/%s"%(outDirName, inFileName_higgswindow.split("/")[1])
   else:
-    outDirName =  "optplots_nMinus1_noBtag_dd_sb%i%i" % (windowEdges[0], windowEdges[1])
+    outDirName =  "%s_analysis_optplots_nMinus1_noBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
     outFileName="%s/%s"%(outDirName, inFileName_higgswindow.split("/")[1])
   if not path.exists(outDirName):
     makedirs(outDirName)
   outFileName=outFileName.split(".")[0]
-  outFile = TFile("%s_%r.root"%(outFileName, upDown), "RECREATE")
+  outFile = TFile.Open("%s_%r.root"%(outFileName, upDown), "RECREATE")
   outFile.cd()
   can_higgswindow.Write()
   can_higgswindow.Print("%s_%r.pdf"%(outFileName, upDown))
   outFile.Close()
+  inFile_higgswindow.Close()
+  del inFile_higgswindow
+  inFile_sideband.Close()
+  del inFile_sideband
 
 if __name__ == "__main__":
   from argparse import ArgumentParser
@@ -373,11 +391,13 @@ if __name__ == "__main__":
     print "bad sideband:", arguments.sideband
     exit(1)
   
-  from math import sqrt
-  from ROOT import *
-  from VgParameters import getRangesDict, getHiggsRangesDict
-  from getMCbgWeights import getMCbgLabels
   from os import path, makedirs
+  from math import sqrt
+  import pickle
+  from ROOT import *
+  from VgParameters import getRangesDict, getHiggsRangesDict, isVarTagger
+  from getMCbgWeights import getMCbgLabels
+  from pyrootTools import isOrIsNot
 
   gROOT.SetBatch()
   debugOneVar = False
@@ -397,6 +417,8 @@ if __name__ == "__main__":
     i=0
     for key in getHiggsRangesDict().keys():
       print "working on key:", key
+      isTagger = isVarTagger(key)
+      print "  -> this variable", isOrIsNot(isTagger, "singular"), "a b-tagger"
       if debugOneVar and not key=="phPtOverMgammaj":
         continue
       if "btagSF" in key or key=="mcWeight":
@@ -404,7 +426,7 @@ if __name__ == "__main__":
       # for withBtag / noBtag you need to change the next THREE lines
       sideband_varName    = "%s_stackplots_softdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( arguments.analysis, withBtag, windowEdges[0], windowEdges[1], key)
       higgswindow_varName = "%s_stackplots_softdrop_nMinus1_%s/nMinus1_stack_%s.root"%(arguments.analysis, withBtag, key)
-      makeOpt(arguments.analysis, sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges)
+      makeOpt(arguments.analysis, key, sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger)
       i+=1
   #for direction in ["up", "down"]:
   #  srCans =  []

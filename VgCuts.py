@@ -3,7 +3,22 @@ from ROOT import TCut
 # functions to define the selection cuts for H(bb)Gamma 
 # John Hakala 7/13/16
 
-def getCutValues(analysis):
+def getTaggerWPs():
+  return {
+      "DDB"   : 0.9,
+      "decDDB": 0.9
+      }
+
+def getSDmassWindow(analysis):
+  if "Zg" in analysis:
+    return [80.0, 100.0]
+  elif "Hg" in analysis:
+    return [110.0, 140.0]
+  else:
+    print "invalid analysis in VgCuts.getSDmassWindow."
+    exit(1)
+
+def getCutValues(analysis, tagger="DDB"):
   cutValues = {}
   cutValues["minInvMass"]     = 700.0
   #cutValues["minInvMass"]     = 500.0
@@ -12,7 +27,7 @@ def getCutValues(analysis):
   cutValues["jetAbsEta"]      = 2.2
   cutValues["deltaR"]         = 1.1
   cutValues["ptOverM"]        = 0.35
-  cutValues["DDB"]            = 0.9
+  cutValues[tagger]            = getTaggerWPs()[tagger]
   if "Hg" in analysis:
     cutValues["jetPt"]          = 250.0
   elif "Zg" in analysis:
@@ -38,19 +53,32 @@ def getVarKeys():
   varKeys = {}
   varKeys["bJett2t1"]                = "t2t1"
   varKeys["bJet_DDBtag"]             = "btagHolder"
-  varKeys["cosThetaStar"]                = "cosThetaStar"
-  varKeys["phPtOverMgammaj"]             = "ptOverM"
-  varKeys["leadingPhEta"]                = "phEta"
-  varKeys["leadingPhPhi"]                = "phPhi"
-  varKeys["leadingPhPt"]                 = "phPt"
-  varKeys["leadingPhAbsEta"]             = "phEta"
-  varKeys["phJetInvMass_softdrop"] = "turnon"
-  varKeys["phJetDeltaR"]           = "deltaR"
+  varKeys["bJet_decDDBtag"]          = "btagHolder"
+  varKeys["bJet_csvbb"]              = "btagHolder"
+  varKeys["bJet_akx_probHbb"]        = "btagHolder"
+  varKeys["bJet_akx_HbbvsQCD"]       = "btagHolder"
+  varKeys["bJet_akx_H4qvsQCD"]       = "btagHolder"
+  varKeys["bJet_akx_probZbb"]        = "btagHolder"
+  varKeys["bJet_akx_probZcc"]        = "btagHolder"
+  varKeys["bJet_akx_probZqq"]        = "btagHolder"
+  varKeys["bJet_akx_ZvsQCD"]         = "btagHolder"
+  varKeys["bJet_akx_ZbbvsQCD"]       = "btagHolder"
+  varKeys["bJet_akx_probWcq"]        = "btagHolder"
+  varKeys["bJet_akx_probWqq"]        = "btagHolder"
+  varKeys["bJet_akx_WvsQCD"]         = "btagHolder"
+  varKeys["cosThetaStar"]            = "cosThetaStar"
+  varKeys["phPtOverMgammaj"]         = "ptOverM"
+  varKeys["leadingPhEta"]            = "phEta"
+  varKeys["leadingPhPhi"]            = "phPhi"
+  varKeys["leadingPhPt"]             = "phPt"
+  varKeys["leadingPhAbsEta"]         = "phEta"
+  varKeys["phJetInvMass_softdrop"]   = "turnon"
+  varKeys["phJetDeltaR"]             = "deltaR"
   varKeys["bJet_abseta"]             = "jetAbsEta"
   varKeys["bJet_eta"]                = "jetEta"
   varKeys["bJet_phi"]                = "jetPhi"
   varKeys["bJet_pt"]                 = "jetPt"
-  varKeys["softdropJetCorrMass"]   = "higgsWindow"
+  varKeys["softdropJetCorrMass"]     = "higgsWindow"
   return varKeys
 
 def makeHiggsWindow(analysis, sideband=False, windowEdges=[100.0,110.0]):
@@ -124,7 +152,7 @@ def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[10
     
 def getBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100,110]):
     if windowEdges == "signalRegion":
-      windowEdges = [110.0, 140.0]
+      windowEdges = getSDmassWindow(analysis)
     btagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     btagCuts.pop("antibtag")
     if scaleFactors:
@@ -133,7 +161,7 @@ def getBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFactors=F
 
 def getAntiBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFactors=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
-      windowEdges = [110.0, 140.0]
+      windowEdges = getSDmassWindow(analysis)
     antibtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     antibtagCuts.pop("btag")
     if scaleFactors:
@@ -142,7 +170,7 @@ def getAntiBtagComboCut(analysis, region, useTrigger, sideband=False, scaleFacto
 
 def getNoBtagComboCut(analysis, region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
-      windowEdges = [110.0, 140.0]
+      windowEdges = getSDmassWindow(analysis)
     nobtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("btag")
     nobtagCuts.pop("antibtag")
@@ -150,7 +178,7 @@ def getNoBtagComboCut(analysis, region, useTrigger, sideband=False, windowEdges=
 
 def getNminus1ComboCut(analysis, region, popVar, withBtag, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
     if windowEdges == "signalRegion":
-      windowEdges = [110.0, 140.0]
+      windowEdges = getSDmassWindow(analysis)
     nobtagCuts = copy.deepcopy(getDefaultCuts(analysis, region, useTrigger, sideband, windowEdges))
     nobtagCuts.pop("antibtag")
     if not withBtag:

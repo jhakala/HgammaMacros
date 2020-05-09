@@ -89,19 +89,19 @@ def getWeightsDict(analysis, bkgSmall3Dir):
   #for signalToInclude in getSignalsToInclude():
   #  sampleWeights[signalToInclude] = signalWeight
   sampleWeights["data_2017.root"] = (1 , "data")
-  sampleWeights[ "%s-700.root"  % analysis] = (.8*0.4, "sig")
-  sampleWeights[ "%s-800.root"  % analysis] = (.8*0.4, "sig")
-  sampleWeights[ "%s-1000.root" % analysis] = (.7*0.4, "sig")
-  sampleWeights[ "%s-1200.root" % analysis] = (.7*0.4, "sig")
-  sampleWeights[ "%s-1400.root" % analysis] = (.7*0.4, "sig")
-  sampleWeights[ "%s-1600.root" % analysis] = (.6*0.4, "sig")
-  #sampleWeights["%s-1800.root" % analysis] = (.6*0.4, "sig")
-  sampleWeights[ "%s-2000.root" % analysis] = (.5*0.4, "sig")
-  sampleWeights[ "%s-2200.root" % analysis] = (.5*0.4, "sig")
-  sampleWeights[ "%s-2400.root" % analysis] = (.4*0.4, "sig")
-  sampleWeights[ "%s-2600.root" % analysis] = (.4*0.4, "sig")
-  sampleWeights[ "%s-3000.root" % analysis] = (.4*0.4, "sig")
-  sampleWeights[ "%s-3500.root" % analysis] = (.4*0.4, "sig")
+  sampleWeights[ "%s-700.root"  % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-800.root"  % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-1000.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-1200.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-1400.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-1600.root" % analysis] = (0.5, "sig")
+  #sampleWeights["%s-1800.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-2000.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-2200.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-2400.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-2600.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-3000.root" % analysis] = (0.5, "sig")
+  sampleWeights[ "%s-3500.root" % analysis] = (0.5, "sig")
   return sampleWeights
 
 def getMCbgWeightsDict(analysis, bkgSmall3Dir):

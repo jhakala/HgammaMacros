@@ -55,8 +55,8 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
         if sampleType == "bkg":
           #print "setting bkg", key, "fill color to", getMCbgColors()[key]
           hist.SetFillColor(getMCbgColors()[key])
-        if var == "bJet_DDBtag":
-          hist.Rebin(5)
+        #if var == "bJet_DDBtag":
+        #  hist.Rebin(5)
         #print "cutName is:", cutName
         if   cutName in "btag":
           cut = getBtagComboCut(analysis, "ddboost", useTrigger, sideband, useScaleFactors, windowEdges)

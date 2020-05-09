@@ -78,6 +78,30 @@ def getVariableDict():
   varDict["mcWeight"]    = "weight on MC background event"
   return varDict
 
+def isVarTagger(varName):
+
+  label =   "b" # stands for "boost"
+  taggers = [
+      "%sJet_DDBtag"%label,
+      "%sJet_decDDBtag"%label,
+      "%sJet_csvbb"%label,
+      "%sJet_akx_probHbb"%label,
+      "%sJet_akx_HbbvsQCD"%label,
+      "%sJet_akx_H4qvsQCD"%label,
+      "%sJet_akx_probZbb"%label,
+      "%sJet_akx_probZqq"%label,
+      "%sJet_akx_probZcc"%label,
+      "%sJet_akx_ZvsQCD"%label,
+      "%sJet_akx_ZbbvsQCD"%label,
+      "%sJet_akx_probWcq"%label,
+      "%sJet_akx_probWqq"%label,
+      "%sJet_akx_WvsQCD"%label
+      ]
+  if varName in taggers:
+    return True
+  else:
+    return False
+
 
 def getHiggsRangesDict(fineBinning=False):
   rangesDict = {}
