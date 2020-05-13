@@ -8,7 +8,7 @@ def whichVarAmI(inFileName):
       iAm = key
   return iAm
 
-def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag):
+def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag, useMC=False):
   bb=0.
   ss=0.
   if goUpOrDown in "up":
@@ -24,7 +24,7 @@ def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag):
   else:
     return "b=0"
 
-def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger):
+def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger, useMC=False, omitData = False):
   
   debug=False
   inFile_higgswindow     = TFile.Open(inFileName_higgswindow)
@@ -133,6 +133,7 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
       stacks.append(stack)
     if "SilverJson" in subprim.GetName():
       print "this is screwy, some SilverJson crap"
+      exit(1)
       subprim.SetName("garbage_%i_%s_%s" % (i, inFileName_higgswindow, subprim.GetName()))
       subprim.Delete()
 
@@ -142,6 +143,8 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
     if "data" in subprim.GetName():
       subprim.SetName("%i_theSideband_%s" % (i, inFileName_sideband))
       sideband = subprim
+      if omitData:
+        sideband.Reset()
       SetOwnership(sideband, False)
       sidebands.append(sideband)
     elif "THStack" in subprim.IsA().GetName() or "THist" in subprim.IsA().GetName():
@@ -150,18 +153,20 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
 
 
   def getSbNorm(stack, sideband, mode="matchMCsig"):
+    if omitData:
+      return 1.
     if mode=="matchMCsig":
       return stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
 
-  sbNorm = getSbNorm(stack, sideband)
-  #sbNorm = stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
 
-  if debug:
-    print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
-    print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
-    print "                       sbNorm is: %f" % sbNorm 
-  for sbBin in range (1, sideband.GetXaxis().GetNbins()+1):
-    sideband.SetBinContent(sbBin, sideband.GetBinContent(sbBin)*sbNorm)
+  if not omitData:
+    sbNorm = getSbNorm(stack, sideband)
+    if debug:
+      print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
+      print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
+      print "                       sbNorm is: %f" % sbNorm 
+    for sbBin in range (1, sideband.GetXaxis().GetNbins()+1):
+      sideband.SetBinContent(sbBin, sideband.GetBinContent(sbBin)*sbNorm)
   #stack = stacks[-1]
   #theSideband = sidebands[-1]
   #print stack
@@ -189,7 +194,11 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
   m3000.SetLineWidth(3)
 
   #m4000 = pad.GetPrimitive(name4000)
-  total = sideband
+  if useMC:
+    total = stack.GetStack().Last()
+  else:
+    total = sideband
+
   if not m800.GetNbinsX() == total.GetNbinsX():
     #print "nonmatching histograms!"
     quit()
@@ -208,15 +217,21 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
   for i in range(-1, total.GetNbinsX()):
     slideValue = lowerBound+i*stepSize
     if i==-1:
-      sOverRootB800 = m800.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m800.GetSumOfWeights(), total.GetSumOfWeights()]
-      sOverRootB1000 = m1000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m1000.GetSumOfWeights(), total.GetSumOfWeights()]
-      sOverRootB2000 = m2000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m2000.GetSumOfWeights(), total.GetSumOfWeights()]
-      sOverRootB3000 = m3000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m3000.GetSumOfWeights(), total.GetSumOfWeights()]
+      if upDown in "down":
+        sOverRootB800 = "b=0"
+        sOverRootB1000 = "b=0"
+        sOverRootB2000 = "b=0"
+        sOverRootB3000 = "b=0"
+      elif upDown in "up":
+        sOverRootB800 = m800.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m800.GetSumOfWeights(), total.GetSumOfWeights()]
+        sOverRootB1000 = m1000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m1000.GetSumOfWeights(), total.GetSumOfWeights()]
+        sOverRootB2000 = m2000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m2000.GetSumOfWeights(), total.GetSumOfWeights()]
+        sOverRootB3000 = m3000.GetSumOfWeights()/sqrt(total.GetSumOfWeights()), [m3000.GetSumOfWeights(), total.GetSumOfWeights()]
     if i>=0:
-      sOverRootB800  = getSoverRootB(total,  m800, slideValue, upDown, withBtag)
-      sOverRootB1000 = getSoverRootB(total, m1000, slideValue, upDown, withBtag)
-      sOverRootB2000 = getSoverRootB(total, m2000, slideValue, upDown, withBtag)
-      sOverRootB3000 = getSoverRootB(total, m3000, slideValue, upDown, withBtag)
+      sOverRootB800  = getSoverRootB(total,  m800, slideValue, upDown, withBtag, useMC)
+      sOverRootB1000 = getSoverRootB(total, m1000, slideValue, upDown, withBtag, useMC)
+      sOverRootB2000 = getSoverRootB(total, m2000, slideValue, upDown, withBtag, useMC)
+      sOverRootB3000 = getSoverRootB(total, m3000, slideValue, upDown, withBtag, useMC)
     if type(sOverRootB800[0]) is float : 
       graphPoints800.append([slideValue, sOverRootB800])
       #print "filled point %f %f into graphPoints800 direction %s" % ( slideValue, sOverRootB800[0], upDown)
@@ -239,7 +254,10 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
   #  #print "set point in graph4000"
   if isTagger and upDown == "up":
     graphData = {"graphPoints3000": graphPoints3000, "graphPoints2000": graphPoints2000, "graphPoints1000":graphPoints1000, "graphPoints800":graphPoints800}
-    pickle.dump(graphData, open("tagOpt_%s/tagOpt_%s.pkl" % (analysis, var), "wb"))
+    if useMC:
+      pickle.dump(graphData, open("tagOpt_mcBG_%s/tagOpt_%s.pkl" % (analysis, var), "wb"))
+    else:
+      pickle.dump(graphData, open("tagOpt_%s/tagOpt_%s.pkl" % (analysis, var), "wb"))
   #  print graph[0], graph[1]
   graph3000 = TGraph()
   graph3000.SetName("optGraph_%s"%name3000)
@@ -345,16 +363,24 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
   pad_higgswindow.SetBorderSize(0)
 
   
+  outDirName = None
   if withBtag:
-    outDirName = "%s_optplots_nMinus1_withBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
+    if useMC:
+      outDirName = "%s_optplots_nMinus1_withBtag_dd_sb%i%i_mcBG" % (analysis, windowEdges[0], windowEdges[1])
+    else:
+      outDirName = "%s_optplots_nMinus1_withBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
     outFileName="%s/%s"%(outDirName, inFileName_higgswindow.split("/")[1])
   else:
-    outDirName =  "%s_analysis_optplots_nMinus1_noBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
+    if useMC:
+      outDirName =  "%s_optplots_nMinus1_noBtag_dd_sb%i%i_mcBG" % (analysis, windowEdges[0], windowEdges[1])
+    else:
+      outDirName =  "%s_optplots_nMinus1_noBtag_dd_sb%i%i" % (analysis, windowEdges[0], windowEdges[1])
     outFileName="%s/%s"%(outDirName, inFileName_higgswindow.split("/")[1])
   if not path.exists(outDirName):
     makedirs(outDirName)
   outFileName=outFileName.split(".")[0]
   outFile = TFile.Open("%s_%r.root"%(outFileName, upDown), "RECREATE")
+  print outFile.GetName()
   outFile.cd()
   can_higgswindow.Write()
   can_higgswindow.Print("%s_%r.pdf"%(outFileName, upDown))
@@ -374,6 +400,10 @@ if __name__ == "__main__":
                       dest="sideband", help="either 100110, 5070, or 80100")
   parser.add_argument("-a", "--analysis", required=True,
                       dest="analysis", help="either 'Hg' or 'Zg'")
+  parser.add_argument("-m", "--useMC", action="store_true",
+                      dest="useMC", help="use MC background rather than sideband")
+  parser.add_argument("-o", "--omitData", action="store_true",
+                      dest="omitData", help="don't bother with data, only do MC bg stuff")
   arguments = parser.parse_args()
   if not arguments.tagoption in ["withBtag", "noBtag"] :
     print "invalid first argument: either 'withBtag' or 'noBtag'"
@@ -423,10 +453,9 @@ if __name__ == "__main__":
         continue
       if "btagSF" in key or key=="mcWeight":
         continue
-      # for withBtag / noBtag you need to change the next THREE lines
       sideband_varName    = "%s_stackplots_softdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( arguments.analysis, withBtag, windowEdges[0], windowEdges[1], key)
       higgswindow_varName = "%s_stackplots_softdrop_nMinus1_%s/nMinus1_stack_%s.root"%(arguments.analysis, withBtag, key)
-      makeOpt(arguments.analysis, key, sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger)
+      makeOpt(arguments.analysis, key, sideband_varName, higgswindow_varName, direction, withBtag == "withBtag", srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger, arguments.useMC, arguments.omitData)
       i+=1
   #for direction in ["up", "down"]:
   #  srCans =  []

@@ -6,8 +6,8 @@ from copy import deepcopy
 
 
 analysis = None
-if len(argv) != 2:
-  print "please specify analysis, either 'Zg' or 'Hg'"
+if len(argv) != 3:
+  print "invalid arguments, [Zg or Hg] [SB or MC]"
   exit(1)
 if "Hg" in argv[1]:
   analysis = "Hg"
@@ -16,11 +16,21 @@ elif "Zg" in argv[1]:
 else:
   print "invalid analysis, either 'Hg' or 'Zg'"
   exit(1)
+if "SB" in argv[2]:
+  bg = "SB"
+elif "MC" in argv[2]:
+  bg = "MC"
+else:
+  print "invalid background, either 'SB' or 'MC'"
+  exit(1)
 
 tagOpts = {}
-inFiles=glob.glob("tagOpt_%s/*"%analysis)
+dirPrefix = "tagOpt"
+if "MC" in bg:
+  dirPrefix += "_mcBG" 
+inFiles=glob.glob("%s_%s/*"%(dirPrefix, analysis))
 for inFile in inFiles:
-  tagOpts[inFile.replace("tagOpt_%s/tagOpt_bJet_"%analysis, "").replace(".pkl", "")]=pickle.load(open(inFile, "rb"))
+  tagOpts[inFile.replace("%s_%s/tagOpt_bJet_"%(dirPrefix, analysis), "").replace(".pkl", "")]=pickle.load(open(inFile, "rb"))
 
 print "\n---------------------"
 print "tagOpts:"
@@ -66,8 +76,8 @@ for mass in optPoints["decDDBtag"].keys():
     elif optPoints[tagger][mass][1] > fourthBestTagger[1][1]:
       #print "found second best tagger", tagger
       fourthBestTagger = [tagger, optPoints[tagger][mass]]
-  print "final best taggers for mass", mass, ":", bestTagger, secondBestTagger
   optTaggers[mass] = [bestTagger, secondBestTagger, thirdBestTagger, fourthBestTagger]
+  print "final best taggers for mass", mass, ":", optTaggers
 
 #pprint(optTaggers)
 
@@ -75,14 +85,41 @@ for mass in optPoints["decDDBtag"].keys():
 #                                 (27.733815937074006,
 #                                  [3004.0, 11732.230823516846])],
 
-from ROOT import TGraph
+from ROOT import TGraph, TCanvas, kRed, gROOT
 rocCurves = {}
+gROOT.SetBatch()
 for tagger in tagOpts.keys():
-  rocCurves[tagger+"_all"] = TGraph()
+  #rocCurves[tagger+"_all"] = TGraph()
+  can = TCanvas()
+  can.cd()
+  first = True
   for mass in tagOpts[tagger].keys():
-    rocCurves[tagger+"_m%s"%mass.replace("graphPoints","")] = TGraph()
-    totalB = tagOpts[tagger][mass][0][1][1]
-    totalS = tagOpts[tagger][mass][0][1][0]
-    print tagger, mass, totalB, totalS
-    exit(1)
-    #[3109.0, 11678.490283966064]
+    cName = tagger+"_m%s"%mass.replace("graphPoints","")
+    rocCurves[cName] = TGraph()
+    print "totalB, totalS"
+    totalB = tagOpts[tagger][mass][0][1][1][1]
+    totalS = tagOpts[tagger][mass][0][1][1][0]
+    print totalB, totalS
+    print "point"
+    iColor = -2
+    for point in tagOpts[tagger][mass]:
+      rocCurves[cName].SetPoint(rocCurves[cName].GetN(), point[1][1][1]/totalB, point[1][1][0]/totalS)
+    rocCurves[cName].SetLineColor(kRed+iColor)
+    rocCurves[cName].SetTitle("%s M%s" % (tagger, mass.replace("graphPoints", "")))
+    if first:
+      rocCurves[cName].Draw()
+      rocCurves[cName].GetXaxis().SetRangeUser(0,1)
+      rocCurves[cName].GetXaxis().SetTitle("Background eff")
+      rocCurves[cName].GetYaxis().SetRangeUser(0,1)
+      rocCurves[cName].GetYaxis().SetTitle("Signal eff")
+      first = False
+    else:
+      rocCurves[cName].Draw("SAME")
+    iColor += 2
+
+  can.BuildLegend()
+  can.Print("rocCurves_%s/rocCurve_%s.pdf"%(argv[1],tagger))
+
+      
+
+

@@ -3,10 +3,19 @@ from ROOT import TCut
 # functions to define the selection cuts for H(bb)Gamma 
 # John Hakala 7/13/16
 
+def getTagger(analysis):
+  if "Hg" in analysis:
+    return "akx_HbbvsQCD"
+  elif "Zg" in analysis:
+    return "akx_ZvsQCD"
+
 def getTaggerWPs():
+  #TODO TODO find good cut values
   return {
-      "DDB"   : 0.9,
-      "decDDB": 0.9
+      "DDB"            : 0.9,
+      "decDDB"         : 0.9,
+      "akx_HbbvsQCD"   : 0.9,
+      "akx_ZvsQCD"     : 0.9
       }
 
 def getSDmassWindow(analysis):
@@ -18,7 +27,8 @@ def getSDmassWindow(analysis):
     print "invalid analysis in VgCuts.getSDmassWindow."
     exit(1)
 
-def getCutValues(analysis, tagger="DDB"):
+def getCutValues(analysis):
+  tagger = getTagger(analysis)
   cutValues = {}
   cutValues["minInvMass"]     = 700.0
   #cutValues["minInvMass"]     = 500.0
@@ -31,7 +41,7 @@ def getCutValues(analysis, tagger="DDB"):
   if "Hg" in analysis:
     cutValues["jetPt"]          = 250.0
   elif "Zg" in analysis:
-    cutValues["jetPt"]          = 180.0
+    cutValues["jetPt"]          = 225.0
   else:
     print "invalid analysis for HgCuts, either 'Hg' or 'Zg'"
     exit(1)
@@ -52,20 +62,20 @@ def combineCuts(cutDict):
 def getVarKeys():
   varKeys = {}
   varKeys["bJett2t1"]                = "t2t1"
-  varKeys["bJet_DDBtag"]             = "btagHolder"
-  varKeys["bJet_decDDBtag"]          = "btagHolder"
-  varKeys["bJet_csvbb"]              = "btagHolder"
-  varKeys["bJet_akx_probHbb"]        = "btagHolder"
+  varKeys["bJet_DDBtag"]             = "unusued"
+  varKeys["bJet_decDDBtag"]          = "unusued"
+  varKeys["bJet_csvbb"]              = "unusued"
+  varKeys["bJet_akx_probHbb"]        = "unusued"
   varKeys["bJet_akx_HbbvsQCD"]       = "btagHolder"
-  varKeys["bJet_akx_H4qvsQCD"]       = "btagHolder"
-  varKeys["bJet_akx_probZbb"]        = "btagHolder"
-  varKeys["bJet_akx_probZcc"]        = "btagHolder"
-  varKeys["bJet_akx_probZqq"]        = "btagHolder"
+  varKeys["bJet_akx_H4qvsQCD"]       = "unusued"
+  varKeys["bJet_akx_probZbb"]        = "unusued"
+  varKeys["bJet_akx_probZcc"]        = "unusued"
+  varKeys["bJet_akx_probZqq"]        = "unusued"
   varKeys["bJet_akx_ZvsQCD"]         = "btagHolder"
-  varKeys["bJet_akx_ZbbvsQCD"]       = "btagHolder"
-  varKeys["bJet_akx_probWcq"]        = "btagHolder"
-  varKeys["bJet_akx_probWqq"]        = "btagHolder"
-  varKeys["bJet_akx_WvsQCD"]         = "btagHolder"
+  varKeys["bJet_akx_ZbbvsQCD"]       = "unusued"
+  varKeys["bJet_akx_probWcq"]        = "unusued"
+  varKeys["bJet_akx_probWqq"]        = "unusued"
+  varKeys["bJet_akx_WvsQCD"]         = "unusued"
   varKeys["cosThetaStar"]            = "cosThetaStar"
   varKeys["phPtOverMgammaj"]         = "ptOverM"
   varKeys["leadingPhEta"]            = "phEta"
@@ -85,16 +95,6 @@ def makeHiggsWindow(analysis, sideband=False, windowEdges=[100.0,110.0]):
     #print "makeHiggsWindow got sideband =", sideband, "and windowEdges =", windowEdges
     cutValues = getCutValues(analysis)
     cuts = {}
-    #window = "higgsWindow"
-    #if sideband:
-    #  if windowEdges == [100.0,110.0]:
-    #    window = "sidebandWindow"
-    #  elif windowEdges == [50.0,70.0]:
-    #    window = "sideband5070Window"
-    #  elif windowEdges == [80.0,100.0]:
-    #    window = "sideband80100Window"
-    #  elif windowEdges == [30.0,99999.9]:
-    #    window = "preselectionWindow"
     cuts["higgsWindowLow"] = TCut( "softdropJetCorrMass>%f"   % windowEdges[0] )
     cuts["higgsWindowHi"]  = TCut( "softdropJetCorrMass<%f"   % windowEdges[1] )
     #print "will return combineCuts(cuts)=", combineCuts(cuts)
@@ -112,6 +112,7 @@ def makeTrigger(analysis, which = "OR"):
 
 def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[100.0,110.0]):
     cutValues = getCutValues(analysis)
+    tagger = getTagger(analysis)
 
     cuts = {} 
     cuts["phEta"]           = TCut( "leadingPhAbsEta<%f"           % cutValues["phEta"]      )
@@ -129,22 +130,14 @@ def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[10
       cuts["turnon"]   = TCut( "phJetInvMass_softdrop>%f"      % cutValues["minInvMass"]     )
       cuts["deltaR"]   = TCut( "phJetDeltaR>%f"              % cutValues["deltaR"]         )
       cuts["jetAbsEta"]       = TCut( "bJet_abseta<%f"         % cutValues["jetAbsEta"]      )
-      cuts["btag"]     = TCut( "bJet_DDBtag>%f"                % cutValues["DDB"]            )
-      cuts["antibtag"] = TCut( "bJet_DDBtag<%f"                % cutValues["DDB"]            )
+      if "Hg" in analysis:
+        cuts["btag"]     = TCut( "bJet_akx_HbbvsQCD>%f"                % cutValues[tagger]            )
+        cuts["antibtag"] = TCut( "bJet_akx_HbbvsQCD<%f"                % cutValues[tagger]            )
+      if "Zg" in analysis:
+        cuts["btag"]     = TCut( "bJet_akx_ZvsQCD>%f"                % cutValues[tagger]            )
+        cuts["antibtag"] = TCut( "bJet_akx_ZvsQCD<%f"                % cutValues[tagger]            )
       cuts ["jetPt"]          = TCut("bJet_pt>%f"          % cutValues["jetPt"]      )
-      #cuts["higgsWindowLow"] = TCut( "higgsPuppi_softdropJetCorrMass>%f"   % cutValues["higgsWindow"][0] )
-      #cuts["higgsWindowHi"]  = TCut( "higgsPuppi_softdropJetCorrMass<%f"   % cutValues["higgsWindow"][1] )
       cuts["higgsWindow"]     = makeHiggsWindow(analysis, sideband, windowEdges)
-    #elif region is "side5070" or region is "side100110":
-    #  if region is "side5070":
-    #    index = "Three"
-    #  else:
-    #    index = "Four"
-    #  cuts["turnon"]   = TCut( "phJetInvMass_softdrop_sideLow%s>%f" % (index, cutValues["minInvMass"] ))
-    #  cuts["deltaR"]   = TCut( "phJetDeltaR_sideLow%s>%f"         % (index, cutValues["deltaR"]     ))
-    #  cuts["jetEta"]   = TCut( "sideLow%sJet_abseta<%f"    % (index, cutValues["jetEta"]     ))
-    #  cuts["btag"]     = TCut( "sideLow%sJet_DDBtag>%f"           % (index, cutValues["DDB"]        ))
-    #  cuts["antibtag"] = TCut( "sideLow%sJet_DDBtag<%f"           % (index, cutValues["DDB"]        ))
     else:
       print "Invalid region!!!"
       quit()
