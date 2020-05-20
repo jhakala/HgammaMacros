@@ -62,20 +62,36 @@ def combineCuts(cutDict):
 def getVarKeys():
   varKeys = {}
   varKeys["bJett2t1"]                = "t2t1"
-  varKeys["bJet_DDBtag"]             = "unusued"
-  varKeys["bJet_decDDBtag"]          = "unusued"
-  varKeys["bJet_csvbb"]              = "unusued"
-  varKeys["bJet_akx_probHbb"]        = "unusued"
+  varKeys["bJet_DDBtag"]             = "unused"
+  varKeys["bJet_decDDBtag"]          = "unused"
+  varKeys["bJet_csvbb"]              = "unused"
+  varKeys["bJet_akx_probHbb"]        = "unused"
   varKeys["bJet_akx_HbbvsQCD"]       = "btagHolder"
-  varKeys["bJet_akx_H4qvsQCD"]       = "unusued"
-  varKeys["bJet_akx_probZbb"]        = "unusued"
-  varKeys["bJet_akx_probZcc"]        = "unusued"
-  varKeys["bJet_akx_probZqq"]        = "unusued"
+  varKeys["bJet_akx_H4qvsQCD"]       = "unused"
+  varKeys["bJet_akx_probZbb"]        = "unused"
+  varKeys["bJet_akx_probZcc"]        = "unused"
+  varKeys["bJet_akx_probZqq"]        = "unused"
   varKeys["bJet_akx_ZvsQCD"]         = "btagHolder"
-  varKeys["bJet_akx_ZbbvsQCD"]       = "unusued"
-  varKeys["bJet_akx_probWcq"]        = "unusued"
-  varKeys["bJet_akx_probWqq"]        = "unusued"
-  varKeys["bJet_akx_WvsQCD"]         = "unusued"
+  varKeys["bJet_akx_ZbbvsQCD"]       = "unused"
+  varKeys["bJet_akx_probWcq"]        = "unused"
+  varKeys["bJet_akx_probWqq"]        = "unused"
+  varKeys["bJet_akx_WvsQCD"]         = "unused"
+  varKeys["bJet_akxDec_H4qvsQCD"]    = "unused"
+  varKeys["bJet_akxDec_HbbvsQCD"]    = "unused"
+  varKeys["bJet_akxDec_WvsQCD"]      = "unused"
+  varKeys["bJet_akxDec_ZHbbvsQCD"]   = "unused"
+  varKeys["bJet_akxDec_ZHccvsQCD"]   = "unused"
+  varKeys["bJet_akxDec_ZbbvsQCD"]    = "unused"
+  varKeys["bJet_akxDec_ZvsQCD"]      = "unused"
+  varKeys["bJet_akxDec_bbvsLight"]   = "unused"
+  varKeys["bJet_akxDec_probHbb"]     = "unused"
+  varKeys["bJet_akxDec_probHcc"]     = "unused"
+  varKeys["bJet_akxDec_probHqqqq"]   = "unused"
+  varKeys["bJet_akxDec_probWcq"]     = "unused"
+  varKeys["bJet_akxDec_probWqq"]     = "unused"
+  varKeys["bJet_akxDec_probZbb"]     = "unused"
+  varKeys["bJet_akxDec_probZcc"]     = "unused"
+  varKeys["bJet_akxDec_probZqq"]     = "unused"
   varKeys["cosThetaStar"]            = "cosThetaStar"
   varKeys["phPtOverMgammaj"]         = "ptOverM"
   varKeys["leadingPhEta"]            = "phEta"
@@ -123,6 +139,7 @@ def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[10
     cuts ["jetPhi"]         = TCut()
     cuts ["jetEta"]         = TCut()
     cuts ["btagHolder"]     = TCut()
+    cuts ["unused"]         = TCut()
     cuts ["cosThetaStar"]   = TCut()
     if useTrigger: 
       cuts["trigger"]         = makeTrigger(analysis)
@@ -130,12 +147,11 @@ def getDefaultCuts(analysis, region, useTrigger, sideband=False, windowEdges=[10
       cuts["turnon"]   = TCut( "phJetInvMass_softdrop>%f"      % cutValues["minInvMass"]     )
       cuts["deltaR"]   = TCut( "phJetDeltaR>%f"              % cutValues["deltaR"]         )
       cuts["jetAbsEta"]       = TCut( "bJet_abseta<%f"         % cutValues["jetAbsEta"]      )
-      if "Hg" in analysis:
-        cuts["btag"]     = TCut( "bJet_akx_HbbvsQCD>%f"                % cutValues[tagger]            )
-        cuts["antibtag"] = TCut( "bJet_akx_HbbvsQCD<%f"                % cutValues[tagger]            )
-      if "Zg" in analysis:
-        cuts["btag"]     = TCut( "bJet_akx_ZvsQCD>%f"                % cutValues[tagger]            )
-        cuts["antibtag"] = TCut( "bJet_akx_ZvsQCD<%f"                % cutValues[tagger]            )
+      cuts["btag"]     = TCut( "bJet_%s>%f"                % (getTagger(analysis), cutValues[tagger]) )
+      cuts["antibtag"] = TCut( "bJet_%s<%f"                % (getTagger(analysis), cutValues[tagger]) )
+      #if "Zg" in analysis:
+      #  cuts["btag"]     = TCut( "bJet_%s>%f"                % cutValues[tagger]            )
+      #  cuts["antibtag"] = TCut( "bJet_%s<%f"                % cutValues[tagger]            )
       cuts ["jetPt"]          = TCut("bJet_pt>%f"          % cutValues["jetPt"]      )
       cuts["higgsWindow"]     = makeHiggsWindow(analysis, sideband, windowEdges)
     else:

@@ -95,7 +95,23 @@ def isVarTagger(varName):
       "%sJet_akx_ZbbvsQCD"%label,
       "%sJet_akx_probWcq"%label,
       "%sJet_akx_probWqq"%label,
-      "%sJet_akx_WvsQCD"%label
+      "%sJet_akx_WvsQCD"%label,
+      "%sJet_akxDec_H4qvsQCD"%label,
+      "%sJet_akxDec_HbbvsQCD"%label,
+      "%sJet_akxDec_WvsQCD"%label,
+      "%sJet_akxDec_ZHbbvsQCD"%label,
+      "%sJet_akxDec_ZHccvsQCD"%label,
+      "%sJet_akxDec_ZbbvsQCD"%label,
+      "%sJet_akxDec_ZvsQCD"%label,
+      "%sJet_akxDec_bbvsLight"%label,
+      "%sJet_akxDec_probHbb"%label,
+      "%sJet_akxDec_probHcc"%label,
+      "%sJet_akxDec_probHqqqq"%label,
+      "%sJet_akxDec_probWcq"%label,
+      "%sJet_akxDec_probWqq"%label,
+      "%sJet_akxDec_probZbb"%label,
+      "%sJet_akxDec_probZcc"%label,
+      "%sJet_akxDec_probZqq"%label
       ]
   if varName in taggers:
     return True
@@ -116,20 +132,36 @@ def getHiggsRangesDict(fineBinning=False):
   rangesDict["btagSF"]                       = [[0.0, 1.0]]
   rangesDict["weightFactor"]                 = [[0.0, 2.0]]
   label =   "b" # stands for "boost"
-  rangesDict["%sJet_DDBtag"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_decDDBtag"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_csvbb"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probHbb"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_HbbvsQCD"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_H4qvsQCD"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probZbb"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probZqq"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probZcc"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_ZvsQCD"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_ZbbvsQCD"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probWcq"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_probWqq"%label]           = [[-1. , 1.]]
-  rangesDict["%sJet_akx_WvsQCD"%label]           = [[-1. , 1.]]
+  rangesDict["%sJet_DDBtag"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_decDDBtag"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_csvbb"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probHbb"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_HbbvsQCD"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_H4qvsQCD"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probZbb"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probZqq"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probZcc"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_ZvsQCD"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_ZbbvsQCD"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probWcq"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_probWqq"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akx_WvsQCD"%label]           = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_H4qvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_HbbvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_WvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_ZHbbvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_ZHccvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_ZbbvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_ZvsQCD"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_bbvsLight"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probHbb"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probHcc"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probHqqqq"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probWcq"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probWqq"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probZbb"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probZcc"%label]     = [[0. , 1.]]
+  rangesDict["%sJet_akxDec_probZqq"%label]     = [[0. , 1.]]
   rangesDict["%sJet_abseta"%label]=[[0., 3]]
   rangesDict["%sJet_eta"%label]       = [[-3., 3.]]
   rangesDict["%sJet_phi"%label]       = [[-3.5, 3.5]]

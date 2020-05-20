@@ -75,7 +75,24 @@ public :
   float bJet_akx_probWcq                  = -999. ;
   float bJet_akx_probWqq                  = -999. ;
   float bJet_akx_WvsQCD                  = -999. ;
- 
+
+  float bJet_akxDec_H4qvsQCD          = -999.;
+  float bJet_akxDec_HbbvsQCD          = -999.;
+  float bJet_akxDec_WvsQCD          = -999.;
+  float bJet_akxDec_ZHbbvsQCD          = -999.;
+  float bJet_akxDec_ZHccvsQCD          = -999.;
+  float bJet_akxDec_ZbbvsQCD          = -999.;
+  float bJet_akxDec_ZvsQCD          = -999.;
+  float bJet_akxDec_bbvsLight          = -999.;
+  float bJet_akxDec_probHbb          = -999.;
+  float bJet_akxDec_probHcc          = -999.;
+  float bJet_akxDec_probHqqqq          = -999.;
+  float bJet_akxDec_probWcq          = -999.;
+  float bJet_akxDec_probWqq          = -999.;
+  float bJet_akxDec_probZbb          = -999.;
+  float bJet_akxDec_probZcc          = -999.;
+  float bJet_akxDec_probZqq          = -999.;
+
   //float test_looseloose                = -1.   ;
   //bool looseloose                = false ;
   float softdrop_bJetTau1         = -999. ;
@@ -277,6 +294,23 @@ public :
    vector<float>   *jetAK8_akx_probWcq; 
    vector<float>   *jetAK8_akx_probWqq; 
    vector<float>   *jetAK8_akx_WvsQCD;  
+
+   vector<float>   *jetAK8_akxDec_H4qvsQCD;
+   vector<float>   *jetAK8_akxDec_HbbvsQCD;
+   vector<float>   *jetAK8_akxDec_WvsQCD;
+   vector<float>   *jetAK8_akxDec_ZHbbvsQCD;
+   vector<float>   *jetAK8_akxDec_ZHccvsQCD;
+   vector<float>   *jetAK8_akxDec_ZbbvsQCD;
+   vector<float>   *jetAK8_akxDec_ZvsQCD;
+   vector<float>   *jetAK8_akxDec_bbvsLight;
+   vector<float>   *jetAK8_akxDec_probHbb;
+   vector<float>   *jetAK8_akxDec_probHcc;
+   vector<float>   *jetAK8_akxDec_probHqqqq;
+   vector<float>   *jetAK8_akxDec_probWcq;
+   vector<float>   *jetAK8_akxDec_probWqq;
+   vector<float>   *jetAK8_akxDec_probZbb;
+   vector<float>   *jetAK8_akxDec_probZcc;
+   vector<float>   *jetAK8_akxDec_probZqq;
 
    //vector<int>     *jetAK8_partonFlavour;
    //vector<int>     *jetAK8_hadronFlavour;
@@ -493,6 +527,25 @@ public :
    TBranch        *b_jetAK8_akx_probWcq; 
    TBranch        *b_jetAK8_akx_probWqq; 
    TBranch        *b_jetAK8_akx_WvsQCD;  
+
+   TBranch        *b_jetAK8_akxDec_H4qvsQCD;
+   TBranch        *b_jetAK8_akxDec_HbbvsQCD;
+   TBranch        *b_jetAK8_akxDec_WvsQCD;
+   TBranch        *b_jetAK8_akxDec_ZHbbvsQCD;
+   TBranch        *b_jetAK8_akxDec_ZHccvsQCD;
+   TBranch        *b_jetAK8_akxDec_ZbbvsQCD;
+   TBranch        *b_jetAK8_akxDec_ZvsQCD;
+   TBranch        *b_jetAK8_akxDec_bbvsLight;
+   TBranch        *b_jetAK8_akxDec_probHbb;
+   TBranch        *b_jetAK8_akxDec_probHcc;
+   TBranch        *b_jetAK8_akxDec_probHqqqq;
+   TBranch        *b_jetAK8_akxDec_probWcq;
+   TBranch        *b_jetAK8_akxDec_probWqq;
+   TBranch        *b_jetAK8_akxDec_probZbb;
+   TBranch        *b_jetAK8_akxDec_probZcc;
+   TBranch        *b_jetAK8_akxDec_probZqq;
+
+
 
    //TBranch        *b_jetAK8_partonFlavour;   //!
    //TBranch        *b_jetAK8_hadronFlavour;   //!
@@ -770,6 +823,24 @@ void VgammaSelector::Init(TTree *tree)
    jetAK8_akx_probWqq = 0; 
    jetAK8_akx_WvsQCD = 0;  
 
+   jetAK8_akxDec_H4qvsQCD = 0;
+   jetAK8_akxDec_HbbvsQCD = 0;
+   jetAK8_akxDec_WvsQCD = 0;
+   jetAK8_akxDec_ZHbbvsQCD = 0;
+   jetAK8_akxDec_ZHccvsQCD = 0;
+   jetAK8_akxDec_ZbbvsQCD = 0;
+   jetAK8_akxDec_ZvsQCD = 0;
+   jetAK8_akxDec_bbvsLight = 0;
+   jetAK8_akxDec_probHbb = 0;
+   jetAK8_akxDec_probHcc = 0;
+   jetAK8_akxDec_probHqqqq = 0;
+   jetAK8_akxDec_probWcq = 0;
+   jetAK8_akxDec_probWqq = 0;
+   jetAK8_akxDec_probZbb = 0;
+   jetAK8_akxDec_probZcc = 0;
+   jetAK8_akxDec_probZqq = 0;
+
+
    //jetAK8_partonFlavour = 0;
    //jetAK8_hadronFlavour = 0;
    //jetAK8_genParton_pdgID = 0;
@@ -976,6 +1047,23 @@ void VgammaSelector::Init(TTree *tree)
    fChain->SetBranchAddress("jetAK8_akx_probWcq",  &jetAK8_akx_probWcq ,   &b_jetAK8_akx_probWcq  );
    fChain->SetBranchAddress("jetAK8_akx_probWqq",  &jetAK8_akx_probWqq ,   &b_jetAK8_akx_probWqq  );
    fChain->SetBranchAddress("jetAK8_akx_WvsQCD",  &jetAK8_akx_WvsQCD  ,   &b_jetAK8_akx_WvsQCD   );
+
+   fChain->SetBranchAddress("jetAK8_akxDec_H4qvsQCD",     &jetAK8_akxDec_H4qvsQCD  ,     &b_jetAK8_akxDec_H4qvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_HbbvsQCD",     &jetAK8_akxDec_HbbvsQCD  ,     &b_jetAK8_akxDec_HbbvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_WvsQCD",       &jetAK8_akxDec_WvsQCD    ,     &b_jetAK8_akxDec_WvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_ZHbbvsQCD",    &jetAK8_akxDec_ZHbbvsQCD ,     &b_jetAK8_akxDec_ZHbbvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_ZHccvsQCD",    &jetAK8_akxDec_ZHccvsQCD ,     &b_jetAK8_akxDec_ZHccvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_ZbbvsQCD",     &jetAK8_akxDec_ZbbvsQCD  ,     &b_jetAK8_akxDec_ZbbvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_ZvsQCD",       &jetAK8_akxDec_ZvsQCD    ,     &b_jetAK8_akxDec_ZvsQCD );
+   fChain->SetBranchAddress("jetAK8_akxDec_bbvsLight",    &jetAK8_akxDec_bbvsLight ,     &b_jetAK8_akxDec_bbvsLight );
+   fChain->SetBranchAddress("jetAK8_akxDec_probHbb",      &jetAK8_akxDec_probHbb   ,     &b_jetAK8_akxDec_probHbb );
+   fChain->SetBranchAddress("jetAK8_akxDec_probHcc",      &jetAK8_akxDec_probHcc   ,     &b_jetAK8_akxDec_probHcc );
+   fChain->SetBranchAddress("jetAK8_akxDec_probHqqqq",    &jetAK8_akxDec_probHqqqq ,     &b_jetAK8_akxDec_probHqqqq );
+   fChain->SetBranchAddress("jetAK8_akxDec_probWcq",      &jetAK8_akxDec_probWcq   ,     &b_jetAK8_akxDec_probWcq );
+   fChain->SetBranchAddress("jetAK8_akxDec_probWqq",      &jetAK8_akxDec_probWqq   ,     &b_jetAK8_akxDec_probWqq );
+   fChain->SetBranchAddress("jetAK8_akxDec_probZbb",      &jetAK8_akxDec_probZbb   ,     &b_jetAK8_akxDec_probZbb );
+   fChain->SetBranchAddress("jetAK8_akxDec_probZcc",      &jetAK8_akxDec_probZcc   ,     &b_jetAK8_akxDec_probZcc );
+   fChain->SetBranchAddress("jetAK8_akxDec_probZqq",      &jetAK8_akxDec_probZqq   ,     &b_jetAK8_akxDec_probZqq );
 
    //fChain->SetBranchAddress("jetAK8_partonFlavour", &jetAK8_partonFlavour, &b_jetAK8_partonFlavour);
    //fChain->SetBranchAddress("jetAK8_hadronFlavour", &jetAK8_hadronFlavour, &b_jetAK8_hadronFlavour);

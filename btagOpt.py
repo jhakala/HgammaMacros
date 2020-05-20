@@ -104,6 +104,7 @@ for tagger in tagOpts.keys():
     iColor = -2
     for point in tagOpts[tagger][mass]:
       rocCurves[cName].SetPoint(rocCurves[cName].GetN(), point[1][1][1]/totalB, point[1][1][0]/totalS)
+      print "bkg eff:", point[1][1][1]/totalB, " --  WP:", point[0]
     rocCurves[cName].SetLineColor(kRed+iColor)
     rocCurves[cName].SetTitle("%s M%s" % (tagger, mass.replace("graphPoints", "")))
     if first:

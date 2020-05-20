@@ -81,6 +81,26 @@ outputTreeBoost->Branch("bJet_akx_probWcq",  &bJet_akx_probWcq);
 outputTreeBoost->Branch("bJet_akx_probWqq",  &bJet_akx_probWqq);
 outputTreeBoost->Branch("bJet_akx_WvsQCD",  &bJet_akx_WvsQCD);
 
+outputTreeBoost->Branch("bJet_akxDec_H4qvsQCD",   &bJet_akxDec_H4qvsQCD  );
+outputTreeBoost->Branch("bJet_akxDec_HbbvsQCD",   &bJet_akxDec_HbbvsQCD  );
+outputTreeBoost->Branch("bJet_akxDec_WvsQCD",     &bJet_akxDec_WvsQCD    );
+outputTreeBoost->Branch("bJet_akxDec_ZHbbvsQCD",  &bJet_akxDec_ZHbbvsQCD );
+outputTreeBoost->Branch("bJet_akxDec_ZHccvsQCD",  &bJet_akxDec_ZHccvsQCD );
+outputTreeBoost->Branch("bJet_akxDec_ZbbvsQCD",   &bJet_akxDec_ZbbvsQCD  );
+outputTreeBoost->Branch("bJet_akxDec_ZvsQCD",     &bJet_akxDec_ZvsQCD    );
+outputTreeBoost->Branch("bJet_akxDec_bbvsLight",  &bJet_akxDec_bbvsLight );
+outputTreeBoost->Branch("bJet_akxDec_probHbb",    &bJet_akxDec_probHbb   );
+outputTreeBoost->Branch("bJet_akxDec_probHcc",    &bJet_akxDec_probHcc   );
+outputTreeBoost->Branch("bJet_akxDec_probHqqqq",  &bJet_akxDec_probHqqqq );
+outputTreeBoost->Branch("bJet_akxDec_probWcq",    &bJet_akxDec_probWcq   );
+outputTreeBoost->Branch("bJet_akxDec_probWqq",    &bJet_akxDec_probWqq   );
+outputTreeBoost->Branch("bJet_akxDec_probZbb",    &bJet_akxDec_probZbb   );
+outputTreeBoost->Branch("bJet_akxDec_probZcc",    &bJet_akxDec_probZcc   );
+outputTreeBoost->Branch("bJet_akxDec_probZqq",    &bJet_akxDec_probZqq   );
+
+
+
+
   outputTreeBoost->Branch("cosThetaStar", &cosThetaStar);
   outputTreeBoost->Branch("phPtOverMgammaj", &phPtOverMgammaj);
   outputTreeBoost->Branch("leadingPhEta", &leadingPhEta);
@@ -140,6 +160,24 @@ outputTreeBoost->Branch("bJet_akx_WvsQCD",  &bJet_akx_WvsQCD);
   fChain->SetBranchStatus( "jetAK8_akx_probWcq"              ,  1 );  
   fChain->SetBranchStatus( "jetAK8_akx_probWqq"              ,  1 );  
   fChain->SetBranchStatus( "jetAK8_akx_WvsQCD"               ,  1 );  
+
+  fChain->SetBranchStatus( "jetAK8_akxDec_H4qvsQCD",         1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_HbbvsQCD",         1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_WvsQCD",           1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_ZHbbvsQCD",        1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_ZHccvsQCD",        1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_ZbbvsQCD",         1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_ZvsQCD",           1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_bbvsLight",        1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probHbb",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probHcc",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probHqqqq",        1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probWcq",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probWqq",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probZbb",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probZcc",          1 );
+  fChain->SetBranchStatus( "jetAK8_akxDec_probZqq",          1 );
+
 
   //fChain->SetBranchStatus("EVENT_run"      ,  1 );
   //fChain->SetBranchStatus("EVENT_lumiBlock"      ,  1 );
@@ -214,6 +252,23 @@ outputTreeBoost->Branch("bJet_akx_WvsQCD",  &bJet_akx_WvsQCD);
     bJet_akx_probWcq                     = -999. ;
     bJet_akx_probWqq                     = -999. ;
     bJet_akx_WvsQCD                      = -999. ;
+
+    bJet_akxDec_H4qvsQCD                 = -999. ;
+    bJet_akxDec_HbbvsQCD                 = -999. ;
+    bJet_akxDec_WvsQCD                   = -999. ;
+    bJet_akxDec_ZHbbvsQCD                = -999. ;
+    bJet_akxDec_ZHccvsQCD                = -999. ;
+    bJet_akxDec_ZbbvsQCD                 = -999. ;
+    bJet_akxDec_ZvsQCD                   = -999. ;
+    bJet_akxDec_bbvsLight                = -999. ;
+    bJet_akxDec_probHbb                  = -999. ;
+    bJet_akxDec_probHcc                  = -999. ;
+    bJet_akxDec_probHqqqq                = -999. ;
+    bJet_akxDec_probWcq                  = -999. ;
+    bJet_akxDec_probWqq                  = -999. ;
+    bJet_akxDec_probZbb                  = -999. ;
+    bJet_akxDec_probZcc                  = -999. ;
+    bJet_akxDec_probZqq                  = -999. ;
 
     cosThetaStar                     =  -99. ; 
     phPtOverMgammaj                  =  -99. ; 
@@ -324,17 +379,23 @@ outputTreeBoost->Branch("bJet_akx_WvsQCD",  &bJet_akx_WvsQCD);
               bJet_akx_probWqq  = jetAK8_akx_probWqq  ->at(iJet);
               bJet_akx_WvsQCD   = jetAK8_akx_WvsQCD   ->at(iJet);
 
-              bJet_akx_probHbb    = jetAK8_akx_probHbb ->at(iJet);
-              bJet_akx_HbbvsQCD   = jetAK8_akx_HbbvsQCD->at(iJet);
-              bJet_akx_H4qvsQCD   = jetAK8_akx_H4qvsQCD->at(iJet);
-              bJet_akx_probZbb    = jetAK8_akx_probZbb ->at(iJet);
-              bJet_akx_probZqq    = jetAK8_akx_probZqq ->at(iJet);
-              bJet_akx_probZcc    = jetAK8_akx_probZcc ->at(iJet);
-              bJet_akx_ZvsQCD     = jetAK8_akx_ZvsQCD  ->at(iJet);
-              bJet_akx_ZbbvsQCD   = jetAK8_akx_ZbbvsQCD->at(iJet);
-              bJet_akx_probWcq    = jetAK8_akx_probWcq ->at(iJet);
-              bJet_akx_probWqq    = jetAK8_akx_probWqq ->at(iJet);
-              bJet_akx_WvsQCD     = jetAK8_akx_WvsQCD  ->at(iJet);
+              bJet_akxDec_H4qvsQCD   = jetAK8_akxDec_H4qvsQCD   ->at(iJet);  
+              bJet_akxDec_HbbvsQCD   = jetAK8_akxDec_HbbvsQCD   ->at(iJet);  
+              bJet_akxDec_WvsQCD     = jetAK8_akxDec_WvsQCD     ->at(iJet);  
+              bJet_akxDec_ZHbbvsQCD  = jetAK8_akxDec_ZHbbvsQCD  ->at(iJet);  
+              bJet_akxDec_ZHccvsQCD  = jetAK8_akxDec_ZHccvsQCD  ->at(iJet);  
+              bJet_akxDec_ZbbvsQCD   = jetAK8_akxDec_ZbbvsQCD   ->at(iJet);  
+              bJet_akxDec_ZvsQCD     = jetAK8_akxDec_ZvsQCD     ->at(iJet);  
+              bJet_akxDec_bbvsLight  = jetAK8_akxDec_bbvsLight  ->at(iJet);  
+              bJet_akxDec_probHbb    = jetAK8_akxDec_probHbb    ->at(iJet);  
+              bJet_akxDec_probHcc    = jetAK8_akxDec_probHcc    ->at(iJet);  
+              bJet_akxDec_probHqqqq  = jetAK8_akxDec_probHqqqq  ->at(iJet);  
+              bJet_akxDec_probWcq    = jetAK8_akxDec_probWcq    ->at(iJet);  
+              bJet_akxDec_probWqq    = jetAK8_akxDec_probWqq    ->at(iJet);  
+              bJet_akxDec_probZbb    = jetAK8_akxDec_probZbb    ->at(iJet);  
+              bJet_akxDec_probZcc    = jetAK8_akxDec_probZcc    ->at(iJet);  
+              bJet_akxDec_probZqq    = jetAK8_akxDec_probZqq    ->at(iJet);  
+
 
               softdrop_bJetTau1 = jetAK8_tau1 ->  at(iJet) ;
               softdrop_bJetTau2 = jetAK8_tau2 ->  at(iJet) ;
