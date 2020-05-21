@@ -2,31 +2,11 @@
 # Makes optimization plots by sliding cuts over N-1 stackplots from makeStacks.py
 
 
-def whichVarAmI(inFileName):
-  for key in getRangesDict().keys():
-    if key in inFileName:
-      iAm = key
-  return iAm
-
-def getSoverRootB(bkg, sig, start, goUpOrDown, withBtag, useMC=False):
-  bb=0.
-  ss=0.
-  if goUpOrDown in "up":
-    for iBin in range(bkg.FindBin(start), bkg.GetNbinsX()+1):
-      bb+=bkg.GetBinContent(iBin)
-      ss+=sig.GetBinContent(iBin)
-  elif goUpOrDown in "down":
-    for iBin in range(0, bkg.FindBin(start)):
-      bb+=bkg.GetBinContent(iBin)
-      ss+=sig.GetBinContent(iBin)
-  if bb != 0:
-    return (ss/sqrt(bb), [ss, bb])
-  else:
-    return "b=0"
+from optTools import *
 
 def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, srCans, srPads, sbCans, sbPads, stacks, sidebands, i, windowEdges, isTagger, useMC=False, omitData = False):
   
-  debug=False
+  debug=True
   inFile_higgswindow     = TFile.Open(inFileName_higgswindow)
   if debug:
     print "inFile_higgswindow is: %s" % inFile_higgswindow.GetName()
@@ -34,76 +14,24 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
   if debug:
     print "inFile_sideband is: %s" % inFile_sideband.GetName()
 
-  can_higgswindow = None
-  if debug:
-    print "inFile_higgswindow.GetName()", inFile_higgswindow.GetName()
-  for key in inFile_higgswindow.GetListOfKeys():
-    if debug:
-      print "can_higgsWindow has key:", key.GetName()
-    if "c1" in key.GetName():
-      can_higgswindow = inFile_higgswindow.Get(key.GetName()).DrawClone()
-      can_higgswindow.SetName("%i_%s_c1_higgswindow" % (i, inFileName_higgswindow))
-      #print "can_higgswindow: ",
-      #print can_higgswindow
-      SetOwnership(can_higgswindow, False)
-      srCans.append(can_higgswindow)
-      #canName_higgswindow = "c1_higgswindow"
-        
-  for key in inFile_higgswindow.GetListOfKeys():
-    if debug:
-      print "inFile_higgswindow is: %s" % inFile_higgswindow.GetName()
-      print "inFile_higgswindow has key: ", 
-      print key.GetName()
-  #print "canName_higgswindow: %s" % canName_higgswindow 
-  for prim in can_higgswindow.GetListOfPrimitives():
-    if debug:
-      print "can_higgswindow has primitive: %s" % prim.GetName()
-    prim.SetName("%i_%s_higgswindow" % (i, prim.GetName()))
-    #print "can_higgswindow has renamed primitive: %s" % prim.GetName()
-    if "stack" in prim.GetName():
-      pad_higgswindow = prim
-      for primitive in pad_higgswindow.GetListOfPrimitives():
-        if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
-          primitive.SetName("%s_%s_higgswindow" % (inFileName_higgswindow, primitive.GetName()))
-      #print "pad_higgswindow: ",
-      #print  pad_higgswindow
-      SetOwnership(pad_higgswindow, False)
-      srPads.append(pad_higgswindow)
-      #print "using higgswindow stack: %s" % padName_higgswindow
-    if debug:
-      print "prim.GetName()", prim.GetName()
-    if "ratio" in prim.GetName():
-      bottomPad_higgswindow = prim
-      for primitive in bottomPad_higgswindow.GetListOfPrimitives():
-        if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
-          primitive.SetName("%s_%s_higgswindow" % (inFileName_higgswindow, primitive.GetName()))
-      SetOwnership(bottomPad_higgswindow, False)
-      srPads.append(bottomPad_higgswindow)
-      bottomPad_ratio=srPads[-1]
-      
+  can_higgswindow = getCanvas(inFile_higgswindow, i)
+  srCans.append(can_higgswindow)
 
+  pad_higgswindow = getTopPad(inFile_higgswindow.GetName(), i, can_higgswindow)
+  srPads.append(pad_higgswindow)
 
-  for key in inFile_sideband.GetListOfKeys():
-    #print key.GetName()
-    #print "inFile_sideband is: %s" % inFile_sideband.GetName()
-    if "c1" in key.GetName():
-      can_sideband = inFile_sideband.Get(key.GetName()).DrawClone()
-      can_sideband.SetName("%i_%s_c1_sideband" % (i, inFileName_sideband))
-      SetOwnership(can_sideband, False)
-      sbCans.append(can_sideband)
+  bottomPad_higgswindow = getRatioPad(inFile_higgswindow.GetName(), i, can_higgswindow)
+  srPads.append(bottomPad_higgswindow)
+  bottomPad_ratio=srPads[-1]
   can_higgswindow.Draw()
+
+  can_sideband = getCanvas(inFile_sideband, i, True)
+  sbCans.append(can_sideband)
+
+  pad_sideband = getTopPad(inFile_sideband.GetName(), i, can_sideband, True)
+  sbPads.append(pad_sideband)
+
   for prim in can_sideband.GetListOfPrimitives():
-    if debug:
-      print "can_sideband has primitive: %s" % prim.GetName()
-    prim.SetName("%i_%s_sideband" % (i, prim.GetName()))
-    #print "can_sideband has renamed primitive: %s" % prim.GetName()
-    if "stack" in prim.GetName():
-      pad_sideband = prim
-      for primitive in pad_sideband.GetListOfPrimitives():
-        if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
-          primitive.SetName("%s_%s_sideband" % (inFileName_sideband, primitive.GetName()))
-      SetOwnership(pad_sideband, False)
-      sbPads.append(pad_sideband)
     if "ratio" in prim.GetName():
       bottomPad_sideband = prim
       for primitive in bottomPad_sideband.GetListOfPrimitives():
@@ -151,16 +79,8 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
       subprim.SetName("garbage_%i_%s_%s" % (i, inFileName_sideband, subprim.GetName()))
       subprim.Delete()
 
-
-  def getSbNorm(stack, sideband, mode="matchMCsig"):
-    if omitData:
-      return 1.
-    if mode=="matchMCsig":
-      return stack.GetStack().Last().GetSumOfWeights()/float(sideband.GetSumOfWeights())
-
-
   if not omitData:
-    sbNorm = getSbNorm(stack, sideband)
+    sbNorm = getSbNorm(stack, sideband, omitData)
     if debug:
       print "number of entries in stack is   : %f" % stack.GetStack().Last().GetSumOfWeights()
       print "number of entries in sideband is: %f" % sideband.GetSumOfWeights()
@@ -429,10 +349,11 @@ if __name__ == "__main__":
   from getMCbgWeights import getMCbgLabels
   from pyrootTools import isOrIsNot
 
-  gROOT.SetBatch()
+  #gROOT.SetBatch()
   debugOneVar = False
 
-  for direction in ["up", "down", "spacer"]:
+  #for direction in ["up", "down", "spacer"]:
+  for direction in ["up", "down"]:
     if "spacer" in direction:
       print "exiting"
       from time import sleep
