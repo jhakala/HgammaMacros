@@ -357,11 +357,11 @@ for withBtag in [options.withBtag]:
             sighists[-1].Draw("hist SAME")
 
         pads[-1].SetBottomMargin(0)
-        pads[-1].BuildLegend()
+        #pads[-1].BuildLegend()
         cans[-1].cd()
         pads[-1].Draw()
 
-        TDRify(pads[-1], False, "cpad_%s_%s"%(rName, sigFileName))
+        #TDRify(pads[-1], False, "cpad_%s_%s"%(rName, sigFileName))
         for prim in pads[-1].GetListOfPrimitives():
           if "TLegend" in prim.IsA().GetName():
             prim.SetX1NDC(0.753)

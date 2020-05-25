@@ -45,7 +45,8 @@ def getCanvas(inFile, i, sideband=False, debug=False):
     if debug:
       print "can_%s has key:", (label, key.GetName())
     if "c1" in key.GetName():
-      can = inFile.Get(key.GetName()).DrawClone()
+      #can = inFile.Get(key.GetName()).DrawClone()
+      can = inFile.Get(key.GetName())
       can.SetName("%i_%s_c1_%s" % (i, inFile.GetName(), label))
       for prim in can.GetListOfPrimitives():
         if debug:
@@ -67,16 +68,27 @@ def getTopPad(inFileName, i, can, sideband=False, debug=False):
       pad = prim
       for primitive in pad.GetListOfPrimitives():
         if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
-          primitive.SetName("%s_%s_higgswindow" % (inFileName, primitive.GetName()))
+          primitive.SetName("%s_%s_%s" % (inFileName, primitive.GetName(), label))
       SetOwnership(pad, False)
       return pad
 
-def getRatioPad(inFileName, i, can_higgswindow, debug=False):
-  for prim in can_higgswindow.GetListOfPrimitives():
+def getRatioPad(inFileName, i, can, sideband=False, debug=False):
+  label = getLabel(sideband)
+  for prim in can.GetListOfPrimitives():
     if "ratio" in prim.GetName():
       pad_ratio = prim
-      for primitive in bottomPad_higgswindow.GetListOfPrimitives():
+      for primitive in pad_ratio.GetListOfPrimitives():
         if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
-          primitive.SetName("%s_%s_higgswindow" % (inFileName_higgswindow, primitive.GetName()))
-      SetOwnership(bottomPad_higgswindow, False)
+          primitive.SetName("%s_%s_%s" % (inFileName, primitive.GetName(), label))
+      SetOwnership(pad_ratio, False)
       return pad_ratio
+
+def getPlots(higgsWindowFile, sidebandFile, i, debug=False):
+  can_higgswindow = getCanvas(higgsWindowFile , i, False , debug)
+  can_sideband    = getCanvas(sidebandFile    , i, True  , debug)
+
+  pad_higgswindow = getTopPad(higgsWindowFile.GetName() , i, can_higgswindow, debug)
+  pad_sideband    = getTopPad(sidebandFile.GetName()    , i, can_sideband   , debug)
+
+  bottomPad_sideband = getRatioPad(sidebandFile.GetName(), i, can_sideband, debug)
+  return can_higgswindow, pad_higgswindow, can_sideband, pad_sideband, bottomPad_sideband
