@@ -206,3 +206,15 @@ def getPreselectionComboCut(analysis, region, useTrigger, sideband=False, window
     preselectionCuts.pop("jetAbsEta")
     return combineCuts(preselectionCuts)
 
+def shouldBlind(cutName, sideband, windowEdges):
+  blindData = True
+
+  if cutName=="preselection" or sideband:
+    blindData       = False
+  else:
+    blindData    = True
+  
+  if windowEdges == "signalRegion":
+    blindData = True
+
+  return blindData

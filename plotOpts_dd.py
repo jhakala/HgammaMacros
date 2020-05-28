@@ -3,6 +3,7 @@
 
 
 from optTools import *
+from VgParameters import getRangesDict, getHiggsRangesDict, isVarTagger, getDebugVar
 
 def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, withBtag, stacks, sidebands, i, windowEdges, isTagger, useMC=False, omitData = False):
   
@@ -14,8 +15,10 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
     print "inFile_sideband is: %s" % inFile_sideband.GetName()
 
   can_higgswindow, pad_higgswindow, can_sideband, pad_sideband, bottomPad_sideband = getPlots(inFile_higgswindow, inFile_sideband, i)
+  print "got pad_sideband", pad_sideband
 
 
+  name800 = name1000 = name2000 = name3000 = None
   for subprim in pad_higgswindow.GetListOfPrimitives():
     #print "pad_higgswindow has primitive: %s" % subprim.GetName()
     if "-800" in subprim.GetName():
@@ -39,6 +42,7 @@ def makeOpt(analysis, var, inFileName_sideband, inFileName_higgswindow, upDown, 
       subprim.SetName("garbage_%i_%s_%s" % (i, inFileName_higgswindow, subprim.GetName()))
       subprim.Delete()
 
+  print "again, pad_sideband:", pad_sideband
   for subprim in pad_sideband.GetListOfPrimitives():
     if debug:
       print "pad_sideband has primitive:", subprim.GetName()
@@ -322,12 +326,12 @@ if __name__ == "__main__":
   from math import sqrt
   import pickle
   from ROOT import *
-  from VgParameters import getRangesDict, getHiggsRangesDict, isVarTagger
   from getMCbgWeights import getMCbgLabels
   from pyrootTools import isOrIsNot
 
-  #gROOT.SetBatch()
-  debugOneVar = False
+  TColor.SetColorThreshold(0.1)
+  gROOT.SetBatch()
+  debugOneVar = getDebugVar()
 
   #for direction in ["up", "down", "spacer"]:
   for direction in ["up", "down"]:
@@ -347,8 +351,13 @@ if __name__ == "__main__":
       print "working on key:", key
       isTagger = isVarTagger(key)
       print "  -> this variable", isOrIsNot(isTagger, "singular"), "a b-tagger"
-      if debugOneVar and not key=="phPtOverMgammaj":
-        continue
+      if debugOneVar:
+        print "debugOneVar found"
+        if debugOneVar in key:
+          pass
+        else:
+          #print "skipping", debugOneVar
+          continue
       if "btagSF" in key or key=="mcWeight":
         continue
       sideband_varName    = "%s_stackplots_softdrop_nMinus1_%s_sideband%i%i/nMinus1_stack_%s.root"%( arguments.analysis, withBtag, windowEdges[0], windowEdges[1], key)

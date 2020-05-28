@@ -9,8 +9,9 @@ from os import path
 # churns out all the possible histograms from DDtrees
 
 printCuts = False
+TColor.SetColorThreshold(0.1)
 
-def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False):
+def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFactors=False, windowEdges=[100,110], fineBinning=False, useReweighting=False, debugOneVar=""):
   print "entering HgPlotTools.makeAllHists for analysis", analysis
   if fineBinning != useReweighting:
     print "there was something funny happening... fineBinning and useReweighting were different..."
@@ -40,6 +41,14 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
       if not "csvValues" in branch.GetName() and not "subjetCut" in branch.GetName() and not "triggerFired" in branch.GetName():
         varNames.append(branch.GetName())
     for var in varNames:
+      if debugOneVar:
+        print "debugOneVar found"
+        if debugOneVar in var:
+          pass
+        else:
+          continue
+      else:
+        print "debugOneVar is false"
       print "    -> working on var:", var
       iRange = 1
       firstRange = True
@@ -90,16 +99,16 @@ def makeAllHists(analysis, cutName, withBtag=True, sideband=False, useScaleFacto
         #print cut
         if useScaleFactors:
           if cutName in ["antibtag", "btag"]:
-            cutString = "%sSF*(%s)" % (cutName, cut)
+            cutString = "%sSF*(%s)" % (cutName, cut.GetTitle())
             if useReweighting:
               cutString = "weightFactor*(%s)"%cutString
           else:
-            cutString = "1*(%s)" % (cut)
+            cutString = "1*(%s)" % (cut.GetTitle())
         else:
           if cutName in "preselection":
-            cutString = "1*(%s)" % cut
+            cutString = "1*(%s)" % cut.GetTitle()
           else:
-            cutString = "1*(%s)" % (cut)
+            cutString = "1*(%s)" % (cut.GetTitle())
         print "      -> cuts:", cutString
         nEntries = tree.Draw("%s>> %s"%(var, histName), cutString, "HIST")
         directory = ""

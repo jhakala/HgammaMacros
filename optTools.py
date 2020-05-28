@@ -37,7 +37,7 @@ def getLabel(sideband):
     return "higgswindow"
   
 
-def getCanvas(inFile, i, sideband=False, debug=False):
+def getCanvas(inFile, i, sideband=False, debug=True):
   label = getLabel(sideband)
   if debug:
     print "inFile.GetName()", inFile.GetName()
@@ -52,15 +52,18 @@ def getCanvas(inFile, i, sideband=False, debug=False):
         if debug:
           print "  can_%s has primitive: %s" % (label, prim.GetName())
         newPrimName = "%i_%s_%s" % (i, prim.GetName(), label)
-        prim.SetName(newPrimName)
         if debug:
           print "  -> new name is: ", prim.GetName()
       SetOwnership(can, False)
       return can
 
-def getTopPad(inFileName, i, can, sideband=False, debug=False):
+def getTopPad(inFileName, i, can, sideband=False, debug=True):
   label = getLabel(sideband)
+  if debug:
+    print "getTopPad opening input filename", inFileName
   for prim in can.GetListOfPrimitives():
+    if debug:
+      print "can:", can, "primitive:", prim.GetName()
     if sideband:
       prim.SetName("%i_%s_sideband" % (i, prim.GetName()))
 
@@ -70,7 +73,9 @@ def getTopPad(inFileName, i, can, sideband=False, debug=False):
         if not ("TLine" in primitive.IsA().GetName() or "TFrame" in primitive.IsA().GetName()):
           primitive.SetName("%s_%s_%s" % (inFileName, primitive.GetName(), label))
       SetOwnership(pad, False)
+      print "returning pad", pad
       return pad
+  print "  ERROR \n getTopPad looked through inFileName", inFileName, "and did not find any stack primitive in canvas", can.GetName()
 
 def getRatioPad(inFileName, i, can, sideband=False, debug=False):
   label = getLabel(sideband)

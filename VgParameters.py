@@ -183,3 +183,7 @@ def getRangesDict(fineBinning=False):
   for key in higgsRangesDict.keys():
     rangesDict[key]=higgsRangesDict[key]
   return rangesDict
+
+def getDebugVar():
+  #return "akxDec_bbvsLight"
+  return None
